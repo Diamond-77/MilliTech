@@ -544,8 +544,8 @@ function syncNav(){
 addEventListener('scroll', syncNav, {passive: true}); syncNav();
 
 /* ---------- 3D cover ---------- */
-// The MilliTech emblem in the middle, the 11 styles on a ring around it.
-// The ring brings one style to the front at a time and the emblem reskins to that style's look.
+// The MilliTech emblem in the middle, the 11 styles on a ring around it (drag to spin).
+// Whichever style is at the front, the emblem is rendered in that style: same logo, its colours and finish.
 const canvas = $('#scene');
 if (!window.THREE || !canvas) return;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -564,12 +564,17 @@ if (THREE.RoomEnvironment){
   scene.environment = pmrem.fromScene(new THREE.RoomEnvironment(), .04).texture;
 }
 const camera = new THREE.PerspectiveCamera(38, 1, .1, 60);
-const key = new THREE.DirectionalLight(0xffffff, 1.1); key.position.set(3, 5, 6); scene.add(key);
-const rim = new THREE.DirectionalLight(C(0xD4F53C), .8); rim.position.set(-5, 2, -4); scene.add(rim);
-scene.add(new THREE.HemisphereLight(0xffffff, 0x223344, .35));
+const key = new THREE.DirectionalLight(0xffffff, 1); key.position.set(3, 5, 6); scene.add(key);
+const rim = new THREE.DirectionalLight(C(0xD4F53C), .6); rim.position.set(-5, 2, -4); scene.add(rim);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x223344, .45));
 const world = new THREE.Group(); scene.add(world);
 
-// emblem geometry, built from the logo's own paths
+/* ---- helpers ---- */
+const clamp = x => Math.max(0, Math.min(1, x));
+const seg = (p, a, b) => clamp((p - a) / (b - a));
+const E = x => x * x * (3 - 2 * x);
+const backOut = x => { const c = 1.6; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const hash = n => { const s = Math.sin(n * 127.1) * 43758.5453; return s - Math.floor(s); };
 const S = 2.6 / 840, CX = 360, CY = 320;
 const pt = (x, y) => new THREE.Vector2((x - CX) * S, -(y - CY) * S);
 const PATHS = [
@@ -577,158 +582,499 @@ const PATHS = [
   'M360 156 L594 282 L594 483 L518 526 L518 331 L360 246 L204 331 L204 526 L126 483 L126 282 Z',
   'M318 271 L402 271 L402 384 L460 350 L480 350 L508 405 L401 463 L401 576 L319 576 L319 463 L212 405 L240 350 L260 350 L318 384 Z'
 ];
-function shapeFrom(str){
-  const nums = str.match(/-?\d+(\.\d+)?/g).map(Number), sh = new THREE.Shape();
-  for (let i = 0; i < nums.length; i += 2){ const p = pt(nums[i], nums[i + 1]); i ? sh.lineTo(p.x, p.y) : sh.moveTo(p.x, p.y); }
-  sh.closePath(); return sh;
+const POLYS = PATHS.map(d => { const n = d.match(/-?\d+(\.\d+)?/g).map(Number), a = []; for (let i = 0; i < n.length; i += 2) a.push([n[i], n[i + 1]]); return a; });
+const shapeOf = poly => { const s = new THREE.Shape(); poly.forEach(([x, y], i) => { const p = pt(x, y); i ? s.lineTo(p.x, p.y) : s.moveTo(p.x, p.y); }); s.closePath(); return s; };
+const MARK = POLYS.map(shapeOf);
+function rr(cx, cy, w, h, r){
+  const s = new THREE.Shape(), l = cx - w / 2, ri = cx + w / 2, b = cy - h / 2, t = cy + h / 2;
+  s.moveTo(l + r, b); s.lineTo(ri - r, b); s.quadraticCurveTo(ri, b, ri, b + r);
+  s.lineTo(ri, t - r); s.quadraticCurveTo(ri, t, ri - r, t);
+  s.lineTo(l + r, t); s.quadraticCurveTo(l, t, l, t - r);
+  s.lineTo(l, b + r); s.quadraticCurveTo(l, b, l + r, b);
+  return s;
 }
-function roundRect(x, y, w, h, r){
-  const sh = new THREE.Shape(), a = pt(x, y), b = pt(x + w, y + h), rr = r * S;
-  const l = a.x, t = a.y, ri = b.x, bo = b.y;
-  sh.moveTo(l + rr, t); sh.lineTo(ri - rr, t); sh.quadraticCurveTo(ri, t, ri, t - rr);
-  sh.lineTo(ri, bo + rr); sh.quadraticCurveTo(ri, bo, ri - rr, bo);
-  sh.lineTo(l + rr, bo); sh.quadraticCurveTo(l, bo, l, bo + rr);
-  sh.lineTo(l, t - rr); sh.quadraticCurveTo(l, t, l + rr, t);
-  return sh;
+const TW = 840 * S, TH = 800 * S, TR = 160 * S;          // the lime tile behind the mark
+const tileShape = (k = 1) => rr(0, 0, TW * k, TH * k, TR * k);
+function ext(shapes, depth, bevel, segs = 4, curve = 24){
+  return new THREE.ExtrudeGeometry(shapes, {depth, bevelEnabled: bevel > 0, bevelThickness: bevel, bevelSize: bevel * .8, bevelSegments: segs, curveSegments: curve});
 }
-const TILE_D = .34, TILE_B = .07, MARK_D = .14;
-const tileGeo = new THREE.ExtrudeGeometry(roundRect(-60, -80, 840, 800, 160), {depth: TILE_D, bevelEnabled: true, bevelThickness: TILE_B, bevelSize: TILE_B, bevelSegments: 8, curveSegments: 24});
-tileGeo.translate(0, 0, -TILE_D);
-const markGeo = new THREE.ExtrudeGeometry(PATHS.map(shapeFrom), {depth: MARK_D, bevelEnabled: true, bevelThickness: .02, bevelSize: .014, bevelSegments: 4});
-markGeo.translate(0, 0, TILE_B - .01);
-const tileMat = new THREE.MeshPhysicalMaterial({color: C(0xD4F53C), roughness: .42, metalness: 0, clearcoat: .2, clearcoatRoughness: .25, envMapIntensity: .45});
-const markMat = new THREE.MeshPhysicalMaterial({color: C(0x0D1720), roughness: .55, metalness: 0, clearcoat: .1, envMapIntensity: .6});
-const emblem = new THREE.Group();
-const tile = new THREE.Mesh(tileGeo, tileMat);
-const mark = new THREE.Mesh(markGeo, markMat);
-emblem.add(tile, mark);
-
-// sketch outlines (Conceptual Sketch, Brutalism)
-const lineMat = new THREE.LineBasicMaterial({color: 0x111111, transparent: true, opacity: 0});
-const tileLines = new THREE.LineSegments(new THREE.EdgesGeometry(tileGeo, 30), lineMat);
-const markLines = new THREE.LineSegments(new THREE.EdgesGeometry(markGeo, 30), lineMat);
-emblem.add(tileLines, markLines);
-
-// voxel mark (Pixel Art): rasterise the logo onto a coarse grid
-const CELL = 24, cols = Math.ceil(720 / CELL), rows = Math.ceil(640 / CELL);
-const rc = document.createElement('canvas'); rc.width = cols; rc.height = rows;
-const rx = rc.getContext('2d'); rx.scale(1 / CELL, 1 / CELL); rx.fillStyle = '#000';
-PATHS.forEach(d => rx.fill(new Path2D(d)));
-const px = rx.getImageData(0, 0, cols, rows).data, cells = [];
-for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) if (px[(y * cols + x) * 4 + 3] > 110) cells.push(pt((x + .5) * CELL, (y + .5) * CELL));
-const voxMat = new THREE.MeshStandardMaterial({color: C(0x2C6EA8), roughness: .7});
-const vox = new THREE.InstancedMesh(new THREE.BoxGeometry(CELL * S * .94, CELL * S * .94, .2), voxMat, cells.length);
+const M = o => new THREE.MeshPhysicalMaterial(Object.assign({roughness: .5, metalness: 0, envMapIntensity: .5}, o));
+function canvasTex(w, h, draw){
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  draw(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.anisotropy = 4; return t;
+}
+// map a texture across the tile face (extrude UVs are in world units)
+function fitTile(t, k = 1){ t.repeat.set(1 / (TW * k), 1 / (TH * k)); t.offset.set(.5, .5); return t; }
+// point-in-logo test in SVG units
+const hitCtx = document.createElement('canvas').getContext('2d');
+const MARK2D = PATHS.map(d => new Path2D(d));
+const inMark = (x, y) => MARK2D.some(p => hitCtx.isPointInPath(p, x, y));
+const TILE2D = (() => { const p = new Path2D(), l = -60, t = -80, r = 780, b = 720, k = 160; p.moveTo(l + k, t); p.arcTo(r, t, r, b, k); p.arcTo(r, b, l, b, k); p.arcTo(l, b, l, t, k); p.arcTo(l, t, r, t, k); p.closePath(); return p; })();
+const inTile = (x, y) => hitCtx.isPointInPath(TILE2D, x, y);
+function gridCells(cell, test){
+  const out = [];
+  for (let y = -80 + cell / 2; y < 720; y += cell) for (let x = -60 + cell / 2; x < 780; x += cell)
+    if (test(x, y)) out.push({x, y, gx: Math.round((x + 60 - cell / 2) / cell), gy: Math.round((y + 80 - cell / 2) / cell)});
+  return out;
+}
 const dummy = new THREE.Object3D();
-cells.forEach((c, i) => { dummy.position.set(c.x, c.y, TILE_B + .1); dummy.updateMatrix(); vox.setMatrixAt(i, dummy.matrix); });
-const voxGroup = new THREE.Group(); voxGroup.add(vox); emblem.add(voxGroup);
+let tx = 0, ty = 0, rootYaw = 0;          // pointer and emblem turn, read by the skins
 
-// eyes (Anthropomorphic, Kawaii) and blush (Kawaii)
-const face = new THREE.Group(); emblem.add(face);
-const white = new THREE.MeshStandardMaterial({color: 0xffffff, roughness: .3});
-const black = new THREE.MeshStandardMaterial({color: 0x0b0b0b, roughness: .2});
-const pupils = [];
-[[286, 300], [434, 300]].forEach(([x, y]) => {
-  const p = pt(x, y), eye = new THREE.Group();
-  const ball = new THREE.Mesh(new THREE.SphereGeometry(.2, 32, 16), white); ball.scale.z = .55;
-  const pupil = new THREE.Mesh(new THREE.SphereGeometry(.095, 24, 12), black); pupil.position.z = .1; pupil.scale.z = .5;
-  const glint = new THREE.Mesh(new THREE.SphereGeometry(.03, 12, 8), white); glint.position.set(.03, .035, .05); pupil.add(glint);
-  eye.add(ball, pupil); eye.position.set(p.x, p.y, .42); face.add(eye); pupils.push(pupil);
+/* ---- the emblem, one skin per look ---- */
+const root = new THREE.Group(); world.add(root);
+const SKINS = {};
+function skin(name, build){ const s = build(); s.p = 0; root.add(s.g); if (s.env) world.add(s.env); SKINS[name] = s; }
+
+// MilliTech: lime tile, ink mark
+skin('brand', () => {
+  const g = new THREE.Group();
+  g.add(new THREE.Mesh(ext(tileShape(), .34, .07, 8).translate(0, 0, -.34), M({color: C(0xD4F53C), roughness: .42, clearcoat: .2})));
+  g.add(new THREE.Mesh(ext(MARK, .14, .02).translate(0, 0, .06), M({color: C(0x0D1720), roughness: .55})));
+  return {g, update(p){ const e = E(p); g.scale.setScalar(.001 + e); g.rotation.y = (1 - e) * 2.4; }};
 });
-const blushMat = new THREE.MeshBasicMaterial({color: C(0xFF7FA6), transparent: true, opacity: .85});
-const blush = new THREE.Group(); emblem.add(blush);
-[[214, 410], [506, 410]].forEach(([x, y]) => {
-  const p = pt(x, y), m = new THREE.Mesh(new THREE.CircleGeometry(.12, 32), blushMat);
-  m.scale.y = .6; m.position.set(p.x, p.y, .42); blush.add(m);
+
+// Anthropomorphic: friendly toon shading, soft rounded shapes, bold cartoon outline
+skin('anthropomorphic', () => {
+  const g = new THREE.Group();
+  const steps = canvasTex(4, 1, (x) => { ['#666', '#aaa', '#ddd', '#fff'].forEach((c, i) => { x.fillStyle = c; x.fillRect(i, 0, 1, 1); }); });
+  steps.minFilter = steps.magFilter = THREE.NearestFilter; steps.encoding = THREE.LinearEncoding;
+  const tileG = ext(tileShape(.96), .26, .16, 10).translate(0, 0, -.26);
+  const markG = ext(MARK, .1, .06, 6).translate(0, 0, .14);
+  const tile = new THREE.Mesh(tileG, new THREE.MeshToonMaterial({color: C(0xF7C928), gradientMap: steps}));
+  const mark = new THREE.Mesh(markG, new THREE.MeshToonMaterial({color: C(0x2E6FB6), gradientMap: steps}));
+  // outline: back faces of a slightly larger copy, the classic cartoon ink line
+  const lineM = new THREE.MeshBasicMaterial({color: 0x15121A, side: THREE.BackSide});
+  const tileO = new THREE.Mesh(tileG, lineM); tileO.scale.set(1.035, 1.035, 1.15);
+  const markO = new THREE.Mesh(markG, lineM); markO.scale.set(1.02, 1.02, 1.3); markO.position.z = -.01;
+  g.add(tileO, tile, markO, mark);
+  // a soft red drop shadow shape, like a sticker
+  const shadow = new THREE.Mesh(new THREE.ShapeGeometry(tileShape(.96), 24), new THREE.MeshBasicMaterial({color: C(0xC0392B)}));
+  shadow.position.set(.14, -.14, -.5); g.add(shadow);
+  return {g, update(p, t){
+    const e = backOut(seg(p, 0, 1));
+    g.scale.set(e, e * (1 + Math.sin(t * 3.2) * .025 * p), e);   // gentle, bouncy breathing
+    g.position.y = Math.abs(Math.sin(t * 1.6)) * .08 * p;
+  }};
 });
-emblem.position.y = .8;
-world.add(emblem);
 
-// one look per style: tile, mark, finish, extras
-const LOOK = {
-  brand:              {tile: 0xD4F53C, mark: 0x0D1720, tr: .42, tm: 0,   tc: .4, mr: .55, mm: 0,  rim: 0xD4F53C},
-  'anthropomorphic':  {tile: 0xF7C928, mark: 0x2E6FB6, tr: .5,  tm: 0,   tc: .3, mr: .45, mm: 0,  rim: 0xC0392B, eyes: 1},
-  'pixel-art':        {tile: 0xF2D9A0, mark: 0x2C6EA8, tr: .85, tm: 0,   tc: 0,  mr: .8,  mm: 0,  rim: 0x3E7D3A, pix: 1},
-  'conceptual-sketch':{tile: 0xF1EBDD, mark: 0x1A1A1A, tr: 1,   tm: 0,   tc: 0,  mr: 1,   mm: 0,  rim: 0xC8B89A, lines: 1},
-  'luxury-typography':{tile: 0x1D1B17, mark: 0xD9B872, tr: .3,  tm: .3,  tc: 1,  mr: .22, mm: 1,  rim: 0xB89A64},
-  'brutalism':        {tile: 0xB9B5AC, mark: 0xE8432E, tr: 1,   tm: 0,   tc: 0,  mr: .9,  mm: 0,  rim: 0xE8432E, lines: .7},
-  'vaporwave':        {tile: 0xFF6EC7, mark: 0x3D2BD9, tr: .2,  tm: .1,  tc: 1,  mr: .25, mm: .3, rim: 0x23C7E6, glow: .35},
-  'bento-box':        {tile: 0x1E4D2B, mark: 0xC8F25A, tr: .45, tm: 0,   tc: .5, mr: .4,  mm: 0,  rim: 0xF5A3C7},
-  'kawaii':           {tile: 0xFFB3C7, mark: 0x9ED8FF, tr: .6,  tm: 0,   tc: .3, mr: .5,  mm: 0,  rim: 0xFFE36E, eyes: 1, blush: 1},
-  'coquette':         {tile: 0xF6C6D5, mark: 0x7A4A3A, tr: .2,  tm: .15, tc: 1,  mr: .3,  mm: .2, rim: 0xD94B7A},
-  'glassmorphism':    {tile: 0xDDF1EE, mark: 0x1C1F24, tr: .05, tm: 0,   tc: 1,  mr: .3,  mm: .4, rim: 0xB6E0D9, glass: 1},
-  'modular-typography':{tile: 0x1E6BFF, mark: 0xFF2BB3, tr: .35, tm: 0,  tc: .6, mr: .35, mm: 0,  rim: 0xFFFFFF}
-};
-const looks = {};
-for (const k in LOOK){
-  const L = LOOK[k];
-  looks[k] = {tile: C(L.tile), mark: C(L.mark), rim: C(L.rim), bg: INK.clone().lerp(new THREE.Color(L.tile), .1),
-    tr: L.tr, tm: L.tm, tc: L.tc, mr: L.mr, mm: L.mm, eyes: L.eyes || 0, blush: L.blush || 0, pix: L.pix || 0,
-    lines: L.lines || 0, glow: L.glow || 0, glass: L.glass || 0};
-}
-const now = {eyes: 0, blush: 0, pix: 0, lines: 0, glow: 0, glass: 0};
-let want = looks.brand;
-function stepLook(k){
-  tileMat.color.lerp(want.tile, k); markMat.color.lerp(want.mark, k); voxMat.color.lerp(want.mark, k);
-  rim.color.lerp(want.rim, k); bg.lerp(want.bg, k);
-  tileMat.roughness += (want.tr - tileMat.roughness) * k; tileMat.metalness += (want.tm - tileMat.metalness) * k;
-  tileMat.clearcoat += (want.tc * .5 - tileMat.clearcoat) * k;
-  markMat.roughness += (want.mr - markMat.roughness) * k; markMat.metalness += (want.mm - markMat.metalness) * k;
-  for (const p in now) now[p] += (want[p] - now[p]) * k;
-  tileMat.emissive.copy(tileMat.color).multiplyScalar(now.glow);
-  tileMat.opacity = 1 - now.glass * .62; tileMat.transparent = tileMat.opacity < .995;
-  lineMat.opacity = now.lines;
-  tileLines.visible = markLines.visible = now.lines > .01;
-  // pixel art: the smooth mark sinks into the tile while the voxels pop out
-  mark.scale.z = Math.max(.001, 1 - now.pix); mark.visible = now.pix < .98;
-  voxGroup.scale.set(1, 1, Math.max(.001, now.pix)); voxGroup.visible = now.pix > .02;
-  face.scale.setScalar(Math.max(.001, now.eyes)); face.visible = now.eyes > .02;
-  blush.scale.setScalar(Math.max(.001, now.blush)); blush.visible = now.blush > .02;
-}
+// Pixel Art: the logo rebuilt from 8-bit blocks with retro shading
+skin('pixel-art', () => {
+  const g = new THREE.Group(), CELL = 40;
+  const cells = gridCells(CELL, inTile);
+  const sz = CELL * S;
+  const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(sz * .98, sz * .98, 1), new THREE.MeshStandardMaterial({roughness: .85, flatShading: true}), cells.length);
+  const has = new Set(cells.map(c => c.gx + ',' + c.gy));
+  const mk = new Set(cells.filter(c => inMark(c.x, c.y)).map(c => c.gx + ',' + c.gy));
+  const col = new THREE.Color(), items = [];
+  cells.forEach((c, i) => {
+    const k = c.gx + ',' + c.gy, isMark = mk.has(k);
+    let hex;
+    if (isMark){
+      hex = !mk.has(c.gx + ',' + (c.gy - 1)) ? 0x6FA8DC : !mk.has(c.gx + ',' + (c.gy + 1)) ? 0x1B4E7E : 0x2C6EA8;
+    } else {
+      const edge = !has.has(c.gx + ',' + (c.gy + 1)) || !has.has((c.gx + 1) + ',' + c.gy);
+      const top = !has.has(c.gx + ',' + (c.gy - 1)) || !has.has((c.gx - 1) + ',' + c.gy);
+      hex = edge ? 0xC99A55 : top ? 0xFFF0C8 : ((c.gx + c.gy) % 2 ? 0xF2D9A0 : 0xEED29A);
+    }
+    mesh.setColorAt(i, col.set(hex).convertSRGBToLinear());
+    const p = pt(c.x, c.y), d = isMark ? .5 : .3;
+    const a = hash(i) * 6.283, r = 2 + hash(i + 7) * 3;
+    items.push({x: p.x, y: p.y, z: isMark ? .1 : 0, d, ox: Math.cos(a) * r, oy: Math.sin(a) * r + 2, oz: (hash(i + 3) - .5) * 4, delay: (c.gy / 20) * .45});
+  });
+  mesh.instanceColor.needsUpdate = true;
+  g.add(mesh);
+  // pixel stars that blink on an 8-bit beat
+  const mkStars = (n, seed) => {
+    const pos = [];
+    for (let i = 0; i < n; i++){ const a = hash(i + seed) * 6.283, r = 1.7 + hash(i + seed + 9) * 1.2; pos.push(Math.cos(a) * r, Math.sin(a) * r * .9, -.4 - hash(i + seed + 5)); }
+    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    return new THREE.Points(geo, new THREE.PointsMaterial({color: 0xFFF6D8, size: 6, sizeAttenuation: false, fog: false}));
+  };
+  const starsA = mkStars(14, 1), starsB = mkStars(14, 40); g.add(starsA, starsB);
+  let lastP = -1;
+  return {g, update(p, t){
+    if (Math.abs(p - lastP) > .001){
+      items.forEach((it, i) => {
+        const q = E(seg(p, it.delay, it.delay + .5));
+        dummy.position.set(it.x + it.ox * (1 - q), it.y + it.oy * (1 - q), it.z + it.oz * (1 - q));
+        dummy.scale.set(q > .001 ? 1 : .001, q > .001 ? 1 : .001, it.d);
+        dummy.rotation.set(0, 0, 0); dummy.updateMatrix(); mesh.setMatrixAt(i, dummy.matrix);
+      });
+      mesh.instanceMatrix.needsUpdate = true; lastP = p;
+    }
+    // choppy, frame-stepped turning like an old game sprite
+    const stepA = Math.PI / 12;
+    g.rotation.y = Math.round(rootYaw / stepA) * stepA - rootYaw;
+    const beat = Math.floor(t * 3) % 2;
+    starsA.visible = p > .5 && beat === 0; starsB.visible = p > .5 && beat === 1;
+  }};
+});
 
-// ring of the 11 styles
-// the ring sits lower than the emblem, so the style at the front never hides it
-const ring = new THREE.Group(); ring.position.y = -1.05; world.add(ring);
+// Conceptual Sketch: drawn in wobbly ink on sketch paper, with hatching and a dimension line
+skin('conceptual-sketch', () => {
+  const g = new THREE.Group();
+  const paperTex = canvasTex(512, 512, (x, w, h) => {
+    x.fillStyle = '#F4EEDF'; x.fillRect(0, 0, w, h);
+    for (let i = 0; i < 6000; i++){ x.fillStyle = `rgba(90,70,40,${Math.random() * .06})`; x.fillRect(Math.random() * w, Math.random() * h, 1, 1); }
+    x.strokeStyle = 'rgba(70,120,170,.16)'; x.lineWidth = 1;
+    for (let i = 16; i < w; i += 24){ x.beginPath(); x.moveTo(i, 0); x.lineTo(i, h); x.stroke(); x.beginPath(); x.moveTo(0, i); x.lineTo(w, i); x.stroke(); }
+  });
+  const paper = new THREE.Mesh(new THREE.BoxGeometry(3.2, 3.05, .02), [0, 0, 0, 0].map(() => new THREE.MeshStandardMaterial({color: C(0xE9E1CE), roughness: 1})).concat([new THREE.MeshStandardMaterial({map: paperTex, roughness: 1}), new THREE.MeshStandardMaterial({color: C(0xE9E1CE)})]));
+  paper.position.z = -.05; paper.rotation.z = -.035; g.add(paper);
+  // resample every outline into small steps so the jitter makes a hand-drawn wobble
+  const outlines = [tileShape(.92).getPoints(10).map(v => [v.x, v.y]), ...POLYS.map(poly => poly.map(([x, y]) => { const p = pt(x, y); return [p.x, p.y]; }))];
+  const strokes = [];
+  outlines.forEach((ol, oi) => {
+    for (let copy = 0; copy < 2; copy++){
+      const pts = [], loop = ol.concat([ol[0]]);
+      for (let i = 0; i < loop.length - 1; i++){
+        const [ax, ay] = loop[i], [bx, by] = loop[i + 1], n = Math.max(1, Math.ceil(Math.hypot(bx - ax, by - ay) / .05));
+        for (let k = 0; k < n; k++) pts.push([ax + (bx - ax) * k / n, ay + (by - ay) * k / n]);
+      }
+      pts.push(pts[0]);
+      strokes.push({pts, seed: oi * 10 + copy, over: copy ? .03 : 0});
+    }
+  });
+  // hatching inside the mark at 45 degrees
+  const hatch = [];
+  for (let c = -900; c < 900; c += 26){
+    let run = null;
+    for (let s = -100; s < 900; s += 6){
+      const x = s, y = s + c, inside = inMark(x, y);
+      if (inside && !run) run = [x, y];
+      if (!inside && run){ hatch.push([run, [x - 6, y - 6]]); run = null; }
+    }
+  }
+  const segCount = strokes.reduce((n, s) => n + s.pts.length - 1, 0);
+  const inkGeo = new THREE.BufferGeometry(); inkGeo.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(segCount * 6), 3));
+  const ink = new THREE.LineSegments(inkGeo, new THREE.LineBasicMaterial({color: C(0x1A1A1A), transparent: true, opacity: .9, fog: false}));
+  const hGeo = new THREE.BufferGeometry(), hp = [];
+  hatch.forEach(([a, b]) => { const p = pt(a[0], a[1]), q = pt(b[0], b[1]); hp.push(p.x, p.y, .02, q.x, q.y, .02); });
+  hGeo.setAttribute('position', new THREE.Float32BufferAttribute(hp, 3));
+  const hatchL = new THREE.LineSegments(hGeo, new THREE.LineBasicMaterial({color: C(0x4A4A4A), transparent: true, opacity: .55, fog: false}));
+  // a dimension line under the drawing, with end ticks
+  const dim = [-1.2, -1.42, -1.2, -1.32, -1.2, -1.42, 1.2, -1.42, 1.2, -1.42, 1.2, -1.32, -.1, -1.42, -.05, -1.37, -.05, -1.37, 0, -1.42];
+  const dGeo = new THREE.BufferGeometry(), dp = [];
+  for (let i = 0; i < dim.length; i += 4) dp.push(dim[i], dim[i + 1], .02, dim[i + 2], dim[i + 3], .02);
+  dGeo.setAttribute('position', new THREE.Float32BufferAttribute(dp, 3));
+  const dimL = new THREE.LineSegments(dGeo, ink.material);
+  g.add(ink, hatchL, dimL);
+  let boilAt = -1;
+  function boil(t){
+    const a = inkGeo.attributes.position.array; let o = 0;
+    strokes.forEach(st => {
+      const j = (i, k) => Math.sin(i * .45 + st.seed * 3.1 + k) * .012 + (hash(i + st.seed * 91 + Math.floor(t * 8)) - .5) * .008;
+      for (let i = 0; i < st.pts.length - 1; i++){
+        const [ax, ay] = st.pts[i], [bx, by] = st.pts[i + 1];
+        a[o++] = ax + j(i, 0) + st.over; a[o++] = ay + j(i, 1.7); a[o++] = .03;
+        a[o++] = bx + j(i + 1, 0) + st.over; a[o++] = by + j(i + 1, 1.7); a[o++] = .03;
+      }
+    });
+    inkGeo.attributes.position.needsUpdate = true;
+  }
+  return {g, update(p, t){
+    const e = E(seg(p, 0, .35));
+    paper.scale.set(.001 + e, .001 + e, 1);
+    if (Math.floor(t * 8) !== boilAt){ boilAt = Math.floor(t * 8); boil(t); }      // line "boil", 8 drawings a second
+    inkGeo.setDrawRange(0, Math.floor(segCount * 2 * seg(p, .25, .85)));
+    hGeo.setDrawRange(0, Math.floor(hp.length / 3 * seg(p, .65, 1)));
+    dimL.visible = p > .9;
+    g.rotation.z = Math.sin(t * .7) * .015;
+  }};
+});
+
+// Luxury Typography: black lacquer, polished gold, hairline frame, foil shine, gold dust
+skin('luxury-typography', () => {
+  const g = new THREE.Group();
+  const gold = M({color: C(0xD9B45A), metalness: 1, roughness: .2, envMapIntensity: 1.5});
+  g.add(new THREE.Mesh(ext(tileShape(), .3, .05, 8).translate(0, 0, -.3), M({color: C(0x0C0B0A), roughness: .12, clearcoat: 1, clearcoatRoughness: .04, envMapIntensity: .9})));
+  const mark = new THREE.Mesh(ext(MARK, .05, .012, 3).translate(0, 0, .05), gold); g.add(mark);
+  const frame = k => {
+    const pts = tileShape(k).getSpacedPoints(160).map(v => new THREE.Vector3(v.x, v.y, .06));
+    return new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, true), 320, k > .89 ? .007 : .0045, 6, true), gold);
+  };
+  const f1 = frame(.9), f2 = frame(.865); g.add(f1, f2);
+  const shineTex = canvasTex(64, 8, (x, w) => { const gr = x.createLinearGradient(0, 0, w, 0); gr.addColorStop(0, 'rgba(255,240,200,0)'); gr.addColorStop(.5, 'rgba(255,240,200,1)'); gr.addColorStop(1, 'rgba(255,240,200,0)'); x.fillStyle = gr; x.fillRect(0, 0, w, 8); });
+  const shine = new THREE.Mesh(new THREE.PlaneGeometry(.55, 3.6), new THREE.MeshBasicMaterial({map: shineTex, transparent: true, opacity: .32, blending: THREE.AdditiveBlending, depthWrite: false, fog: false}));
+  shine.rotation.z = -.5; shine.position.z = .12; g.add(shine);
+  const N = 90, dp = [];
+  for (let i = 0; i < N; i++) dp.push((hash(i) - .5) * 4.4, (hash(i + 50) - .5) * 3.6, (hash(i + 99) - .5) * 1.6);
+  const dGeo = new THREE.BufferGeometry(); dGeo.setAttribute('position', new THREE.Float32BufferAttribute(dp, 3));
+  const dust = new THREE.Points(dGeo, new THREE.PointsMaterial({color: C(0xF2D58A), size: .035, transparent: true, opacity: .8, blending: THREE.AdditiveBlending, depthWrite: false, fog: false}));
+  g.add(dust);
+  return {g, update(p, t){
+    const e = E(p);
+    g.rotation.x = (1 - e) * -1.1; g.position.y = -(1 - e) * .5; g.scale.setScalar(.001 + e);
+    mark.scale.z = .001 + E(seg(p, .35, .9));
+    const fr = .001 + E(seg(p, .55, 1)); f1.scale.set(fr, fr, 1); f2.scale.set(fr, fr, 1);
+    const sw = (t % 4.5) / 4.5; shine.position.x = -2.6 + sw * 5.2; shine.visible = p > .9 && sw < .7;
+    dust.position.y = (t * .05) % .4; dust.material.opacity = .45 + Math.sin(t * 2) * .25 * p;
+  }};
+});
+
+// Brutalism: raw concrete block, deep red slab logo, hard offset shadow, stencil text
+skin('brutalism', () => {
+  const g = new THREE.Group();
+  const concrete = canvasTex(512, 512, (x, w, h) => {
+    x.fillStyle = '#9E9A92'; x.fillRect(0, 0, w, h);
+    for (let i = 0; i < 26000; i++){ const v = Math.random(); x.fillStyle = v > .5 ? `rgba(255,255,255,${Math.random() * .08})` : `rgba(0,0,0,${Math.random() * .12})`; x.fillRect(Math.random() * w, Math.random() * h, 2, 2); }
+    x.fillStyle = 'rgba(0,0,0,.18)'; for (let y = 64; y < h; y += 96) x.fillRect(0, y, w, 2);              // formwork seams
+    for (let i = 0; i < 40; i++){ x.beginPath(); x.arc(Math.random() * w, Math.random() * h, 1 + Math.random() * 3, 0, 7); x.fillStyle = 'rgba(40,36,30,.45)'; x.fill(); }
+    [[34, 34], [w - 34, 34], [34, h - 34], [w - 34, h - 34]].forEach(([a, b]) => { x.beginPath(); x.arc(a, b, 9, 0, 7); x.fillStyle = '#4A4640'; x.fill(); });
+    x.fillStyle = 'rgba(25,22,20,.8)'; x.font = 'bold 26px "Courier New", monospace'; x.fillText('MILLITECH', 56, h - 62); x.font = 'bold 18px "Courier New", monospace'; x.fillText('BLOCK 01 / RAW', 56, h - 36);
+  });
+  const block = new THREE.Mesh(new THREE.BoxGeometry(2.75, 2.65, .55), new THREE.MeshStandardMaterial({map: concrete, roughness: 1}));
+  const shadow = new THREE.Mesh(new THREE.BoxGeometry(2.75, 2.65, .55), new THREE.MeshBasicMaterial({color: 0x0A0A0A}));
+  shadow.position.set(.2, -.2, -.22);
+  const markG = ext(MARK, .42, 0).translate(0, 0, .275);
+  const mark = new THREE.Mesh(markG, new THREE.MeshStandardMaterial({color: C(0xE8432E), roughness: .9, flatShading: true}));
+  const edges = new THREE.LineSegments(new THREE.EdgesGeometry(markG, 30), new THREE.LineBasicMaterial({color: 0x111111}));
+  g.add(shadow, block, mark, edges);
+  return {g, update(p){
+    // heavy drop, then a short hard shake on landing
+    const q = seg(p, 0, .6);
+    const land = q < 1 ? 2.8 * Math.pow(1 - q, 2) : 0;
+    const shake = p > .6 && p < .78 ? Math.sin(p * 120) * .04 * (1 - seg(p, .6, .78)) : 0;
+    g.position.y = land + shake; g.visible = p > .002;
+    g.scale.setScalar(p < .002 ? .001 : 1);
+    const stepA = Math.PI / 6;                         // blunt, stepped turns
+    g.rotation.y = Math.round(rootYaw / stepA) * stepA - rootYaw;
+  }};
+});
+
+// Vaporwave: chrome logo on a pink-purple gradient, striped sunset, neon grid, VHS glitch
+skin('vaporwave', () => {
+  const g = new THREE.Group(), env = new THREE.Group();
+  const grad = fitTile(canvasTex(256, 256, (x, w, h) => { const gr = x.createLinearGradient(0, 0, w, h); gr.addColorStop(0, '#FF8AD8'); gr.addColorStop(.55, '#B44CFF'); gr.addColorStop(1, '#3D2BD9'); x.fillStyle = gr; x.fillRect(0, 0, w, h); }));
+  g.add(new THREE.Mesh(ext(tileShape(), .3, .06, 8).translate(0, 0, -.3), M({map: grad, roughness: .25, clearcoat: 1, envMapIntensity: .6})));
+  const markG = ext(MARK, .12, .02).translate(0, 0, .06);
+  g.add(new THREE.Mesh(markG, M({color: C(0xC9F7FF), metalness: 1, roughness: .07, envMapIntensity: 1.8})));
+  const ghostC = new THREE.Mesh(markG, new THREE.MeshBasicMaterial({color: 0x23E6FF, transparent: true, opacity: .55, blending: THREE.AdditiveBlending, depthWrite: false}));
+  const ghostM = new THREE.Mesh(markG, new THREE.MeshBasicMaterial({color: 0xFF3DD2, transparent: true, opacity: .55, blending: THREE.AdditiveBlending, depthWrite: false}));
+  g.add(ghostC, ghostM);
+  const sunTex = canvasTex(256, 256, (x, w, h) => {
+    const gr = x.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#FFE27A'); gr.addColorStop(.6, '#FF6EC7'); gr.addColorStop(1, '#B44CFF');
+    x.fillStyle = gr; x.beginPath(); x.arc(w / 2, h / 2, w / 2, 0, 7); x.fill();
+    x.globalCompositeOperation = 'destination-out';
+    for (let i = 0; i < 7; i++){ const y = h * .55 + i * 17, hh = 2 + i * 1.6; x.fillRect(0, y, w, hh); }
+  });
+  const sun = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 3.4), new THREE.MeshBasicMaterial({map: sunTex, transparent: true, fog: false, depthWrite: false}));
+  sun.position.set(0, 1.1, -2.2); env.add(sun);
+  const gridTex = canvasTex(128, 128, (x, w, h) => { x.strokeStyle = '#FF4FD8'; x.lineWidth = 4; x.shadowColor = '#FF4FD8'; x.shadowBlur = 8; x.strokeRect(0, 0, w, h); });
+  gridTex.wrapS = gridTex.wrapT = THREE.RepeatWrapping; gridTex.repeat.set(10, 6);
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(16, 9), new THREE.MeshBasicMaterial({map: gridTex, transparent: true, opacity: .8, depthWrite: false}));
+  floor.rotation.x = -Math.PI / 2; floor.position.set(0, -1.15, -1.5); env.add(floor);
+  return {g, env, update(p, t){
+    const sx = E(seg(p, 0, .25)), sy = E(seg(p, .2, .6));
+    g.scale.set(.001 + sx, .02 + sy * .98, .001 + sx);        // CRT switch-on
+    g.visible = p > .002 && !(p < .6 && hash(Math.floor(t * 30)) < .25);
+    env.visible = p > .002;
+    sun.material.opacity = E(p); floor.material.opacity = .8 * E(p);
+    gridTex.offset.y = -t * .35;
+    const burst = (t % 2.6) < .22 && p > .9;
+    ghostC.visible = ghostM.visible = burst;
+    if (burst){ const j = (hash(Math.floor(t * 40)) - .5) * .16; ghostC.position.x = .05 + j; ghostM.position.x = -.05 - j; }
+  }};
+});
+
+// Bento Box: the logo laid out as rounded bento tiles
+skin('bento-box', () => {
+  const g = new THREE.Group();
+  const box = (w, h, color, d = .22) => new THREE.Mesh(ext(rr(0, 0, w, h, .16), d, .035, 4, 12).translate(0, 0, -d), M({color: C(color), roughness: .55, clearcoat: .3}));
+  const tiles = [
+    {m: box(1.66, 1.68, 0x1E4D2B), x: -.52, y: .46, ox: -3, oy: 0},
+    {m: box(.96, .75, 0xF5A3C7), x: .87, y: .925, ox: 0, oy: 3},
+    {m: box(.96, .85, 0xC8F25A), x: .87, y: .045, ox: 3, oy: 0},
+    {m: box(2.7, .84, 0xF3F0E6), x: 0, y: -.88, ox: 0, oy: -3}
+  ];
+  tiles.forEach((tl, i) => { tl.delay = i * .12; g.add(tl.m); });
+  // the logo on the big tile
+  const mark = new THREE.Mesh(ext(MARK, .08, .015).translate(0, 0, .04), M({color: C(0xC8F25A), roughness: .4}));
+  mark.scale.setScalar(.6); tiles[0].m.add(mark);
+  // small live details: a rising bar chart, a toggle and two lines of "text"
+  const bars = [];
+  for (let i = 0; i < 6; i++){ const b = new THREE.Mesh(ext(rr(0, 0, .16, 1, .05), .05, 0, 1, 6), M({color: C(i % 2 ? 0x1E4D2B : 0x7BBF3A), roughness: .5})); tiles[3].m.add(b); bars.push(b); }
+  const pill = new THREE.Mesh(ext(rr(0, 0, .5, .24, .12), .05, .01), M({color: C(0x1E4D2B)})); pill.position.set(0, -.12, .04);
+  const knob = new THREE.Mesh(new THREE.SphereGeometry(.085, 24, 16), M({color: C(0xFFFFFF), roughness: .3})); knob.position.z = .1; pill.add(knob);
+  tiles[2].m.add(pill);
+  const dot = new THREE.Mesh(new THREE.SphereGeometry(.13, 24, 16), M({color: C(0xFFFFFF), roughness: .4})); dot.position.set(-.18, .08, .1); tiles[1].m.add(dot);
+  [.12, -.08].forEach((y, i) => { const l = new THREE.Mesh(ext(rr(0, 0, i ? .3 : .42, .07, .035), .02, 0, 1, 4), M({color: C(0x1E4D2B)})); l.position.set(.2 + (i ? -.06 : 0), y + .02, .02); tiles[1].m.add(l); });
+  return {g, update(p, t){
+    tiles.forEach(tl => {
+      const q = backOut(seg(p, tl.delay, tl.delay + .55));
+      tl.m.position.set(tl.x + tl.ox * (1 - q), tl.y + tl.oy * (1 - q), 0);
+      tl.m.scale.setScalar(Math.max(.001, Math.min(1.2, q)));
+    });
+    bars.forEach((b, i) => { b.scale.y = .25 + .45 * (.5 + .5 * Math.sin(t * 1.8 + i * .8)); b.position.set(-1.05 + i * .24, -.32 + b.scale.y / 2, .04); });
+    knob.position.x = Math.sin(t * 1.4) > 0 ? .12 : -.12;
+    dot.scale.setScalar(1 + Math.sin(t * 3) * .08);
+  }};
+});
+
+// Kawaii: puffy pastel, soft shading, sparkles
+skin('kawaii', () => {
+  const g = new THREE.Group();
+  g.add(new THREE.Mesh(ext(tileShape(.9), .16, .26, 14, 32).translate(0, 0, -.16), M({color: C(0xFF9EBE), roughness: .7, clearcoat: .3, clearcoatRoughness: .5, envMapIntensity: .3})));
+  const mark = new THREE.Mesh(ext(MARK, .05, .06, 8).translate(0, 0, .26), M({color: C(0x8CCBFF), roughness: .5, clearcoat: .4, envMapIntensity: .3}));
+  mark.scale.set(.86, .86, 1); g.add(mark);
+  // a soft white rim highlight, like a sticker edge
+  const rimL = new THREE.Mesh(new THREE.ShapeGeometry(tileShape(1.06), 32), new THREE.MeshBasicMaterial({color: 0xFFFFFF}));
+  rimL.position.z = -.46; g.add(rimL);
+  const starShape = (() => { const s = new THREE.Shape(); for (let i = 0; i < 10; i++){ const a = i / 10 * Math.PI * 2 + Math.PI / 2, r = i % 2 ? .05 : .13; i ? s.lineTo(Math.cos(a) * r, Math.sin(a) * r) : s.moveTo(Math.cos(a) * r, Math.sin(a) * r); } s.closePath(); return s; })();
+  const starG = ext(starShape, .03, .015, 2);
+  const sparkles = [0xFFE36E, 0xFFFFFF, 0x9ED8FF, 0xFFE36E, 0xFFFFFF, 0xFFC9DA].map((c, i) => {
+    const m = new THREE.Mesh(starG, M({color: C(c), roughness: .4})), a = i / 6 * Math.PI * 2 + .3;
+    m.userData = {a, r: 1.75 + (i % 2) * .25, ph: i}; g.add(m); return m;
+  });
+  return {g, update(p, t){
+    const q = seg(p, 0, .8), el = q === 0 ? 0 : q === 1 ? 1 : Math.pow(2, -9 * q) * Math.sin((q * 10 - .75) * 2.094) + 1;   // elastic pop
+    const sq = Math.sin(t * 3) * .03 * p;
+    g.scale.set(Math.max(.001, el) * (1 + sq), Math.max(.001, el) * (1 - sq), Math.max(.001, el));
+    sparkles.forEach(s => {
+      const u = s.userData, k = E(seg(p, .5, 1));
+      s.position.set(Math.cos(u.a + t * .2) * u.r, Math.sin(u.a + t * .2) * u.r * .85, .3);
+      s.scale.setScalar(.001 + k * (.8 + .35 * Math.sin(t * 4 + u.ph)));
+      s.rotation.z = t * .8 + u.ph;
+    });
+  }};
+});
+
+// Coquette: pearly pink, pearl border, satin ribbon
+skin('coquette', () => {
+  const g = new THREE.Group();
+  g.add(new THREE.Mesh(ext(tileShape(), .3, .09, 10, 32).translate(0, 0, -.3), M({color: C(0xF2A2BC), roughness: .3, clearcoat: .8, clearcoatRoughness: .15, envMapIntensity: .35})));
+  g.add(new THREE.Mesh(ext(MARK, .08, .02).translate(0, 0, .09), M({color: C(0x8B2E52), roughness: .3, clearcoat: .9, envMapIntensity: .5})));
+  const pts = tileShape(.9).getSpacedPoints(54); pts.pop();
+  const pearls = new THREE.InstancedMesh(new THREE.SphereGeometry(.05, 20, 14), M({color: C(0xFFF4EE), roughness: .12, clearcoat: 1, envMapIntensity: 1.3}), pts.length);
+  g.add(pearls);
+  // satin ribbon across the lower right corner, like a wrapped gift
+  const ribbonM = M({color: C(0xE05A84), roughness: .35, clearcoat: .7, envMapIntensity: .9, side: THREE.DoubleSide});
+  const ribbon = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([[1.9, -.4], [1.2, -.7], [.6, -1.05], [-.1, -1.5]].map(([x, y]) => new THREE.Vector3(x, y, .14))), 40, .09, 2, false), ribbonM);
+  ribbon.scale.z = .3; g.add(ribbon);
+  let lastP = -1;
+  return {g, update(p, t){
+    const e = E(p);
+    g.scale.setScalar(.001 + e); g.rotation.z = (1 - e) * .5;
+    if (Math.abs(p - lastP) > .001){
+      pts.forEach((v, i) => {
+        const k = backOut(seg(p, .3 + i / pts.length * .5, .45 + i / pts.length * .5));
+        dummy.position.set(v.x, v.y, .1); dummy.scale.setScalar(Math.max(.001, k)); dummy.rotation.set(0, 0, 0);
+        dummy.updateMatrix(); pearls.setMatrixAt(i, dummy.matrix);
+      });
+      pearls.instanceMatrix.needsUpdate = true; lastP = p;
+    }
+    ribbon.scale.x = ribbon.scale.y = .001 + E(seg(p, .6, 1));
+    ribbon.rotation.z = Math.sin(t * 1.2) * .02;
+  }};
+});
+
+// Glassmorphism: frosted glass layers over soft glowing colour
+skin('glassmorphism', () => {
+  const g = new THREE.Group();
+  const glowTex = canvasTex(128, 128, (x, w) => { const gr = x.createRadialGradient(w / 2, w / 2, 0, w / 2, w / 2, w / 2); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = gr; x.fillRect(0, 0, w, w); });
+  const glows = [[0x3FE0C5, -.7, .5], [0x8A6CFF, .8, .2], [0xFF8FD1, 0, -.7]].map(([c, x, y], i) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 2.6), new THREE.MeshBasicMaterial({map: glowTex, color: C(c), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, fog: false}));
+    m.position.set(x, y, -.9); m.userData = {x, y, i}; m.renderOrder = -1; g.add(m); return m;
+  });
+  const glass = o => new THREE.MeshPhysicalMaterial(Object.assign({color: 0xffffff, roughness: .15, clearcoat: 1, transparent: true, opacity: .2, envMapIntensity: 1, depthWrite: false}, o));
+  const backG = ext(rr(0, 0, 2.1, 2, .32), .06, .03, 4, 16);
+  const back = new THREE.Mesh(backG, glass({opacity: .16})); back.position.set(-.45, .4, -.45);
+  const paneG = ext(tileShape(), .1, .04, 6, 24).translate(0, 0, -.1);
+  const pane = new THREE.Mesh(paneG, glass({opacity: .26}));
+  const edgeM = new THREE.LineBasicMaterial({color: 0xffffff, transparent: true, opacity: .55, fog: false});
+  const paneE = new THREE.LineSegments(new THREE.EdgesGeometry(paneG, 35), edgeM);
+  const backE = new THREE.LineSegments(new THREE.EdgesGeometry(backG, 35), edgeM); back.add(backE);
+  const mark = new THREE.Mesh(ext(MARK, .05, .012).translate(0, 0, .03), new THREE.MeshPhysicalMaterial({color: 0xffffff, roughness: .25, transparent: true, opacity: .92, envMapIntensity: .8}));
+  const chip = new THREE.Mesh(ext(rr(0, 0, .9, .32, .16), .05, .02, 3, 12), glass({opacity: .3})); chip.position.set(1.15, -1.1, .35);
+  const chipDot = new THREE.Mesh(new THREE.SphereGeometry(.07, 20, 12), new THREE.MeshBasicMaterial({color: C(0x3FE0C5)})); chipDot.position.set(-.27, 0, .06); chip.add(chipDot);
+  g.add(back, pane, paneE, mark, chip);
+  return {g, update(p, t){
+    const e = E(p);
+    g.scale.setScalar(.001 + e);
+    back.position.z = -.45 * e - .05; chip.position.z = .35 * e;
+    pane.material.opacity = .26 * e; back.material.opacity = .16 * e; edgeM.opacity = .55 * e; mark.material.opacity = .92 * e;
+    glows.forEach(m => { const u = m.userData; m.position.x = u.x + Math.sin(t * .5 + u.i * 2) * .35; m.position.y = u.y + Math.cos(t * .4 + u.i) * .3; m.material.opacity = e; });
+    back.position.x = -.45 - tx * .08; chip.position.x = 1.15 + tx * .1;
+  }};
+});
+
+// Modular Typography: the logo assembled from grid modules that turn in a rhythm
+skin('modular-typography', () => {
+  const g = new THREE.Group();
+  const gridTex = fitTile(canvasTex(512, 512, (x, w, h) => {
+    x.fillStyle = '#F7F7F4'; x.fillRect(0, 0, w, h);
+    x.strokeStyle = 'rgba(30,107,255,.18)'; x.lineWidth = 1;
+    for (let i = 0; i <= w; i += 512 / 17.5){ x.beginPath(); x.moveTo(i, 0); x.lineTo(i, h); x.stroke(); x.beginPath(); x.moveTo(0, i); x.lineTo(w, i); x.stroke(); }
+  }));
+  const slab = new THREE.Mesh(ext(tileShape(), .22, .04, 6).translate(0, 0, -.22), M({map: gridTex, roughness: .7}));
+  g.add(slab);
+  const CELL = 48, h = CELL * S * .47;
+  const sq = new THREE.Shape(); sq.moveTo(-h, -h); sq.lineTo(h, -h); sq.lineTo(h, h); sq.lineTo(-h, h); sq.closePath();
+  const qc = new THREE.Shape(); qc.moveTo(-h, -h); qc.lineTo(h, -h); qc.absarc(-h, -h, 2 * h, 0, Math.PI / 2, false); qc.lineTo(-h, -h);
+  const hc = new THREE.Shape(); hc.moveTo(-h, -h); hc.lineTo(h, -h); hc.absarc(0, -h, h, 0, Math.PI, false);
+  const ci = new THREE.Shape(); ci.absarc(0, 0, h, 0, Math.PI * 2, false);
+  const geos = [sq, qc, hc, ci].map(s => ext(s, .07, 0, 1, 16));
+  const mats = [0xFF2BB3, 0x1E6BFF, 0x111111].map(c => M({color: C(c), roughness: .45}));
+  const cells = gridCells(CELL, inMark), maxD = Math.max(...cells.map(c => c.gx + c.gy));
+  const mods = cells.map((c, i) => {
+    const type = hash(i * 3.7) < .38 ? 0 : hash(i * 3.7) < .7 ? 1 : hash(i * 3.7) < .88 ? 2 : 3;
+    const m = new THREE.Mesh(geos[type], mats[Math.floor(hash(i * 9.1) * 3)]);
+    const p = pt(c.x, c.y); m.position.set(p.x, p.y, .02);
+    m.userData = {k0: Math.floor(hash(i * 5.3) * 4), d: (c.gx + c.gy) / maxD};
+    g.add(m); return m;
+  });
+  return {g, update(p, t){
+    slab.scale.setScalar(.001 + E(seg(p, 0, .4)));
+    mods.forEach(m => {
+      const u = m.userData, q = E(seg(p, .2 + u.d * .5, .4 + u.d * .5));
+      m.scale.set(Math.max(.001, q), Math.max(.001, q), 1);
+      const ph = t * .7 - u.d * 2.2, k = Math.floor(ph), f = E(seg(ph - k, .72, 1));
+      m.rotation.z = (u.k0 + k + f) * Math.PI / 2;
+    });
+  }};
+});
+
+/* ---- ring of the 11 styles ---- */
+const ring = new THREE.Group(); ring.position.y = .4; world.add(ring);
 const loader = new THREE.TextureLoader();
 const cards = [];
 const R = 4.1, CW = 1.7, CH = CW * 10 / 16, STEP = Math.PI * 2 / STYLES.length;
 STYLES.forEach((s, i) => {
   const a = i * STEP;
   const g = new THREE.Group();
-  g.position.set(Math.sin(a) * R, Math.sin(a * 2) * .25, Math.cos(a) * R);
+  g.position.set(Math.sin(a) * R, Math.sin(a * 2) * .35, Math.cos(a) * R);
   g.rotation.y = a;
   const border = new THREE.Mesh(new THREE.PlaneGeometry(CW + .06, CH + .06), new THREE.MeshBasicMaterial({color: C(0xD4F53C), side: THREE.DoubleSide, fog: false}));
   border.position.z = -.005;
   const tex = loader.load(IMG(s)('2'));
   tex.encoding = THREE.sRGBEncoding; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-  const faceM = new THREE.Mesh(new THREE.PlaneGeometry(CW, CH), new THREE.MeshBasicMaterial({map: tex, color: 0xffffff, fog: false, toneMapped: false}));
+  const face = new THREE.Mesh(new THREE.PlaneGeometry(CW, CH), new THREE.MeshBasicMaterial({map: tex, color: 0xffffff, fog: false}));
   const back = new THREE.Mesh(new THREE.PlaneGeometry(CW, CH), new THREE.MeshBasicMaterial({color: C(0x17232E)}));
   back.rotation.y = Math.PI; back.position.z = -.01;
-  g.add(border, faceM, back);
-  faceM.userData = {slug: s.slug, name: s.name, group: g, i};
-  cards.push(faceM); ring.add(g);
+  g.add(border, face, back);
+  face.userData = {slug: s.slug, name: s.name, group: g, i};
+  cards.push(face); ring.add(g);
 });
 
-// pixel confetti, tinted with the current look
+// pixel confetti in brand colours
 const N = 70;
 const cubeMat = new THREE.MeshStandardMaterial({color: C(0xD4F53C), roughness: .5});
 const cubes = new THREE.InstancedMesh(new THREE.BoxGeometry(.07, .07, .07), cubeMat, N);
 const seeds = Array.from({length: N}, () => ({x: (Math.random() - .5) * 13, y: (Math.random() - .5) * 7, z: (Math.random() - .5) * 9 - 1, s: .3 + Math.random() * .9, v: .1 + Math.random() * .25}));
 world.add(cubes);
 
-// focus: which style is at the front
+// background and rim light follow the style at the front
+const BG = {brand: [0x0D1720, 0xD4F53C], anthropomorphic: [0x1A1708, 0xC0392B], 'pixel-art': [0x0E1A2B, 0x6FA8DC], 'conceptual-sketch': [0x1B1A17, 0xC8B89A],
+  'luxury-typography': [0x0B0A08, 0xD9B45A], brutalism: [0x161514, 0xE8432E], vaporwave: [0x1A0B2E, 0x23E6FF], 'bento-box': [0x0D1A12, 0xF5A3C7],
+  kawaii: [0x22131B, 0xFFE36E], coquette: [0x22121A, 0xE05A84], glassmorphism: [0x0E1626, 0x8A6CFF], 'modular-typography': [0x0D1424, 0xFF2BB3]};
+for (const k in BG) BG[k] = [new THREE.Color(BG[k][0]), C(BG[k][1])];
+
+/* ---- which style is at the front ---- */
 const nowEl = $('#now'), nowName = $('#now-name');
-let focus = -1, spin = 0, spinTarget = 0, turnAt = -9, autoAt = 0;
-const wrap = a => Math.atan2(Math.sin(a), Math.cos(a));
-function setFocus(i, t){
-  focus = (i + STYLES.length) % STYLES.length;
-  spinTarget = spin + wrap(-focus * STEP - spin);
-  want = looks[STYLES[focus].slug];
-  turnAt = t;
-  nowName.textContent = STYLES[focus].name;
-  nowEl.dataset.slug = STYLES[focus].slug;
-  nowEl.hidden = false;
-}
+let active = 'brand', focus = -1, pendIdx = -1, pendAt = 0;
 nowEl.addEventListener('click', () => { const id = nowEl.dataset.slug; if (id) document.getElementById(id).scrollIntoView({behavior: reduce ? 'auto' : 'smooth'}); });
+function frontIndex(spin){ const n = STYLES.length; return ((Math.round(-spin / STEP) % n) + n) % n; }
 
 // size
 let W = 1, H = 1, narrow = false;
@@ -739,8 +1085,8 @@ function resize(){
   narrow = W < 700;
   // desktop: scene sits right of the headline; phone: scene sits above it
   world.position.set(narrow ? 0 : Math.min(3.2, W / 420), 0, 0);
-  camera.position.set(0, narrow ? 2.8 : 1.6, narrow ? 16 : 10.5);
-  camera.lookAt(0, narrow ? -2.5 : -.3, 0);
+  camera.position.set(0, narrow ? 2.4 : 1.6, narrow ? 13 : 10.5);
+  camera.lookAt(0, narrow ? -1.6 : -.3, 0);
   camera.updateProjectionMatrix();
   if (reduce) render(performance.now());
 }
@@ -748,7 +1094,7 @@ new ResizeObserver(resize).observe(cover);
 
 // pointer: tilt, hover, drag to spin, tap a card to jump
 const ray = new THREE.Raycaster(), mouse = new THREE.Vector2(9, 9), tip = $('#tip');
-let tx = 0, ty = 0, hovered = null, dragX = null, moved = 0;
+let hovered = null, dragX = null, spin = 0, spinV = 0, moved = 0;
 function setMouse(e){
   const r = canvas.getBoundingClientRect();
   mouse.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
@@ -762,7 +1108,7 @@ function pickAt(){
 }
 canvas.addEventListener('pointermove', e => {
   const r = setMouse(e);
-  if (dragX !== null){ const dx = e.clientX - dragX; dragX = e.clientX; moved += Math.abs(dx); spinTarget += dx * .006; spin = spinTarget; autoAt = performance.now() / 1000 + 5; }
+  if (dragX !== null){ const dx = e.clientX - dragX; dragX = e.clientX; moved += Math.abs(dx); spinV = dx * .004; spin += spinV; }
   hovered = pickAt();
   canvas.style.cursor = hovered ? 'pointer' : (dragX !== null ? 'grabbing' : 'grab');
   if (hovered){ tip.hidden = false; tip.textContent = hovered.userData.name; tip.style.left = (e.clientX - r.left) + 'px'; tip.style.top = (e.clientY - r.top) + 'px'; }
@@ -774,48 +1120,49 @@ canvas.addEventListener('pointerdown', e => { dragX = e.clientX; moved = 0; setM
 window.addEventListener('pointerup', e => {
   if (dragX === null) return;
   dragX = null;
-  const t = performance.now() / 1000;
   if (moved < 6 && e.target === canvas){
     setMouse(e);
     const c = pickAt();
     if (c){ $('#hint').hidden = true; document.getElementById(c.userData.slug).scrollIntoView({behavior: reduce ? 'auto' : 'smooth'}); }
-  } else {
-    // after a drag, settle on the card nearest the front
-    setFocus(Math.round(-spin / STEP), t);
-    autoAt = t + 5;
   }
   if (reduce) render(performance.now());
 });
 
 // animate
-const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-let last = performance.now(), visible = true, started = 0, yaw = 0;
+let last = performance.now(), visible = true, yaw = 0, started = 0;
 new IntersectionObserver(([en]) => { visible = en.isIntersecting; if (visible && !reduce) requestAnimationFrame(loop); }).observe(cover);
 function render(now){
   const t = now / 1000, dt = Math.min(.05, (now - last) / 1000); last = now;
   if (!started) started = t;
-  if (!reduce && dragX === null && t > autoAt && t - started > 1.6){
-    setFocus(focus + 1, t);
-    autoAt = t + 3.6;
-  }
-  const k = reduce ? 1 : 1 - Math.exp(-dt * 3.2);
-  if (dragX === null) spin += (spinTarget - spin) * (reduce ? 1 : 1 - Math.exp(-dt * 3.5));
+  if (!reduce){ spin += (dragX === null ? .12 : 0) * dt + spinV; spinV *= .92; }
   ring.rotation.y = spin;
-  stepLook(k);
+  // the style at the front sets the emblem's look, once it has stayed there a moment
+  const idx = frontIndex(spin);
+  if (idx !== pendIdx){ pendIdx = idx; pendAt = t; }
+  if (idx !== focus && (t - pendAt > .3 || reduce) && t - started > 1.2){
+    focus = idx; active = STYLES[idx].slug;
+    nowName.textContent = STYLES[idx].name; nowEl.dataset.slug = active; nowEl.hidden = false;
+  }
+  for (const k in SKINS){
+    const s = SKINS[k], target = k === active ? 1 : 0;
+    // the old look leaves quickly, the new one takes its time to build
+    s.p = reduce ? target : target ? Math.min(1, s.p + dt / 1.4) : Math.max(0, s.p - dt / .45);
+    s.g.visible = s.p > .002;
+    if (s.env) s.env.visible = s.p > .002;
+    if (s.p > .002 || target) s.update(s.p, t, dt);
+  }
+  const look = BG[active] || BG.brand, k = reduce ? 1 : 1 - Math.exp(-dt * 2.5);
+  bg.lerp(look[0], k); rim.color.lerp(look[1], k); cubeMat.color.lerp(look[1], k);
   renderer.setClearColor(bg, 1); scene.fog.color.copy(bg);
-  // a smooth full turn while the emblem changes its look
-  const turn = reduce ? 0 : ease(Math.min(1, (t - turnAt) / 1.2)) * Math.PI * 2;
-  const idle = reduce ? 0 : Math.sin(t * .6) * .14;
-  yaw += (tx * .45 + idle - yaw) * .08;
-  emblem.rotation.y = yaw + turn;
-  emblem.rotation.x += ((-ty * .22) - emblem.rotation.x) * .08;
-  emblem.position.y = .8 + (reduce ? 0 : Math.sin(t * 1.1) * .06);
-  pupils.forEach(p => p.position.set(tx * .06, ty * .05, .1));
+  const idle = reduce ? 0 : Math.sin(t * .6) * .18;
+  yaw += (tx * .5 + idle - yaw) * .06; rootYaw = yaw;
+  root.rotation.y = yaw;
+  root.rotation.x += ((-ty * .25) - root.rotation.x) * .06;
+  root.position.y = .55 + (reduce ? 0 : Math.sin(t * 1.1) * .06);
   cards.forEach(c => {
-    const g = c.userData.group, target = c === hovered ? 1.14 : (c.userData.i === focus ? 1.1 : .94);
-    g.scale.setScalar(g.scale.x + (target - g.scale.x) * .15);
+    const g = c.userData.group, target = c === hovered ? 1.14 : (c.userData.i === focus ? 1.08 : 1);
+    g.scale.setScalar(g.scale.x + (target - g.scale.x) * .2);
   });
-  cubeMat.color.copy(tileMat.color);
   seeds.forEach((p, i) => {
     const y = reduce ? p.y : ((p.y + t * p.v + 3.5) % 7) - 3.5;
     dummy.position.set(p.x, y, p.z);
@@ -831,6 +1178,7 @@ function loop(now){
   render(now);
   requestAnimationFrame(loop);
 }
+SKINS.brand.p = 1;
 resize();
 if (reduce){ THREE.DefaultLoadingManager.onLoad = () => render(performance.now()); render(performance.now()); }
 else requestAnimationFrame(loop);
