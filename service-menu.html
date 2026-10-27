@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Sora:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: dark 3D cover, then one two-column "spread" per style (screens on one side, notes on the other, sides alternate), then a dark order band. */
+/* Layout: a 480px phone column like the home page. Dark 3D cover, then one spread per style (screens on top, notes below), then a dark order band. */
 :root{
   --lime:#D4F53C;
   --lime-deep:#7E9A08;
@@ -38,7 +38,8 @@ img{max-width:100%;display:block}
 [hidden]{display:none!important}
 a{color:inherit}
 :focus-visible{outline:3px solid var(--lime-deep);outline-offset:3px}
-.wrap{max-width:1200px;margin:0 auto;padding-left:var(--gut-l);padding-right:var(--gut-r)}
+.app{max-width:480px;margin:0 auto;position:relative;background:var(--paper);box-shadow:0 0 0 1px var(--line)}
+.wrap{padding-left:var(--gut-l);padding-right:var(--gut-r)}
 h1,h2,h3{text-wrap:balance;margin:0}
 
 /* header */
@@ -50,15 +51,15 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .top nav{display:flex;gap:6px;align-items:center}
 .top nav a{font:600 12px/1 var(--sans);text-decoration:none;padding:9px 13px;border-radius:999px;color:var(--white);border:1px solid rgba(255,255,255,.18)}
 .top nav a.cta{background:var(--lime);color:var(--ink);border-color:var(--lime)}
-@media (max-width:520px){.top nav a.home{display:none}}
+.top nav a.home{display:none}
 
 /* cover */
-.cover{position:relative;background:var(--ink);color:var(--white);overflow:hidden;height:min(88vh,780px);min-height:560px}
+.cover{position:relative;background:var(--ink);color:var(--white);overflow:hidden;height:min(88vh,760px);min-height:600px}
 .cover canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y}
 .cover-copy{position:absolute;left:0;right:0;bottom:0;pointer-events:none;background:linear-gradient(transparent,rgba(13,23,32,.85) 45%)}
 .cover-copy .wrap{padding-block:56px 34px;display:grid;gap:14px}
 .eyebrow{font:700 11px/1 var(--pixel);letter-spacing:.14em;text-transform:uppercase;color:var(--lime)}
-.cover h1{font:700 clamp(30px,6.2vw,64px)/1.02 var(--pixel);letter-spacing:.01em;max-width:15ch}
+.cover h1{font:700 clamp(28px,8vw,36px)/1.05 var(--pixel);letter-spacing:.01em;max-width:15ch}
 .cover h1 mark{background:var(--lime);color:var(--ink);padding:0 .12em}
 .cover p{margin:0;max-width:52ch;color:#C9D1CC}
 .cover .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;pointer-events:auto}
@@ -83,7 +84,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 /* intro */
 .intro{padding-block:64px 24px}
 .intro .wrap{display:grid;gap:14px}
-.intro h2{font:700 clamp(24px,3.6vw,38px)/1.1 var(--pixel);max-width:22ch}
+.intro h2{font:700 24px/1.15 var(--pixel);max-width:22ch}
 .intro p{margin:0;max-width:62ch;color:var(--muted)}
 .how{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;padding:0;list-style:none}
 .how li{display:flex;gap:8px;align-items:center;background:var(--white);border:1px solid var(--line);border-radius:999px;padding:7px 14px 7px 7px;font-size:13px;font-weight:500}
@@ -91,11 +92,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
 /* style spreads */
 .style{padding-block:56px;border-top:1px solid var(--line)}
-.style .wrap{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:clamp(28px,5vw,72px);align-items:center}
-.style:nth-of-type(even) .media{order:2}
+.style .wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:28px}
 .style.picked{background:#E6ECCB}
 
-.media{position:relative;padding:9% 15% 13% 13%;min-width:0}
+.media{position:relative;padding:9% 15% 13% 13%;min-width:0;width:100%}
 .frame{background:var(--white);border-radius:12px;overflow:hidden;box-shadow:0 1px 0 rgba(13,23,32,.06),0 22px 50px -18px rgba(13,23,32,.45);border:1px solid rgba(13,23,32,.1)}
 .bar{display:flex;align-items:center;gap:5px;height:24px;padding:0 10px;background:#F4F5F1;border-bottom:1px solid var(--line)}
 .bar i{width:7px;height:7px;border-radius:50%;background:#C9CCC4}
@@ -113,9 +113,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .corner .tag{right:8px;bottom:8px}
 .scrollhint{position:absolute;display:none;right:15%;bottom:calc(13% - 26px);font:700 9px/1 var(--pixel);letter-spacing:.1em;color:var(--muted)}
 
-.copy{display:grid;gap:16px;min-width:0}
+.copy{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;min-width:0}
 .num{font:700 11px/1 var(--pixel);letter-spacing:.14em;color:var(--lime-deep)}
-.copy h2{font:700 clamp(28px,4.4vw,46px)/1 var(--pixel);letter-spacing:.01em}
+.copy h2{font:700 clamp(20px,6.2vw,30px)/1.05 var(--pixel);overflow-wrap:anywhere;letter-spacing:.01em}
 .swatch{display:flex;gap:6px}
 .swatch i{width:22px;height:22px;border-radius:6px;border:1px solid rgba(13,23,32,.15)}
 .copy p{margin:0;max-width:58ch}
@@ -135,9 +135,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
 /* order */
 .order{background:var(--ink);color:var(--white);padding-block:72px}
-.order .wrap{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(28px,5vw,64px);align-items:start}
-.order h2{font:700 clamp(26px,4vw,42px)/1.05 var(--pixel)}
-.order .sum{display:grid;gap:16px;position:sticky;top:90px}
+.order .wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:28px}
+.order h2{font:700 28px/1.1 var(--pixel)}
+.order .sum{display:grid;gap:16px}
 .order .sum p{margin:0;color:#C9D1CC}
 .incl{margin:0;padding:0;list-style:none;display:grid;gap:8px;font-size:14px}
 .incl li{display:flex;gap:10px}
@@ -162,7 +162,7 @@ input,select,textarea{font:500 15px/1.4 var(--sans);color:var(--ink);background:
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px var(--lime)}
 textarea{min-height:84px;resize:vertical}
 fieldset{border:0;margin:0;padding:0;display:grid;gap:8px;min-width:0}
-.opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.opts{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
 .opt{position:relative}
 .opt input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
 .opt span{display:grid;gap:4px;height:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px;font-size:12px;color:var(--muted)}
@@ -178,25 +178,16 @@ fieldset{border:0;margin:0;padding:0;display:grid;gap:8px;min-width:0}
 .done code{font:600 13px/1 var(--sans);background:var(--paper);padding:6px 8px;border-radius:6px;user-select:all}
 
 /* floating pick bar */
-.pickbar{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:25;display:flex;align-items:center;gap:12px;background:var(--ink);color:var(--white);padding:8px 8px 8px 16px;border-radius:999px;box-shadow:0 12px 32px rgba(13,23,32,.4);max-width:calc(100% - 32px);font-size:13px}
+.pickbar{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:25;display:flex;align-items:center;gap:12px;background:var(--ink);color:var(--white);padding:8px 8px 8px 16px;border-radius:999px;box-shadow:0 12px 32px rgba(13,23,32,.4);max-width:min(448px,calc(100% - 32px));font-size:13px}
 .pickbar b{font:700 12px/1 var(--pixel);color:var(--lime);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pickbar .btn{padding:10px 14px;font-size:13px}
 
 footer{background:var(--ink);color:var(--on-ink-muted);font-size:12px;border-top:1px solid rgba(255,255,255,.08)}
-footer .wrap{padding-block:22px 90px;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between}
+footer .wrap{padding-block:22px 90px;display:grid;gap:8px}
 footer a{color:#DCE3DE}
 
 @media (hover:hover){.scrollhint{display:block}}
-@media (max-width:860px){
-  .style .wrap,.order .wrap{grid-template-columns:minmax(0,1fr)}
-  .style:nth-of-type(even) .media{order:0}
-  .order .sum{position:static}
-  .media{max-width:520px;width:100%;justify-self:center}
-}
-@media (max-width:560px){
-  .two,.opts{grid-template-columns:minmax(0,1fr)}
-  .opt span{grid-template-columns:auto;}
-}
+@media (max-width:400px){.two{grid-template-columns:minmax(0,1fr)}}
 @media (prefers-reduced-motion:reduce){
   .main img{transition:none}
   .flash{animation:none}
@@ -209,6 +200,7 @@ footer a{color:#DCE3DE}
   <symbol id="emblem" viewBox="-60 -80 840 800"><rect x="-60" y="-80" width="840" height="800" rx="160" fill="#D4F53C"/><g fill="#0D1720"><path d="M360 10 L708 200 L708 518 L518 625 L518 520 L628 462 L628 246 L360 100 L92 246 L92 462 L204 520 L204 625 L12 518 L12 200 Z"/><path d="M360 156 L594 282 L594 483 L518 526 L518 331 L360 246 L204 331 L204 526 L126 483 L126 282 Z"/><path d="M318 271 L402 271 L402 384 L460 350 L480 350 L508 405 L401 463 L401 576 L319 576 L319 463 L212 405 L240 350 L260 350 L318 384 Z"/></g></symbol>
 </svg>
 
+<div class="app">
 <header class="top">
   <div class="wrap">
     <a class="mark" href="/" aria-label="MilliTech home"><svg aria-hidden="true"><use href="#emblem"/></svg>MILLITECH</a>
@@ -335,6 +327,8 @@ footer a{color:#DCE3DE}
     <span>Style notes adapted from “50 Design Styles Every Designer Should Know” by Himanshu Bhardwaj, UX Planet. Screens are third-party references, shown to explain each style.</span>
   </div>
 </footer>
+
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
