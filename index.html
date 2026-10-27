@@ -18,7 +18,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Sora:wght@400;500;600;700;800&family=Inter+Tight:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,600&family=Instrument+Sans:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: one phone-width app column. Sticky pill nav, 3D conveyor hero, swipe carousel of offers, bottom sheets for demos and claims. Single light theme by design (matches the asset sheet). */
+/* Layout: phone first, one 480px app column. Sticky pill nav, 3D conveyor hero, swipe carousel of offers, bottom sheets for demos and claims. Single light theme by design (matches the asset sheet).
+   From 960px wide (see the desktop block at the end of this sheet) the column opens up: headline beside the machine, all three offers side by side, text beside each section's visual. */
 :root{
   --lime:#D4F53C;
   --lime-deep:#8DAA0B;
@@ -807,6 +808,41 @@ footer{padding-block:64px 48px}
 .why-stage.used .why-tag{opacity:0;scale:.9}
 .tl-times b{font-size:14px;white-space:nowrap}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* ===== desktop: same content, wider column, sections side by side ===== */
+@media (min-width:960px){
+  .app{max-width:1240px}
+  .gutter{padding-left:max(40px,env(safe-area-inset-left,0px));padding-right:max(40px,env(safe-area-inset-right,0px))}
+  .navwrap{margin-top:-58px;pointer-events:none}
+  .nav{width:380px;margin-inline:auto;pointer-events:auto}
+  main{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);column-gap:24px}
+  main > *{grid-column:1/-1}
+  .hero{grid-column:2;grid-row:1;margin-top:8px}
+  #scene,.hero-fallback{height:min(62vh,520px);min-height:420px}
+  .intro{grid-column:1;grid-row:1;align-self:center;gap:14px;padding-right:0}
+  .intro h1{font-size:clamp(34px,3.4vw,46px);line-height:1.12}
+  .tabs,.swipe{display:none}
+  .carousel{overflow:visible;justify-content:center;gap:24px;padding:40px max(40px,env(safe-area-inset-right,0px)) 8px max(40px,env(safe-area-inset-left,0px));scroll-snap-type:none}
+  .card{flex:1 1 0;max-width:394px}
+  .card:not(.is-active){transform:none;opacity:1}
+  .card{transition:transform .25s,box-shadow .25s}
+  .card:hover{transform:translateY(-4px);box-shadow:8px 8px 0 var(--lime)}
+  .block{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:64px;align-content:start;padding-block:112px 8px}
+  .block > *{grid-column:1}
+  .block h2{font-size:40px}
+  #why .why-stage{grid-column:2;grid-row:1/span 6;align-self:center;margin-inline:0}
+  #how .tl{grid-column:2;grid-row:1/span 4;margin-top:0}
+  #how .cta{align-self:start}
+  #about .contact{grid-column:2;grid-row:1/span 4;align-self:center;margin-top:0}
+  footer{grid-template-columns:auto auto;justify-content:space-between;align-items:center;padding-block:80px 48px}
+  .sheet{align-items:center}
+  .panel{border-radius:26px;max-height:calc(100% - 64px)}
+  .panel.demo{height:calc(100% - 64px);max-width:520px}
+}
+@media (min-width:960px) and (max-width:1199px){
+  .carousel{gap:16px}
+  .offer{grid-template-columns:minmax(0,1fr) 112px}
+  .claim span{font-size:20px;padding:0 8px}
+}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
