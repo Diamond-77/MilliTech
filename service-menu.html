@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MilliTech Style Menu</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Pick one of 11 landing page styles and order it from MilliTech, Imphal. Ready in 5 days.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Sora:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: dark 3D cover, then one two-column "spread" per style (screens on one side, notes on the other, sides alternate), then a dark order band. */
+:root{
+  --lime:#D4F53C;
+  --lime-deep:#7E9A08;
+  --ink:#0D1720;
+  --ink-2:#17232E;
+  --paper:#EFF0EB;
+  --white:#FFFFFF;
+  --line:#D9DBD3;
+  --muted:#5F665E;
+  --on-ink-muted:#9AA6A0;
+  --pixel:"Silkscreen","Courier New",monospace;
+  --sans:"Sora",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --gut-l:max(16px,env(safe-area-inset-left,0px));
+  --gut-r:max(16px,env(safe-area-inset-right,0px));
+  color-scheme:light;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.6 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
+img{max-width:100%;display:block}
+[hidden]{display:none!important}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--lime-deep);outline-offset:3px}
+.wrap{max-width:1200px;margin:0 auto;padding-left:var(--gut-l);padding-right:var(--gut-r)}
+h1,h2,h3{text-wrap:balance;margin:0}
+
+/* header */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--ink)}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--ink);color:var(--white);border-bottom:1px solid rgba(255,255,255,.08)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px}
+.mark{display:flex;align-items:center;gap:10px;font:700 15px/1 var(--pixel);letter-spacing:.06em;text-decoration:none}
+.mark svg{width:30px;height:30px;flex:none}
+.top nav{display:flex;gap:6px;align-items:center}
+.top nav a{font:600 12px/1 var(--sans);text-decoration:none;padding:9px 13px;border-radius:999px;color:var(--white);border:1px solid rgba(255,255,255,.18)}
+.top nav a.cta{background:var(--lime);color:var(--ink);border-color:var(--lime)}
+@media (max-width:520px){.top nav a.home{display:none}}
+
+/* cover */
+.cover{position:relative;background:var(--ink);color:var(--white);overflow:hidden;height:min(88vh,780px);min-height:560px}
+.cover canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y}
+.cover-copy{position:absolute;left:0;right:0;bottom:0;pointer-events:none;background:linear-gradient(transparent,rgba(13,23,32,.85) 45%)}
+.cover-copy .wrap{padding-block:56px 34px;display:grid;gap:14px}
+.eyebrow{font:700 11px/1 var(--pixel);letter-spacing:.14em;text-transform:uppercase;color:var(--lime)}
+.cover h1{font:700 clamp(30px,6.2vw,64px)/1.02 var(--pixel);letter-spacing:.01em;max-width:15ch}
+.cover h1 mark{background:var(--lime);color:var(--ink);padding:0 .12em}
+.cover p{margin:0;max-width:52ch;color:#C9D1CC}
+.cover .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;pointer-events:auto}
+.price{display:inline-flex;align-items:baseline;gap:8px;font-weight:600}
+.price s{color:var(--on-ink-muted);font-weight:500}
+.price b{font:700 22px/1 var(--pixel);color:var(--lime)}
+.btn{display:inline-flex;align-items:center;gap:8px;font:600 14px/1 var(--sans);padding:14px 20px;border-radius:999px;border:0;cursor:pointer;text-decoration:none}
+.btn.lime{background:var(--lime);color:var(--ink)}
+.btn.ghost{background:transparent;color:var(--white);box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
+.btn.ink{background:var(--ink);color:var(--white)}
+.btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.hint{position:absolute;top:18px;right:var(--gut-r);font:700 10px/1 var(--pixel);letter-spacing:.12em;color:var(--on-ink-muted)}
+.tip{position:absolute;pointer-events:none;font:700 11px/1 var(--pixel);letter-spacing:.06em;background:var(--lime);color:var(--ink);padding:7px 9px;border-radius:6px;transform:translate(-50%,-140%);white-space:nowrap}
+
+/* index strip */
+.index{background:var(--ink-2);color:var(--white)}
+.index .wrap{display:flex;gap:8px;overflow-x:auto;padding-block:12px;scrollbar-width:none}
+.index .wrap::-webkit-scrollbar{display:none}
+.index a{flex:none;font:700 11px/1 var(--pixel);letter-spacing:.06em;text-decoration:none;padding:9px 12px;border-radius:8px;background:rgba(255,255,255,.06);color:#DCE3DE}
+.index a span{color:var(--lime);margin-right:6px}
+
+/* intro */
+.intro{padding-block:64px 24px}
+.intro .wrap{display:grid;gap:14px}
+.intro h2{font:700 clamp(24px,3.6vw,38px)/1.1 var(--pixel);max-width:22ch}
+.intro p{margin:0;max-width:62ch;color:var(--muted)}
+.how{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;padding:0;list-style:none}
+.how li{display:flex;gap:8px;align-items:center;background:var(--white);border:1px solid var(--line);border-radius:999px;padding:7px 14px 7px 7px;font-size:13px;font-weight:500}
+.how b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--lime);font:700 11px/1 var(--pixel)}
+
+/* style spreads */
+.style{padding-block:56px;border-top:1px solid var(--line)}
+.style .wrap{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:clamp(28px,5vw,72px);align-items:center}
+.style:nth-of-type(even) .media{order:2}
+.style.picked{background:#E6ECCB}
+
+.media{position:relative;padding:9% 15% 13% 13%;min-width:0}
+.frame{background:var(--white);border-radius:12px;overflow:hidden;box-shadow:0 1px 0 rgba(13,23,32,.06),0 22px 50px -18px rgba(13,23,32,.45);border:1px solid rgba(13,23,32,.1)}
+.bar{display:flex;align-items:center;gap:5px;height:24px;padding:0 10px;background:#F4F5F1;border-bottom:1px solid var(--line)}
+.bar i{width:7px;height:7px;border-radius:50%;background:#C9CCC4}
+.bar span{margin-left:8px;flex:1;height:12px;border-radius:6px;background:#E5E7E0;max-width:60%}
+.main .shot{aspect-ratio:4/5;overflow:hidden;max-width:100%}
+.main img{width:100%;height:100%;object-fit:cover;object-position:50% 0;transition:object-position 7s ease-in-out}
+.media:hover .main img,.main:focus-within img{object-position:50% 100%}
+.corner{position:absolute;width:52%;z-index:2}
+.corner .shot{aspect-ratio:16/10;overflow:hidden}
+.corner img{width:100%;height:100%;object-fit:cover}
+.corner.c2{top:0;right:0;transform:rotate(2deg)}
+.corner.c3{bottom:0;left:0;transform:rotate(-2deg)}
+.tag{position:absolute;z-index:3;font:700 9px/1 var(--pixel);letter-spacing:.1em;background:var(--ink);color:var(--lime);padding:5px 7px;border-radius:4px}
+.main .tag{left:10px;top:34px}
+.corner .tag{right:8px;bottom:8px}
+.scrollhint{position:absolute;display:none;right:15%;bottom:calc(13% - 26px);font:700 9px/1 var(--pixel);letter-spacing:.1em;color:var(--muted)}
+
+.copy{display:grid;gap:16px;min-width:0}
+.num{font:700 11px/1 var(--pixel);letter-spacing:.14em;color:var(--lime-deep)}
+.copy h2{font:700 clamp(28px,4.4vw,46px)/1 var(--pixel);letter-spacing:.01em}
+.swatch{display:flex;gap:6px}
+.swatch i{width:22px;height:22px;border-radius:6px;border:1px solid rgba(13,23,32,.15)}
+.copy p{margin:0;max-width:58ch}
+.copy .why{font-weight:600}
+.meta{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 14px;margin:0;font-size:13px}
+.meta dt{font:700 10px/1.9 var(--pixel);letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.meta dd{margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips span{font-size:12px;padding:4px 10px;border-radius:999px;background:var(--white);border:1px solid var(--line)}
+.fits{background:var(--ink);color:var(--white);border-radius:14px;padding:16px 18px;display:grid;gap:10px}
+.fits strong{font:700 11px/1 var(--pixel);letter-spacing:.12em;color:var(--lime)}
+.fits ul{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.fits li{display:flex;gap:10px;align-items:flex-start;font-size:14px}
+.fits li::before{content:"";flex:none;width:8px;height:8px;margin-top:7px;background:var(--lime)}
+.pick{justify-self:start}
+.pick[aria-pressed="true"]{background:var(--lime-deep);color:var(--white)}
+
+/* order */
+.order{background:var(--ink);color:var(--white);padding-block:72px}
+.order .wrap{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(28px,5vw,64px);align-items:start}
+.order h2{font:700 clamp(26px,4vw,42px)/1.05 var(--pixel)}
+.order .sum{display:grid;gap:16px;position:sticky;top:90px}
+.order .sum p{margin:0;color:#C9D1CC}
+.incl{margin:0;padding:0;list-style:none;display:grid;gap:8px;font-size:14px}
+.incl li{display:flex;gap:10px}
+.incl li::before{content:"✓";color:var(--lime);font-weight:700}
+.pricebox{border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:16px 18px;display:grid;gap:4px}
+.pricebox .price b{font-size:32px}
+.pricebox small{color:var(--on-ink-muted)}
+
+form{background:var(--white);color:var(--ink);border-radius:20px;padding:clamp(18px,3vw,30px);display:grid;gap:18px}
+.chosen{display:flex;gap:12px;align-items:center;background:var(--paper);border-radius:12px;padding:10px;min-height:68px}
+.chosen img{width:84px;aspect-ratio:16/10;object-fit:cover;border-radius:6px;flex:none;border:1px solid var(--line)}
+.chosen .ph{width:84px;aspect-ratio:16/10;border-radius:6px;flex:none;background:repeating-linear-gradient(45deg,#E2E5DC 0 6px,#EDEFE8 6px 12px)}
+.chosen div{min-width:0;display:grid;gap:2px}
+.chosen small{font:700 9px/1.4 var(--pixel);letter-spacing:.1em;color:var(--muted)}
+.chosen b{font:700 16px/1.2 var(--pixel)}
+.flash{animation:flash .9s ease}
+@keyframes flash{0%{box-shadow:0 0 0 0 var(--lime)}40%{box-shadow:0 0 0 6px var(--lime)}100%{box-shadow:0 0 0 0 transparent}}
+label,legend{font:600 13px/1.3 var(--sans)}
+.field{display:grid;gap:6px;min-width:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+input,select,textarea{font:500 15px/1.4 var(--sans);color:var(--ink);background:var(--white);border:1.5px solid var(--line);border-radius:10px;padding:12px 13px;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px var(--lime)}
+textarea{min-height:84px;resize:vertical}
+fieldset{border:0;margin:0;padding:0;display:grid;gap:8px;min-width:0}
+.opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.opt{position:relative}
+.opt input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.opt span{display:grid;gap:4px;height:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px;font-size:12px;color:var(--muted)}
+.opt span b{font:700 12px/1.25 var(--pixel);color:var(--ink);letter-spacing:.02em}
+.opt input:checked+span{border-color:var(--ink);background:var(--lime)}
+.opt input:checked+span{color:var(--ink)}
+.opt input:focus-visible+span{box-shadow:0 0 0 3px var(--lime-deep)}
+.err{color:#B3261E;font-size:13px;min-height:1.2em;margin:0}
+.fine{font-size:12px;color:var(--muted);margin:0}
+.done{display:grid;gap:12px;justify-items:start}
+.done strong{font:700 22px/1.1 var(--pixel)}
+.done p{margin:0}
+.done code{font:600 13px/1 var(--sans);background:var(--paper);padding:6px 8px;border-radius:6px;user-select:all}
+
+/* floating pick bar */
+.pickbar{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:25;display:flex;align-items:center;gap:12px;background:var(--ink);color:var(--white);padding:8px 8px 8px 16px;border-radius:999px;box-shadow:0 12px 32px rgba(13,23,32,.4);max-width:calc(100% - 32px);font-size:13px}
+.pickbar b{font:700 12px/1 var(--pixel);color:var(--lime);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pickbar .btn{padding:10px 14px;font-size:13px}
+
+footer{background:var(--ink);color:var(--on-ink-muted);font-size:12px;border-top:1px solid rgba(255,255,255,.08)}
+footer .wrap{padding-block:22px 90px;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between}
+footer a{color:#DCE3DE}
+
+@media (hover:hover){.scrollhint{display:block}}
+@media (max-width:860px){
+  .style .wrap,.order .wrap{grid-template-columns:minmax(0,1fr)}
+  .style:nth-of-type(even) .media{order:0}
+  .order .sum{position:static}
+  .media{max-width:520px;width:100%;justify-self:center}
+}
+@media (max-width:560px){
+  .two,.opts{grid-template-columns:minmax(0,1fr)}
+  .opt span{grid-template-columns:auto;}
+}
+@media (prefers-reduced-motion:reduce){
+  .main img{transition:none}
+  .flash{animation:none}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="emblem" viewBox="-60 -80 840 800"><rect x="-60" y="-80" width="840" height="800" rx="160" fill="#D4F53C"/><g fill="#0D1720"><path d="M360 10 L708 200 L708 518 L518 625 L518 520 L628 462 L628 246 L360 100 L92 246 L92 462 L204 520 L204 625 L12 518 L12 200 Z"/><path d="M360 156 L594 282 L594 483 L518 526 L518 331 L360 246 L204 331 L204 526 L126 483 L126 282 Z"/><path d="M318 271 L402 271 L402 384 L460 350 L480 350 L508 405 L401 463 L401 576 L319 576 L319 463 L212 405 L240 350 L260 350 L318 384 Z"/></g></symbol>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="mark" href="/" aria-label="MilliTech home"><svg aria-hidden="true"><use href="#emblem"/></svg>MILLITECH</a>
+    <nav aria-label="Page">
+      <a class="home" href="/">Home</a>
+      <a href="#styles">Styles</a>
+      <a class="cta" href="#order">Order</a>
+    </nav>
+  </div>
+</header>
+
+<section class="cover" id="top" aria-label="MilliTech style menu">
+  <canvas id="scene" aria-label="The MilliTech emblem in 3D, circled by the 11 landing page styles. Tap a style to jump to it."></canvas>
+  <div class="hint" id="hint">TAP A STYLE</div>
+  <div class="tip" id="tip" hidden></div>
+  <div class="cover-copy">
+    <div class="wrap">
+      <span class="eyebrow">Service menu · Landing pages</span>
+      <h1>Pick a look. <mark>We build it</mark> in 5 days.</h1>
+      <p>11 landing page styles we can build for your clinic, school or restaurant. Choose one, tell us about your business, and we'll call you on WhatsApp.</p>
+      <div class="row">
+        <span class="price"><s>₹2,500</s><b>₹1,000</b><span>when you claim</span></span>
+        <a class="btn lime" href="#styles">See the 11 styles<svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
+        <a class="btn ghost" href="#order">Order now</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<nav class="index" aria-label="Styles">
+  <div class="wrap" id="index"></div>
+</nav>
+
+<section class="intro" id="styles">
+  <div class="wrap">
+    <span class="eyebrow" style="color:var(--lime-deep)">How it works</span>
+    <h2>Every style below is a real look we can build for you.</h2>
+    <p>Each one shows a main example and two more on the corners. The screens are references from other designers, so you can see the style. Your page gets your own name, photos, prices and WhatsApp button.</p>
+    <ul class="how">
+      <li><b>1</b>Pick a style</li>
+      <li><b>2</b>Send your details</li>
+      <li><b>3</b>We call you on WhatsApp</li>
+      <li><b>4</b>Your page is live in 5 days</li>
+    </ul>
+  </div>
+</section>
+
+<div id="list"></div>
+
+<section class="order" id="order" aria-labelledby="order-h">
+  <div class="wrap">
+    <div class="sum">
+      <span class="eyebrow">Order a landing page</span>
+      <h2 id="order-h">Tell us about your business.</h2>
+      <p>Send this and WhatsApp opens with your message already written. We reply within 2 hours.</p>
+      <div class="pricebox">
+        <span class="price"><s>₹2,500</s><b>₹1,000</b></span>
+        <small>Launch price when you claim · ready in 5 days</small>
+      </div>
+      <ul class="incl">
+        <li>Copywriting done for you</li>
+        <li>Logo, contact form and WhatsApp button</li>
+        <li>Google Analytics set up</li>
+        <li>2 rounds of changes</li>
+      </ul>
+    </div>
+
+    <form id="order-form" novalidate>
+      <div class="chosen" id="chosen" aria-live="polite">
+        <span class="ph" id="chosen-ph"></span>
+        <img id="chosen-img" alt="" hidden>
+        <div><small>YOUR STYLE</small><b id="chosen-name">Not picked yet</b></div>
+      </div>
+
+      <div class="field">
+        <label for="f-style">Style</label>
+        <select id="f-style" name="style"></select>
+      </div>
+
+      <fieldset>
+        <legend>How should we design it?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="mode" id="m-custom" value="Custom design" checked><span><b>Custom design</b>We design it fresh in the style you picked.</span></label>
+          <label class="opt"><input type="radio" name="mode" id="m-ref" value="Based on my reference"><span><b>Based on my reference</b>You show us a site or photo you like.</span></label>
+          <label class="opt"><input type="radio" name="mode" id="m-team" value="Your design team decides"><span><b>Your team decides</b>Our designers choose what fits you best.</span></label>
+        </div>
+      </fieldset>
+
+      <div class="field" id="ref-wrap" hidden>
+        <label for="f-ref">Your reference</label>
+        <input id="f-ref" name="ref" placeholder="Paste a link, or describe what you like">
+      </div>
+
+      <div class="two">
+        <div class="field"><label for="f-name">Your name</label><input id="f-name" name="name" autocomplete="name" placeholder="Thoiba Singh"></div>
+        <div class="field"><label for="f-wa">WhatsApp number</label><input id="f-wa" name="wa" inputmode="tel" autocomplete="tel" placeholder="98765 43210"></div>
+      </div>
+      <div class="two">
+        <div class="field"><label for="f-biz">Business name</label><input id="f-biz" name="biz" autocomplete="organization" placeholder="Smile Dental Care"></div>
+        <div class="field"><label for="f-type">Type of business</label>
+          <select id="f-type" name="type">
+            <option value="">Choose one</option>
+            <option>Clinic</option><option>School</option><option>Restaurant or café</option><option>Hotel or homestay</option><option>Event</option><option>Shop</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label for="f-note">Anything else? <span style="font-weight:400;color:var(--muted)">(optional)</span></label><textarea id="f-note" name="note" placeholder="Opening hours, services, the date you need it by..."></textarea></div>
+
+      <p class="err" id="f-err" role="alert"></p>
+      <button class="btn ink" type="submit" style="justify-self:start">Send on WhatsApp<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <p class="fine">Prefer to call? WhatsApp us on <b>+91 60092 71012</b>.</p>
+    </form>
+  </div>
+</section>
+
+<div class="pickbar" id="pickbar" hidden>
+  <span>Picked</span><b id="pickbar-name"></b>
+  <a class="btn lime" href="#order">Order this</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 MilliTech · Imphal West, Manipur · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/refunds">Refunds</a></span>
+    <span>Style notes adapted from “50 Design Styles Every Designer Should Know” by Himanshu Bhardwaj, UX Planet. Screens are third-party references, shown to explain each style.</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(() => {
+const STYLES = [
+  {slug:'anthropomorphic', name:'Anthropomorphic',
+   desc:'Gives human traits to non-human things: objects, animals, even buttons. It adds playfulness and helps people feel an emotional connection with the brand.',
+   core:['Expressive eyes','Limbs on objects','Character icons','Rounded friendly shapes'], mood:'Fun, quirky, friendly',
+   why:'A mascot gives nervous visitors a friendly face. Kids remember the character, and parents remember your name.',
+   fits:['Children’s clinics and kids’ dentists','Play schools and kindergartens','Ice-cream and dessert shops'],
+   sw:['#F7C928','#2E6FB6','#C0392B','#F3F0E6']},
+  {slug:'pixel-art', name:'Pixel Art',
+   desc:'A nostalgic style from early computer and video game graphics. Every image is built from visible pixels, so it feels retro and playful at once.',
+   core:['Grid-based visuals','Low-res icons','Limited colour palette','8-bit / 16-bit look'], mood:'Nostalgic, geeky, fun',
+   why:'It reads as fun and techy in one glance, and it stands out in a feed full of stock photos.',
+   fits:['Computer and coding institutes','Gaming cafés','School tech fests and events'],
+   sw:['#2C6EA8','#F2D9A0','#3E7D3A','#6B4A2E']},
+  {slug:'conceptual-sketch', name:'Conceptual Sketch',
+   desc:'Looks like rough hand-drawn sketches. It values imagination over polish and gives a raw, behind-the-scenes creative feel.',
+   core:['Pencil and ink lines','Cross-hatching','Hand notes','Sketch-paper texture'], mood:'Experimental, informal, idea-driven',
+   why:'Hand-drawn lines feel personal, like a chalkboard menu. Great when the owner’s personality is the brand.',
+   fits:['Cafés and small restaurants','Bakeries','Art and music schools'],
+   sw:['#F1EBDD','#1A1A1A','#2E8B3E','#C8B89A']},
+  {slug:'luxury-typography', name:'Luxury Typography',
+   desc:'Refined letterforms carry the whole brand. A minimal layout is paired with expressive serif fonts, so the type alone says elegance and class.',
+   core:['Serif fonts','Wide letter spacing','Gold accents','Monochrome palette'], mood:'Elegant, elite, timeless',
+   why:'Big, quiet type tells visitors you are premium before they see a single price.',
+   fits:['Fine-dining restaurants and hotels','Skin, hair and cosmetic clinics','Wedding and banquet venues'],
+   sw:['#1D1B17','#B89A64','#EDE6D8','#4A3F33']},
+  {slug:'brutalism', name:'Brutalism',
+   desc:'Raw, bold and on purpose unpolished. Borrowed from architecture, it rejects decoration for stark function and breaks the usual web rules to stand out.',
+   core:['Monospaced fonts','Harsh edges','Solid blocks','Plain buttons'], mood:'Bold, disruptive, honest',
+   why:'Huge type and loud blocks are hard to scroll past. It suits anyone who wants to look nothing like their competitors.',
+   fits:['College fests and youth events','Architects and builders','Streetwear and tattoo studios'],
+   sw:['#E8432E','#F2EFE8','#1A1A1A','#2B3A8C']},
+  {slug:'vaporwave', name:'Vaporwave',
+   desc:'A dreamy style that celebrates 80s and 90s nostalgia. It mixes classical statues with glitch art, Japanese text and retro computer windows.',
+   core:['Pastel pinks and purples','VHS glitch','Greek busts','Japanese text'], mood:'Dreamy, ironic, nostalgic',
+   why:'Neon colours pull in a young crowd and look great when people share it on Instagram.',
+   fits:['Music nights and DJ events','Youth cafés and lounges','Gaming and arcade spots'],
+   sw:['#FF6EC7','#3D2BD9','#23C7E6','#FFB86B']},
+  {slug:'bento-box', name:'Bento Box',
+   desc:'Content sits in neat blocks, like the compartments of a bento lunch box. Even a lot of information feels easy to take in.',
+   core:['Rounded tiles','Soft shadows','Icons with labels','Small animations'], mood:'Organised, friendly, clean',
+   why:'Every service gets its own tile, so visitors find what they need fast. Our most practical pick.',
+   fits:['Multi-speciality clinics','Schools (admissions, fees and results as tiles)','Restaurants with menu, booking and delivery'],
+   sw:['#1E4D2B','#C8F25A','#F5A3C7','#121212']},
+  {slug:'kawaii', name:'Kawaii',
+   desc:'The Japanese culture of cuteness. Childlike, cheerful and full of charm, with adorable characters, soft colours and positive vibes.',
+   core:['Pastel colours','Rounded icons','Cute faces and blushing cheeks','Handwritten type'], mood:'Sweet, innocent, joyful',
+   why:'Soft colours and cute characters make small children, and their parents, feel welcome straight away.',
+   fits:['Play schools and day care','Children’s clinics','Bubble tea, bakery and dessert shops'],
+   sw:['#FFB3C7','#9ED8FF','#FFE36E','#FFFFFF']},
+  {slug:'coquette', name:'Coquette',
+   desc:'Soft, feminine and flirty, with a vintage touch. Think bows, lace, pearls, soft filters and love letters.',
+   core:['Baby pinks','Ribbons and pearls','Dainty serif fonts','Heart shapes'], mood:'Delicate, sweet, nostalgic',
+   why:'It feels like a gift. Works best when most of your customers are women and young girls.',
+   fits:['Beauty salons and nail studios','Cake shops and cafés','Boutiques and bridal wear'],
+   sw:['#F6C6D5','#7A4A3A','#FBEFE6','#D94B7A']},
+  {slug:'glassmorphism', name:'Glassmorphism',
+   desc:'Panels look like frosted glass: see-through, blurred and layered with depth. Soft and futuristic at once.',
+   core:['Frosted backgrounds','Blur effects','See-through layers','Soft shadows'], mood:'Futuristic, elegant, sleek',
+   why:'Clean, see-through layers say modern and hygienic, which is exactly what patients look for in a clinic.',
+   fits:['Dental and eye care clinics','Diagnostic labs','Tech and coaching institutes'],
+   sw:['#E9ECEF','#B6E0D9','#1C1F24','#FFFFFF']},
+  {slug:'modular-typography', name:'Modular Typography',
+   desc:'Letters are broken into grids and building blocks. It creates a strong visual rhythm and often feels experimental.',
+   core:['Geometric letters','Type grids','Even spacing','Flexible layouts'], mood:'Structured, modern, playful',
+   why:'The type itself becomes the picture, so it still looks great when you don’t have good photos yet.',
+   fits:['Coaching and tuition centres','Events and conferences','Modern cafés'],
+   sw:['#FF2BB3','#1E6BFF','#FFFFFF','#111111']}
+];
+const IMG = s => k => `menu/img/${s.slug}-${k}.webp`;
+const $ = (s, r = document) => r.querySelector(s);
+const esc = t => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad = n => String(n).padStart(2, '0');
+
+/* ---------- build the spreads ---------- */
+const list = $('#list'), index = $('#index'), sel = $('#f-style');
+STYLES.forEach((s, i) => {
+  const im = IMG(s);
+  list.insertAdjacentHTML('beforeend', `
+  <section class="style" id="${s.slug}" aria-labelledby="h-${s.slug}">
+    <div class="wrap">
+      <div class="media">
+        <figure class="frame main" style="margin:0">
+          <div class="bar"><i></i><i></i><i></i><span></span></div>
+          <div class="shot"><img src="${im('main')}" alt="${esc(s.name)} style, main example landing page" loading="lazy" decoding="async"></div>
+          <span class="tag">MAIN</span>
+        </figure>
+        <figure class="frame corner c2" style="margin:0">
+          <div class="shot"><img src="${im('2')}" alt="${esc(s.name)} style, second example, first screen" loading="lazy" decoding="async"></div>
+          <span class="tag">02</span>
+        </figure>
+        <figure class="frame corner c3" style="margin:0">
+          <div class="shot"><img src="${im('3')}" alt="${esc(s.name)} style, third example, first screen" loading="lazy" decoding="async"></div>
+          <span class="tag">03</span>
+        </figure>
+        <span class="scrollhint" aria-hidden="true">HOVER TO SCROLL ↓</span>
+      </div>
+      <div class="copy">
+        <span class="num">STYLE ${pad(i + 1)} / ${STYLES.length}</span>
+        <h2 id="h-${s.slug}">${esc(s.name)}</h2>
+        <div class="swatch" aria-label="Typical colours">${s.sw.map(c => `<i style="background:${c}" title="${c}"></i>`).join('')}</div>
+        <p>${esc(s.desc)}</p>
+        <p class="why">${esc(s.why)}</p>
+        <dl class="meta">
+          <dt>Look for</dt><dd><div class="chips">${s.core.map(c => `<span>${esc(c)}</span>`).join('')}</div></dd>
+          <dt>Feels</dt><dd>${esc(s.mood)}</dd>
+        </dl>
+        <div class="fits"><strong>FITS BEST WITH</strong><ul>${s.fits.map(f => `<li>${esc(f)}</li>`).join('')}</ul></div>
+        <button type="button" class="btn ink pick" data-pick="${s.slug}" aria-pressed="false">Choose ${esc(s.name)}<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </div>
+    </div>
+  </section>`);
+  index.insertAdjacentHTML('beforeend', `<a href="#${s.slug}"><span>${pad(i + 1)}</span>${esc(s.name)}</a>`);
+  sel.insertAdjacentHTML('beforeend', `<option value="${s.slug}">${pad(i + 1)} · ${esc(s.name)}</option>`);
+});
+sel.insertAdjacentHTML('afterbegin', '<option value="">Not sure yet</option>');
+sel.value = '';
+
+/* ---------- gallery -> form link ---------- */
+const bySlug = Object.fromEntries(STYLES.map(s => [s.slug, s]));
+function choose(slug, {scroll = false, flash = true} = {}){
+  const s = bySlug[slug];
+  sel.value = s ? slug : '';
+  document.querySelectorAll('.pick').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.pick === slug)));
+  document.querySelectorAll('.style').forEach(el => el.classList.toggle('picked', el.id === slug));
+  const img = $('#chosen-img'), ph = $('#chosen-ph');
+  $('#chosen-name').textContent = s ? s.name : 'Not picked yet';
+  if (s){ img.src = IMG(s)('2'); img.hidden = false; ph.hidden = true; } else { img.hidden = true; ph.hidden = false; }
+  $('#pickbar').hidden = !s;
+  $('#pickbar-name').textContent = s ? s.name : '';
+  if (s && flash){ const c = $('#chosen'); c.classList.remove('flash'); void c.offsetWidth; c.classList.add('flash'); }
+  try { s ? localStorage.setItem('mt-style', slug) : localStorage.removeItem('mt-style'); } catch(_){}
+  if (scroll) $('#order').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+}
+list.addEventListener('click', e => {
+  const b = e.target.closest('[data-pick]');
+  if (b) choose(b.dataset.pick, {scroll: true});
+});
+sel.addEventListener('change', () => choose(sel.value));
+try { const saved = localStorage.getItem('mt-style'); if (saved && bySlug[saved]) choose(saved, {flash:false}); } catch(_){}
+
+// hide the floating bar while the form is on screen
+const pickbar = $('#pickbar');
+new IntersectionObserver(([en]) => { pickbar.style.visibility = en.isIntersecting ? 'hidden' : ''; }, {threshold: .15}).observe($('#order'));
+
+// reference field only for "based on my reference"
+const refWrap = $('#ref-wrap');
+document.querySelectorAll('input[name="mode"]').forEach(r => r.addEventListener('change', () => { refWrap.hidden = !$('#m-ref').checked; }));
+
+/* ---------- order form -> WhatsApp ---------- */
+const MT_WA = '916009271012';
+$('#order-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.currentTarget, err = $('#f-err');
+  const v = id => $(id).value.trim();
+  const name = v('#f-name'), wa = v('#f-wa'), biz = v('#f-biz'), type = v('#f-type'), note = v('#f-note'), ref = v('#f-ref');
+  const mode = $('input[name="mode"]:checked').value;
+  const s = bySlug[sel.value];
+  if (!name){ err.textContent = 'Add your name so we know who to call.'; $('#f-name').focus(); return; }
+  if (wa.replace(/\D/g, '').length < 10){ err.textContent = 'Add your 10-digit WhatsApp number, like 98765 43210.'; $('#f-wa').focus(); return; }
+  if (mode === 'Based on my reference' && !ref){ err.textContent = 'Paste a link or describe the design you like.'; $('#f-ref').focus(); return; }
+  err.textContent = '';
+  const msg = [
+    'Hi MilliTech! I want a landing page (₹1,000 launch price).',
+    `Style: ${s ? s.name : 'Not sure yet'}`,
+    `Design: ${mode}`,
+    mode === 'Based on my reference' && `Reference: ${ref}`,
+    `Name: ${name}`,
+    biz && `Business: ${biz}`,
+    type && `Type: ${type}`,
+    `My WhatsApp: ${wa}`,
+    note && `Notes: ${note}`,
+    'Please call me.'
+  ].filter(Boolean).join('\n');
+  const url = `https://wa.me/${MT_WA}?text=${encodeURIComponent(msg)}`;
+  f.innerHTML = `<div class="done">
+    <span class="eyebrow" style="color:var(--lime-deep)">One last tap</span>
+    <strong>Your order is written.</strong>
+    <p>Open WhatsApp and press send. We'll reply within 2 hours to book a call.</p>
+    <a class="btn lime" href="${url}" target="_blank" rel="noopener">Open WhatsApp</a>
+    <p class="fine">WhatsApp didn't open? Message us on <code>+91 60092 71012</code></p>
+  </div>`;
+});
+
+/* ---------- 3D cover ---------- */
+const canvas = $('#scene');
+if (!window.THREE || !canvas) return;
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const cover = canvas.parentElement;
+let renderer;
+try { renderer = new THREE.WebGLRenderer({canvas, antialias: true, alpha: false}); } catch(_){ return; }
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+renderer.setClearColor(0x0D1720, 1);
+renderer.outputEncoding = THREE.sRGBEncoding;
+const scene = new THREE.Scene();
+const C = hex => new THREE.Color(hex).convertSRGBToLinear(); // brand hex -> linear, so colours match the logo
+scene.fog = new THREE.Fog(0x0D1720, 12, 22);
+const world = new THREE.Group(); scene.add(world);
+const camera = new THREE.PerspectiveCamera(38, 1, .1, 60);
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0x223344, .75));
+const key = new THREE.DirectionalLight(0xffffff, .9); key.position.set(3, 5, 6); scene.add(key);
+const rim = new THREE.DirectionalLight(0xD4F53C, .6); rim.position.set(-5, 2, -4); scene.add(rim);
+
+// emblem: lime tile with the ink mark raised on top, built from the logo's own paths
+const S = 2.6 / 840, CX = 360, CY = 320;
+const pt = (x, y) => new THREE.Vector2((x - CX) * S, -(y - CY) * S);
+function shapeFrom(str){
+  const nums = str.match(/-?\d+(\.\d+)?/g).map(Number), sh = new THREE.Shape();
+  for (let i = 0; i < nums.length; i += 2){ const p = pt(nums[i], nums[i + 1]); i ? sh.lineTo(p.x, p.y) : sh.moveTo(p.x, p.y); }
+  sh.closePath(); return sh;
+}
+function roundRect(x, y, w, h, r){
+  const sh = new THREE.Shape(), a = pt(x, y), b = pt(x + w, y + h), rr = r * S;
+  const l = a.x, t = a.y, ri = b.x, bo = b.y;
+  sh.moveTo(l + rr, t); sh.lineTo(ri - rr, t); sh.quadraticCurveTo(ri, t, ri, t - rr);
+  sh.lineTo(ri, bo + rr); sh.quadraticCurveTo(ri, bo, ri - rr, bo);
+  sh.lineTo(l + rr, bo); sh.quadraticCurveTo(l, bo, l, bo + rr);
+  sh.lineTo(l, t - rr); sh.quadraticCurveTo(l, t, l + rr, t);
+  return sh;
+}
+const emblem = new THREE.Group();
+const tileGeo = new THREE.ExtrudeGeometry(roundRect(-60, -80, 840, 800, 160), {depth: .34, bevelEnabled: true, bevelThickness: .06, bevelSize: .05, bevelSegments: 4, curveSegments: 10});
+tileGeo.translate(0, 0, -.34);
+const tile = new THREE.Mesh(tileGeo, new THREE.MeshStandardMaterial({color: C(0xD4F53C), roughness: .45, metalness: .05}));
+emblem.add(tile);
+const inkMat = new THREE.MeshStandardMaterial({color: C(0x0D1720), roughness: .6, metalness: 0});
+[
+  'M360 10 L708 200 L708 518 L518 625 L518 520 L628 462 L628 246 L360 100 L92 246 L92 462 L204 520 L204 625 L12 518 L12 200 Z',
+  'M360 156 L594 282 L594 483 L518 526 L518 331 L360 246 L204 331 L204 526 L126 483 L126 282 Z',
+  'M318 271 L402 271 L402 384 L460 350 L480 350 L508 405 L401 463 L401 576 L319 576 L319 463 L212 405 L240 350 L260 350 L318 384 Z'
+].forEach((d, i) => {
+  const g = new THREE.ExtrudeGeometry(shapeFrom(d), {depth: .12 + i * .05, bevelEnabled: true, bevelThickness: .015, bevelSize: .012, bevelSegments: 2});
+  emblem.add(new THREE.Mesh(g, inkMat));
+});
+emblem.position.y = .55;
+world.add(emblem);
+
+// ring of the 11 styles
+const ring = new THREE.Group(); ring.position.y = .4; world.add(ring);
+const loader = new THREE.TextureLoader();
+const cards = [];
+const R = 4.1, CW = 1.7, CH = CW * 10 / 16;
+STYLES.forEach((s, i) => {
+  const a = i / STYLES.length * Math.PI * 2;
+  const g = new THREE.Group();
+  g.position.set(Math.sin(a) * R, Math.sin(a * 2) * .35, Math.cos(a) * R);
+  g.rotation.y = a;
+  const border = new THREE.Mesh(new THREE.PlaneGeometry(CW + .06, CH + .06), new THREE.MeshBasicMaterial({color: C(0xD4F53C), side: THREE.DoubleSide}));
+  border.position.z = -.005;
+  const tex = loader.load(IMG(s)('2'));
+  tex.encoding = THREE.sRGBEncoding; tex.anisotropy = 4;
+  const face = new THREE.Mesh(new THREE.PlaneGeometry(CW, CH), new THREE.MeshBasicMaterial({map: tex, color: 0xffffff, fog: false}));
+  const back = new THREE.Mesh(new THREE.PlaneGeometry(CW, CH), new THREE.MeshBasicMaterial({color: C(0x17232E)}));
+  back.rotation.y = Math.PI; back.position.z = -.01;
+  g.add(border, face, back);
+  face.userData = {slug: s.slug, name: s.name, group: g};
+  cards.push(face); ring.add(g);
+});
+
+// pixel confetti in brand colours
+const N = 70;
+const cubes = new THREE.InstancedMesh(new THREE.BoxGeometry(.07, .07, .07), new THREE.MeshStandardMaterial({color: C(0xD4F53C), roughness: .5}), N);
+const seeds = Array.from({length: N}, () => ({x: (Math.random() - .5) * 13, y: (Math.random() - .5) * 7, z: (Math.random() - .5) * 9 - 1, s: .3 + Math.random() * .9, v: .1 + Math.random() * .25}));
+const dummy = new THREE.Object3D();
+world.add(cubes);
+
+// size
+let W = 1, H = 1, narrow = false;
+function resize(){
+  W = cover.clientWidth; H = cover.clientHeight;
+  renderer.setSize(W, H, false);
+  camera.aspect = W / H;
+  narrow = W < 700;
+  // desktop: scene sits right of the headline; phone: scene sits above it
+  world.position.set(narrow ? 0 : Math.min(3.2, W / 420), 0, 0);
+  camera.position.set(0, narrow ? 2.4 : 1.6, narrow ? 13 : 10.5);
+  camera.lookAt(0, narrow ? -1.6 : -.3, 0);
+  camera.updateProjectionMatrix();
+  if (reduce) render(performance.now());
+}
+new ResizeObserver(resize).observe(cover);
+
+// pointer: tilt + hover + tap
+const ray = new THREE.Raycaster(), mouse = new THREE.Vector2(9, 9), tip = $('#tip');
+let tx = 0, ty = 0, hovered = null, dragX = null, spin = 0, spinV = 0, moved = 0;
+function setMouse(e){
+  const r = canvas.getBoundingClientRect();
+  mouse.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  tx = mouse.x; ty = mouse.y;
+  return r;
+}
+function pickAt(){
+  ray.setFromCamera(mouse, camera);
+  const hit = ray.intersectObjects(cards, false)[0];
+  return hit && hit.face && hit.object.userData.slug ? hit.object : null;
+}
+canvas.addEventListener('pointermove', e => {
+  const r = setMouse(e);
+  if (dragX !== null){ const dx = e.clientX - dragX; dragX = e.clientX; moved += Math.abs(dx); spinV = dx * .004; spin += spinV; }
+  hovered = pickAt();
+  canvas.style.cursor = hovered ? 'pointer' : (dragX !== null ? 'grabbing' : 'grab');
+  if (hovered){ tip.hidden = false; tip.textContent = hovered.userData.name; tip.style.left = (e.clientX - r.left) + 'px'; tip.style.top = (e.clientY - r.top) + 'px'; }
+  else tip.hidden = true;
+  if (reduce) render(performance.now());
+});
+canvas.addEventListener('pointerleave', () => { hovered = null; tip.hidden = true; dragX = null; mouse.set(9, 9); });
+canvas.addEventListener('pointerdown', e => { dragX = e.clientX; moved = 0; setMouse(e); });
+window.addEventListener('pointerup', e => {
+  if (dragX === null) return;
+  dragX = null;
+  if (moved < 6 && e.target === canvas){
+    setMouse(e);
+    const c = pickAt();
+    if (c){ $('#hint').hidden = true; document.getElementById(c.userData.slug).scrollIntoView({behavior: reduce ? 'auto' : 'smooth'}); }
+  }
+});
+
+// animate
+let last = performance.now(), visible = true;
+new IntersectionObserver(([en]) => { visible = en.isIntersecting; if (visible && !reduce) requestAnimationFrame(loop); }).observe(cover);
+function render(now){
+  const t = now / 1000, dt = Math.min(.05, (now - last) / 1000); last = now;
+  if (!reduce){ spin += (dragX === null ? .12 : 0) * dt + spinV; spinV *= .92; }
+  ring.rotation.y = spin;
+  emblem.rotation.y += ((tx * .5 + (reduce ? 0 : Math.sin(t * .6) * .18)) - emblem.rotation.y) * .06;
+  emblem.rotation.x += ((-ty * .25) - emblem.rotation.x) * .06;
+  emblem.position.y = .55 + (reduce ? 0 : Math.sin(t * 1.1) * .06);
+  cards.forEach(c => {
+    const g = c.userData.group, target = c === hovered ? 1.14 : 1;
+    g.scale.setScalar(g.scale.x + (target - g.scale.x) * .2);
+  });
+  seeds.forEach((p, i) => {
+    const y = reduce ? p.y : ((p.y + t * p.v + 3.5) % 7) - 3.5;
+    dummy.position.set(p.x, y, p.z);
+    dummy.rotation.set(t * p.v, t * p.v * .7, 0);
+    dummy.scale.setScalar(p.s);
+    dummy.updateMatrix(); cubes.setMatrixAt(i, dummy.matrix);
+  });
+  cubes.instanceMatrix.needsUpdate = true;
+  renderer.render(scene, camera);
+}
+function loop(now){
+  if (!visible) return;
+  render(now);
+  requestAnimationFrame(loop);
+}
+resize();
+if (reduce){ THREE.DefaultLoadingManager.onLoad = () => render(performance.now()); render(performance.now()); }
+else requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
