@@ -4,6 +4,7 @@ Static site for MilliTech, a web service agency in Imphal, Manipur. No build ste
 
 - `index.html`: the whole home page (3D conveyor hero with three.js, offer carousel, sample demos, claim form).
 - `service-menu.html` (served at `/service-menu`): landing page style menu. Three.js cover, 11 style spreads, and an order form that sends the picked style to WhatsApp. Style data is the `STYLES` array in the page; images live in `menu/img/` as `<slug>-main.webp`, `<slug>-2.webp`, `<slug>-3.webp` (2 and 3 are cropped to the first screen, 16:10).
+- `demo-health-plus.html` (served at `/demo-health-plus`): client demo for Health Plus Clinic, kept apart from the agency pages (nothing links to it). Assets in `demo/health-plus/`. The home page opens with `js/intro.js`: two dotted hands (dot data in `js/hands-data.js`) reach for the logo, then the page turns white; add `?intro=0` to the URL to skip it. Design rules are in `DESIGN_DECISIONS.md`. Copy lives in the HTML with `data-i18n` keys; Romanised Meiteilon goes in `i18n/mni.js` (generate it from the translated content file with `i18n/txt-to-mni.py`), and `DEFAULT_LANG` in `js/site.js` picks the starting language.
 - `privacy.html`, `terms.html`, `refunds.html`, `cookies.html`: legal pages.
 - `favicon.svg`: the emblem.
 
