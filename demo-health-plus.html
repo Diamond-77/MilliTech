@@ -68,68 +68,33 @@
 <section class="page" data-route="home" data-seo="home">
 
   <div class="hero" id="hero">
-    <div class="hero-frame">
-      <!-- 1–2 · greens behind everything, soft and out of focus -->
-      <div class="greens" aria-hidden="true">
-        <img class="greens-a" src="demo/health-plus/img/hero-greens.webp" alt="">
-        <img class="greens-b" src="demo/health-plus/img/hero-greens-2.webp" alt="">
-        <img class="branch-soft" src="demo/health-plus/img/hero-branch-soft.webp" alt="" width="1472" height="880">
-      </div>
+    <div class="sky" aria-hidden="true"><div class="sky-winter"></div><div class="sky-spring"></div><div class="sun"></div></div>
+    <div class="hope" aria-hidden="true">
+      <span class="hope-outline" data-i18n="home.hero.word">HOPE</span>
+      <span class="hope-fill" data-i18n="home.hero.word">HOPE</span>
+    </div>
+    <div id="spring" class="spring" data-base="demo/health-plus/"></div>
+    <img class="spring-fallback" src="demo/health-plus/img/branch.webp" alt="" aria-hidden="true">
 
-      <!-- 6 · HOPE in liquid glass, sitting under the branch -->
-      <div class="hope" aria-hidden="true">
-        <svg class="hope-svg" viewBox="0 0 1000 300" preserveAspectRatio="none">
-          <defs>
-            <clipPath id="hope-clip" clipPathUnits="objectBoundingBox">
-              <text transform="scale(.001 .003333)" x="500" y="262" text-anchor="middle" textLength="1000" lengthAdjust="spacingAndGlyphs" class="hope-t" data-i18n="home.hero.word">HOPE</text>
-            </clipPath>
-            <linearGradient id="hope-sheen" x1="0" y1="0" x2=".35" y2="1">
-              <stop offset="0" stop-color="#fff" stop-opacity=".9"/>
-              <stop offset=".45" stop-color="#fff" stop-opacity="0"/>
-              <stop offset="1" stop-color="#fff" stop-opacity=".18"/>
-            </linearGradient>
-          </defs>
-        </svg>
-        <div class="hope-glass lg"></div>
-        <svg class="hope-svg hope-edge" viewBox="0 0 1000 300" preserveAspectRatio="none">
-          <text x="500" y="262" text-anchor="middle" textLength="1000" lengthAdjust="spacingAndGlyphs" class="hope-t hope-sheen" data-i18n="home.hero.word">HOPE</text>
-          <!-- border: a ring grown out of the letter shapes (a plain stroke would show the font's overlapping contours) -->
-          <filter id="hope-ring" x="-2%" y="-5%" width="104%" height="110%">
-            <feMorphology in="SourceAlpha" operator="dilate" radius="1.5" result="grown"/>
-            <feComposite in="grown" in2="SourceAlpha" operator="out" result="ring"/>
-            <feFlood flood-color="#fff" flood-opacity=".72"/>
-            <feComposite in2="ring" operator="in"/>
-          </filter>
-          <text x="500" y="262" text-anchor="middle" textLength="1000" lengthAdjust="spacingAndGlyphs" class="hope-t hope-line" filter="url(#hope-ring)" data-i18n="home.hero.word">HOPE</text>
-        </svg>
-      </div>
-
-      <!-- 3–4 · the branch: sharp, full opacity, thin white outline -->
-      <img class="hero-branch" src="demo/health-plus/img/hero-branch.webp" alt="" aria-hidden="true" width="1472" height="880">
-
-      <div class="hero-top">
-        <p class="eyebrow hero-pill lg" data-i18n="home.hero.eyebrow">Health Plus Clinic · Irong Chesaba Makha Leikai, Manipur</p>
-      </div>
-
-      <!-- 5 · liquid glass panel -->
-      <div class="hero-panel lg">
-        <p class="hero-kicker" data-i18n="home.hero.kicker">After every winter, there is</p>
-        <h1 class="sr-only"><span data-i18n="home.hero.word">HOPE</span>. <span data-i18n="home.hero.line">Life begins again. Care begins close to home.</span></h1>
-        <p class="hero-line" data-i18n="home.hero.line">Life begins again. Care begins close to home.</p>
-        <p class="hero-text" data-i18n="home.hero.text">Health Plus Clinic is a neighbourhood clinic offering medical consultation and diagnostic services for families in and around Irong Chesaba Makha Leikai.</p>
-        <a class="link-arrow hero-explore" href="#services"><span data-i18n="cta.explore">Explore Our Services</span><svg><use href="#i-arrow"/></svg></a>
-        <a class="hero-tile" href="#contact"><svg><use href="#i-arrow"/></svg><span data-i18n="cta.contact">Contact the Clinic</span></a>
-      </div>
+    <div class="hero-top wrap">
+      <p class="eyebrow glass-chip" data-i18n="home.hero.eyebrow">Health Plus Clinic · Irong Chesaba Makha Leikai, Manipur</p>
     </div>
 
-    <!-- refraction for the glass (used through backdrop-filter in Chromium) -->
-    <svg class="sr-only" aria-hidden="true" focusable="false">
-      <filter id="lg-refract" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
-        <feTurbulence type="fractalNoise" baseFrequency="0.008 0.012" numOctaves="2" seed="7" result="noise"/>
-        <feGaussianBlur in="noise" stdDeviation="2" result="soft"/>
-        <feDisplacementMap in="SourceGraphic" in2="soft" scale="38" xChannelSelector="R" yChannelSelector="G"/>
-      </filter>
-    </svg>
+    <div class="hero-copy wrap">
+      <p class="hero-kicker" data-i18n="home.hero.kicker">After every winter, there is</p>
+      <h1 class="sr-only"><span data-i18n="home.hero.word">HOPE</span>. <span data-i18n="home.hero.line">Life begins again. Care begins close to home.</span></h1>
+      <div class="hero-bottom glass">
+        <div class="hero-msg">
+          <p class="hero-line" data-i18n="home.hero.line">Life begins again. Care begins close to home.</p>
+          <p class="hero-text" data-i18n="home.hero.text">Health Plus Clinic is a neighbourhood clinic offering medical consultation and diagnostic services for families in and around Irong Chesaba Makha Leikai.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-solid" href="#contact"><span data-i18n="cta.contact">Contact the Clinic</span><svg><use href="#i-arrow"/></svg></a>
+          <a class="btn btn-glass" href="#services" data-i18n="cta.explore">Explore Our Services</a>
+        </div>
+      </div>
+      <button class="glass-chip replay" type="button" id="replay"><svg><use href="#i-replay"/></svg><span data-i18n="home.hero.replay">Replay spring</span></button>
+    </div>
   </div>
 
   <!-- 2 · Introduction -->
@@ -718,7 +683,10 @@
   <span data-i18n="form.missing">Please add your name and phone number.</span>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="demo/health-plus/js/leaves.js"></script>
 <script src="demo/health-plus/i18n/mni.js"></script>
 <script src="demo/health-plus/js/site.js"></script>
+<script src="demo/health-plus/js/spring.js"></script>
 </body>
 </html>

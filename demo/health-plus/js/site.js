@@ -1,4 +1,4 @@
-/* Health Plus Clinic demo — language switch, page router, liquid glass, small UI bits. */
+/* Health Plus Clinic demo — language switch, page router, fluted glass, small UI bits. */
 (function () {
   'use strict';
 
@@ -53,6 +53,8 @@
     });
     $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
     store.set('hp-lang', lang);
+    window.HP_WORD = t('home.hero.word');
+    window.HPSpring && window.HPSpring.setWord(window.HP_WORD);
     setSeo(current);
     if (announce && lang === 'mni' && !Object.keys(MNI).length) toast(t('toast.mni'));
   }
@@ -93,6 +95,7 @@
     setSeo(route);
     closeMenu();
     if (changed) window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+    window.HPSpring && window.HPSpring.pause(route !== 'home');
     requestAnimationFrame(() => { observeReveals(); loadMaps(); window.dispatchEvent(new Event('resize')); });
   }
   addEventListener('hashchange', go);
@@ -153,24 +156,8 @@
   });
 
   /* ---------------- hero bits ---------------- */
-  // Liquid-glass refraction (an SVG filter inside backdrop-filter) only renders properly in
-  // Chromium; Safari and Firefox keep the plain blur + saturate glass.
-  const brands = (navigator.userAgentData && navigator.userAgentData.brands) || [];
-  if (brands.some(b => /Chromium/.test(b.brand))) document.documentElement.classList.add('lg-refract');
-
-  // keep the HOPE border at 1.5 screen pixels whatever size the word is drawn at
-  const ring = $('#hope-ring feMorphology'), hopeBox = $('.hope');
-  const sizeRing = () => { if (ring && hopeBox.clientWidth) ring.setAttribute('radius', (1.5 * 1000 / hopeBox.clientWidth).toFixed(2)); };
-  addEventListener('resize', sizeRing); sizeRing();
-
-  // a little depth: the greens and the branch drift apart as the pointer moves
-  const hero = $('#hero');
-  if (hero && matchMedia('(pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    addEventListener('pointermove', e => {
-      hero.style.setProperty('--mx', (e.clientX / innerWidth - 0.5).toFixed(3));
-      hero.style.setProperty('--my', (e.clientY / innerHeight - 0.5).toFixed(3));
-    }, { passive: true });
-  }
+  const replay = $('#replay');
+  replay && replay.addEventListener('click', () => window.HPSpring && window.HPSpring.replay());
 
   const ribbon = $('#ribbon');
   if (store.get('hp-ribbon') === 'x') ribbon.remove();
