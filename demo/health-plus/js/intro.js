@@ -17,7 +17,7 @@
   // design-space offsets of each hand, relative to where it rests in the design
   const START = { L: [-330, 46], R: [330, 34] };
   let W = 0, H = 0, dpr = 1, s = 1, mx = 0, my = 0, touch = { L: [0, 0], R: [0, 0] };
-  let REST = { L: [0, 0], R: [0, 0] };
+  let REST = { L: [0, 0], R: [0, 0] }, rot = 0;
 
   const lerp = (a, b, t) => a + (b - a) * t;
   const clamp = t => Math.max(0, Math.min(1, t));
@@ -27,7 +27,11 @@
   function measure() {
     const r = hero.getBoundingClientRect();
     W = r.width; H = r.height; dpr = Math.min(window.devicePixelRatio || 1, 2);
-    s = W / D.w * (W / H < 0.8 ? 1.9 : 1);
+    // on tall screens the two hands meet on a diagonal (left one from the top, right one from
+    // the bottom), so each gets enough room to show the whole hand, not just the fingers
+    const tall = W / H < 0.8;
+    rot = tall ? 0.96 : 0;
+    s = tall ? Math.min((W / 2) / Math.cos(rot), (H / 2 - 70) / Math.sin(rot)) / 760 : W / D.w;
     const m = mark.getBoundingClientRect();
     mx = m.left - r.left + m.width / 2; my = m.top - r.top + m.height / 2;
     const half = m.width / 2 + 3 * s;
@@ -36,15 +40,15 @@
       L: [(-half - (D.tipL[0] - D.mark[0]) * s) / s, D.mark[1] - D.tipL[1]],
       R: [(half - (D.tipR[0] - D.mark[0]) * s) / s, D.mark[1] - D.tipR[1]]
     };
-    // on tall screens the hands rest closer in, so more than the fingertips stay on screen
-    const k = W / H < 0.8 ? 0.55 : 0;
+    // on tall screens the hands rest a little closer in
+    const k = tall ? 0.3 : 0;
     REST = { L: [touch.L[0] * k, touch.L[1] * k], R: [touch.R[0] * k, touch.R[1] * k] };
   }
 
   /* ---------- three.js renderer: the moving hands ---------- */
   const VERT = `
     attribute vec2 meta;              // hand (0 left, 1 right), random 0-1
-    uniform float uT, uS, uMove, uDpr, uLight, uAlpha;
+    uniform float uT, uS, uMove, uDpr, uLight, uAlpha, uRot;
     uniform vec2 uRes, uMark, uDesignMark, uOffL, uOffR;
     varying float vC, vA, vSq;
     vec2 rot(vec2 p, vec2 c, float a) { p -= c; float sn = sin(a), cs = cos(a); return c + vec2(cs * p.x - sn * p.y, sn * p.x + cs * p.y); }
@@ -76,7 +80,7 @@
       // a few dots turn into square pixels for a moment
       vSq = step(0.93, hash(r * 13.1 + floor(t * 1.5 + r * 9.0))) * step(0.01, uMove);
       vec2 o = meta.x < 0.5 ? uOffL : uOffR;
-      vec2 sp = uMark + (p - uDesignMark + o) * uS;
+      vec2 sp = uMark + rot((p - uDesignMark + o) * uS, vec2(0.0), uRot);
       gl_Position = vec4(sp.x / uRes.x * 2.0 - 1.0, 1.0 - sp.y / uRes.y * 2.0, 0.0, 1.0);
       float rr = max(0.55, sqrt(min(1.0, tone * 1.28)) * 5.2 * uS) * (1.0 + 0.3 * vSq);
       gl_PointSize = rr * 2.0 * uDpr + 1.0;
@@ -113,7 +117,7 @@
     geo.setAttribute('position', new T3.Float32BufferAttribute(pos, 3));
     geo.setAttribute('meta', new T3.Float32BufferAttribute(meta, 2));
     const u = {
-      uT: { value: 0 }, uS: { value: 1 }, uMove: { value: 0 }, uDpr: { value: 1 }, uLight: { value: 0 }, uAlpha: { value: 0 },
+      uT: { value: 0 }, uS: { value: 1 }, uMove: { value: 0 }, uDpr: { value: 1 }, uLight: { value: 0 }, uAlpha: { value: 0 }, uRot: { value: 0 },
       uRes: { value: new T3.Vector2() }, uMark: { value: new T3.Vector2() }, uDesignMark: { value: new T3.Vector2(D.mark[0], D.mark[1]) },
       uOffL: { value: new T3.Vector2() }, uOffR: { value: new T3.Vector2() }
     };
@@ -124,7 +128,7 @@
     return {
       layout() {
         renderer.setPixelRatio(dpr); renderer.setSize(W, H, false);
-        u.uRes.value.set(W, H); u.uMark.value.set(mx, my); u.uS.value = s; u.uDpr.value = dpr;
+        u.uRes.value.set(W, H); u.uMark.value.set(mx, my); u.uS.value = s; u.uDpr.value = dpr; u.uRot.value = rot;
       },
       draw(off, light, alpha, t, move) {
         hero.style.background = bgOf(light);
@@ -161,7 +165,7 @@
         hero.style.background = g.fillStyle;
         g.globalAlpha = alpha;
         ['L', 'R'].forEach(k => {
-          g.setTransform(dpr, 0, 0, dpr, (mx + off[k][0] * s) * dpr, (my + off[k][1] * s) * dpr);
+          g.setTransform(dpr, 0, 0, dpr, mx * dpr, my * dpr); g.rotate(rot); g.translate(off[k][0] * s, off[k][1] * s);
           paths[k].forEach((p, l) => {
             const t = (l + 0.5) / LEVELS, c = Math.round(lerp(80 + 175 * t, 205 - 205 * t, dl));
             g.fillStyle = `rgb(${c},${c},${c})`; g.fill(p);
