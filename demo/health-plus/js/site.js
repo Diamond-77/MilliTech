@@ -1,4 +1,4 @@
-/* Health Plus Clinic demo — language switch, page router, liquid glass, small UI bits. */
+/* Health Plus Clinic demo — language switch, page router, services card, liquid glass, small UI bits. */
 (function () {
   'use strict';
 
@@ -54,6 +54,7 @@
     $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
     store.set('hp-lang', lang);
     setSeo(current);
+    window.HP_onLang && window.HP_onLang();
     if (announce && lang === 'mni' && !Object.keys(MNI).length) toast(t('toast.mni'));
   }
   $$('.lang button').forEach(b => b.addEventListener('click', () => applyLang(b.dataset.lang, true)));
@@ -93,7 +94,6 @@
     setSeo(route);
     closeMenu();
     if (changed) window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
-    window.HPSpring && window.HPSpring.pause(route !== 'home');
     requestAnimationFrame(() => { observeReveals(); loadMaps(); window.dispatchEvent(new Event('resize')); });
   }
   addEventListener('hashchange', go);
@@ -110,13 +110,6 @@
     document.body.classList.toggle('past-hero', current !== 'home' || scrollY > innerHeight * 0.6);
   };
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
-
-  /* ---------------- photos ---------------- */
-  const fluted = $$('.fluted');
-  fluted.forEach(el => {
-    el.style.backgroundImage = `url("${el.dataset.src}")`;
-    el.style.backgroundPosition = el.dataset.pos || '50% 50%';
-  });
 
   /* ---------------- reveal on scroll ---------------- */
   const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => {
@@ -153,16 +146,97 @@
     }
   });
 
-  /* ---------------- hero bits ---------------- */
-  /* HOPE: fit the SVG box to the word once the display font has loaded */
-  const fitHope = () => {
-    const tx = $('.hope text'); if (!tx) return;
-    const b = tx.getBBox(); if (!b.width) return;
-    // the box ends just under the baseline (no room for descenders: HOPE has none)
-    const top = b.y + b.height * 0.12, bottom = +tx.getAttribute('y') + 18;
-    tx.ownerSVGElement.setAttribute('viewBox', `${b.x - 24} ${top} ${b.width + 48} ${bottom - top}`);
-  };
-  (document.fonts ? document.fonts.load('800 300px "Bricolage Grotesque"').then(fitHope, fitHope) : Promise.resolve()).then(fitHope);
+  /* ---------------- pixel pictures ----------------
+     Each canvas.px holds one of the clinic's inner-logo drawings. It resolves from big pixels
+     to sharp when it comes into view, and the active one in the services card does it again
+     now and then. */
+  const pxImgs = {};
+  function pixelate(cv, steps) {
+    const src = cv.dataset.src;
+    const img = pxImgs[src] || (pxImgs[src] = Object.assign(new Image(), { src }));
+    const run = () => {
+      const w = img.naturalWidth, h = img.naturalHeight;
+      if (cv.width !== w) { cv.width = w; cv.height = h; }
+      const g = cv.getContext('2d'), tmp = document.createElement('canvas'), tg = tmp.getContext('2d');
+      const token = cv._px = {};
+      let i = 0;
+      const step = () => {
+        if (cv._px !== token) return;
+        const k = steps[i++];
+        g.clearRect(0, 0, w, h);
+        if (k <= 1) { g.imageSmoothingEnabled = true; g.drawImage(img, 0, 0); return; }
+        tmp.width = Math.ceil(w / k); tmp.height = Math.ceil(h / k);
+        tg.drawImage(img, 0, 0, tmp.width, tmp.height);
+        g.imageSmoothingEnabled = false; g.drawImage(tmp, 0, 0, w, h);
+        setTimeout(step, 70);
+      };
+      step();
+    };
+    img.complete && img.naturalWidth ? run() : img.addEventListener('load', run, { once: true });
+  }
+  const RESOLVE = [72, 48, 32, 22, 14, 9, 6, 4, 2, 1];
+  const pxIO = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting && !e.target.closest('.care-slide')) { pixelate(e.target, RESOLVE); pxIO.unobserve(e.target); }
+  }), { threshold: 0.3 }) : null;
+  $$('canvas.px').forEach(c => pxIO ? pxIO.observe(c) : pixelate(c, [1]));
+
+  /* ---------------- services card: scroll moves through the four ---------------- */
+  const care = $('#care');
+  if (care) {
+    const btns = $$('.care-track button', care), slides = $$('.care-slide', care);
+    const track = $('.care-track', care), bar = $('.care-bar', care), count = $('.care-count b', care);
+    let ci = -1;
+    const centre = () => {
+      const b = btns[ci]; if (!b) return;
+      track.style.transform = `translateX(${Math.round(bar.clientWidth / 2 - (b.offsetLeft + b.offsetWidth / 2))}px)`;
+    };
+    const setCare = i => {
+      if (i === ci) return;
+      ci = i;
+      btns.forEach((b, k) => b.classList.toggle('on', k === i));
+      slides.forEach((sl, k) => sl.classList.toggle('on', k === i));
+      count.textContent = String(i + 1).padStart(2, '0');
+      centre(); setTimeout(centre, 420);
+      pixelate($('canvas', slides[i]), RESOLVE);
+    };
+    const careScroll = () => {
+      if (current !== 'home') return;
+      const total = care.offsetHeight - innerHeight;
+      const p = Math.min(0.999, Math.max(0, -care.getBoundingClientRect().top / total));
+      setCare(Math.floor(p * btns.length));
+    };
+    btns.forEach((b, k) => b.addEventListener('click', () => {
+      const total = care.offsetHeight - innerHeight;
+      scrollTo({ top: care.offsetTop + total * (k + 0.5) / btns.length, behavior: 'smooth' });
+    }));
+    addEventListener('scroll', careScroll, { passive: true });
+    addEventListener('resize', centre);
+    window.HP_onLang = () => setTimeout(centre, 60);
+    setCare(0);
+    // a small pixel flicker on the showing drawing every few seconds
+    setInterval(() => {
+      if (current === 'home' && !document.hidden && care.getBoundingClientRect().top < innerHeight) pixelate($('canvas', slides[ci]), [10, 6, 3, 1]);
+    }, 5200);
+  }
+
+  /* ---------------- find us: falling binary under small glass caps ---------------- */
+  const bin = $('.binary');
+  if (bin) {
+    let seed = 7;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    let html = '';
+    for (let i = 0; i < 24; i++) {
+      const len = 10 + Math.floor(rnd() * 12);
+      let str = ''; for (let j = 0; j < len; j++) str += rnd() < 0.5 ? '0' : '1';
+      html += `<span class="row" style="top:${(i * 4.1).toFixed(1)}%;left:${(i * 2.1 + rnd() * 8).toFixed(1)}%">${str}</span>`;
+    }
+    const caps = [[18, 4, 15, 13, 'sq'], [26, 13, 13, 11, 'sq'], [6, 22, 14, 13, 'sq'], [36, 28, 14, 12, 'sq'], [50, 29, 4.5, 12, ''], [18, 39, 14, 12, 'sq'],
+      [52, 49, 18, 13, 'sq'], [52, 58, 4.5, 12, ''], [76, 52, 4.5, 13, ''], [64, 63, 5, 11, ''], [86, 60, 5, 13, ''], [56, 78, 4.5, 11, ''], [80, 77, 5, 13, '']];
+    caps.forEach(([x, y, w, h, c], i) => {
+      html += `<i class="cap ${c}" style="left:${x}%;top:${y}%;width:${w}%;height:${h}%;--dx:${(i % 3 - 1) * 5}px;--dy:${8 + i % 4 * 3}px;animation-delay:${-i * 0.7}s"></i>`;
+    });
+    bin.innerHTML = html;
+  }
 
   /* ---------------- liquid glass refraction (Chromium) ----------------
      Each .lg element gets its own SVG filter: an edge-normal map drawn on a canvas
