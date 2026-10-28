@@ -1,4 +1,4 @@
-/* Health Plus Clinic demo — language switch, page router, fluted glass, small UI bits. */
+/* Health Plus Clinic demo — language switch, page router, liquid glass, small UI bits. */
 (function () {
   'use strict';
 
@@ -53,8 +53,6 @@
     });
     $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
     store.set('hp-lang', lang);
-    window.HP_WORD = t('home.hero.word');
-    window.HPSpring && window.HPSpring.setWord(window.HP_WORD);
     setSeo(current);
     if (announce && lang === 'mni' && !Object.keys(MNI).length) toast(t('toast.mni'));
   }
@@ -156,8 +154,77 @@
   });
 
   /* ---------------- hero bits ---------------- */
-  const replay = $('#replay');
-  replay && replay.addEventListener('click', () => window.HPSpring && window.HPSpring.replay());
+  /* HOPE: fit the SVG box to the word once the display font has loaded */
+  const fitHope = () => {
+    const tx = $('.hope text'); if (!tx) return;
+    const b = tx.getBBox(); if (!b.width) return;
+    // the box ends just under the baseline (no room for descenders: HOPE has none)
+    const top = b.y + b.height * 0.12, bottom = +tx.getAttribute('y') + 18;
+    tx.ownerSVGElement.setAttribute('viewBox', `${b.x - 24} ${top} ${b.width + 48} ${bottom - top}`);
+  };
+  (document.fonts ? document.fonts.load('800 300px "Bricolage Grotesque"').then(fitHope, fitHope) : Promise.resolve()).then(fitHope);
+
+  /* ---------------- liquid glass refraction (Chromium) ----------------
+     Each .lg element gets its own SVG filter: an edge-normal map drawn on a canvas
+     drives feDisplacementMap through backdrop-filter, so what sits behind the rim is
+     pulled inwards and magnified while the centre stays clear. Safari and Firefox keep
+     the CSS rim and shadow only. */
+  const brands = (navigator.userAgentData && navigator.userAgentData.brands) || [];
+  const chromium = brands.some(b => /Chromium/.test(b.brand));
+  const NS = 'http://www.w3.org/2000/svg';
+  let lgDefs = null, lgId = 0;
+  function edgeMap(w, h, r, band) {
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const g = c.getContext('2d'), img = g.createImageData(w, h), d = img.data;
+    const hx = w / 2 - r, hy = h / 2 - r;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const px = x + 0.5 - w / 2, py = y + 0.5 - h / 2;
+      const qx = Math.abs(px) - hx, qy = Math.abs(py) - hy;
+      let nx, ny, inside;
+      if (qx > 0 && qy > 0) { const l = Math.hypot(qx, qy) || 1; nx = qx / l * Math.sign(px); ny = qy / l * Math.sign(py); inside = r - l; }
+      else if (qx > qy) { nx = Math.sign(px); ny = 0; inside = r - Math.max(qx, 0); }
+      else { nx = 0; ny = Math.sign(py); inside = r - Math.max(qy, 0); }
+      const t = Math.max(0, 1 - inside / band), m = t * t;
+      const i = (y * w + x) * 4;
+      d[i] = 128 - nx * m * 127; d[i + 1] = 128 - ny * m * 127; d[i + 2] = 128; d[i + 3] = 255;
+    }
+    g.putImageData(img, 0, 0);
+    return c.toDataURL();
+  }
+  function refract(el) {
+    const w = el.offsetWidth, h = el.offsetHeight;
+    if (!w || !h) return;
+    if (!lgDefs) {
+      const svg = document.createElementNS(NS, 'svg');
+      svg.setAttribute('aria-hidden', 'true'); svg.style.cssText = 'position:absolute;width:0;height:0';
+      lgDefs = document.createElementNS(NS, 'defs'); svg.appendChild(lgDefs); document.body.appendChild(svg);
+    }
+    let f = el._lgFilter;
+    if (!f) {
+      f = document.createElementNS(NS, 'filter');
+      f.id = 'glass-' + (++lgId);
+      f.setAttribute('filterUnits', 'userSpaceOnUse'); f.setAttribute('primitiveUnits', 'userSpaceOnUse');
+      f.setAttribute('color-interpolation-filters', 'sRGB');
+      f.innerHTML = '<feImage result="map" preserveAspectRatio="none"/><feDisplacementMap in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="G"/>';
+      lgDefs.appendChild(f); el._lgFilter = f;
+    }
+    const r = Math.min(h / 2, w / 2, parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0);
+    const band = Math.min(16, h / 2.4);
+    ['x', 'y'].forEach(a => f.setAttribute(a, 0));
+    f.setAttribute('width', w); f.setAttribute('height', h);
+    const im = f.firstChild;
+    im.setAttribute('x', 0); im.setAttribute('y', 0); im.setAttribute('width', w); im.setAttribute('height', h);
+    im.setAttribute('href', edgeMap(w, h, r, band));
+    f.lastChild.setAttribute('scale', Math.round(band * 1.6));
+    el.style.backdropFilter = `url(#${f.id}) blur(1px)`;
+  }
+  const glassAll = () => $$('.lg').forEach(el => { if (el.offsetParent !== null || el.id === 'nav') refract(el); });
+  if (chromium) {
+    let gt; addEventListener('resize', () => { clearTimeout(gt); gt = setTimeout(glassAll, 150); });
+    addEventListener('hashchange', () => setTimeout(glassAll, 60));
+    document.fonts && document.fonts.ready.then(glassAll);
+    setTimeout(glassAll, 300);
+  }
 
   const ribbon = $('#ribbon');
   if (store.get('hp-ribbon') === 'x') ribbon.remove();

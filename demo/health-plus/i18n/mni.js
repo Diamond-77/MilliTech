@@ -1,7 +1,6 @@
 /* Romanised Meiteilon copy, generated from the translated content file by txt-to-mni.py.
    Any key left out falls back to English. */
 window.HP_I18N_MNI = {
- "home.hero.word": "ASHA",
  "home.hero.eyebrow": "Health Plus Clinic · Irong Chesaba Makha Leikai, Manipur",
  "home.hero.kicker": "Ningtham matam khudingmak-ki matungda leiri",
  "home.hero.line": "Punsisi amuk hougatlaki. Care-sing eikhoigi yumdagi naksanna hougatlaki.",

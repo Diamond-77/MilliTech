@@ -9,7 +9,7 @@
 <link rel="icon" type="image/webp" href="demo/health-plus/img/logo-mark.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;700&family=Noto+Sans+Meetei+Mayek:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="demo/health-plus/css/site.css">
 </head>
 <body>
@@ -36,10 +36,9 @@
   </defs>
 </svg>
 
-<div class="orbs" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 
 <!-- ======================= NAV ======================= -->
-<header class="nav" id="nav">
+<header class="nav lg" id="nav">
   <a class="nav-logo" href="#home" aria-label="Health Plus Clinic home">
     <img src="demo/health-plus/img/logo.webp" alt="Health Plus Clinic" width="900" height="209">
   </a>
@@ -55,9 +54,8 @@
   <div class="nav-tools">
     <div class="lang" role="group" aria-label="Language">
       <button type="button" data-lang="en" aria-pressed="true">EN</button>
-      <button type="button" data-lang="mni" aria-pressed="false" data-i18n="nav.lang.mni">Meiteilon</button>
+      <button type="button" data-lang="mni" aria-pressed="false">Manipur</button>
     </div>
-    <a class="btn btn-solid btn-sm nav-cta" href="#contact" data-i18n="nav.cta">Contact the Clinic</a>
     <button class="burger" type="button" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
   </div>
 </header>
@@ -67,184 +65,96 @@
 <!-- ======================= HOME ======================= -->
 <section class="page" data-route="home" data-seo="home">
 
+  <!-- 1 · Hero: branch, HOPE, one line, one link -->
   <div class="hero" id="hero">
-    <div class="sky" aria-hidden="true"><div class="sky-winter"></div><div class="sky-spring"></div><div class="sun"></div></div>
+    <div class="hero-stack">
     <div class="hope" aria-hidden="true">
-      <span class="hope-outline" data-i18n="home.hero.word">HOPE</span>
-      <span class="hope-fill" data-i18n="home.hero.word">HOPE</span>
+      <svg viewBox="0 0 1000 250" preserveAspectRatio="xMinYMax meet">
+        <defs>
+          <!-- clear glass lens: centre stays clear, the edge darkens and bends, a small shadow lifts it off the page -->
+          <filter id="hope-glass" x="-6%" y="-10%" width="112%" height="130%" color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="9" result="soft"/>
+            <feOffset in="soft" dy="12" result="drop"/>
+            <feFlood flood-color="#111" flood-opacity=".08"/><feComposite in2="drop" operator="in" result="shadow"/>
+            <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="inblur"/>
+            <feComposite in="SourceAlpha" in2="inblur" operator="out" result="inedge"/>
+            <feFlood flood-color="#111" flood-opacity=".13"/><feComposite in2="inedge" operator="in" result="lens"/>
+            <feOffset in="SourceAlpha" dx="-3" dy="-3" result="up"/>
+            <feComposite in="SourceAlpha" in2="up" operator="out" result="brEdge"/>
+            <feFlood flood-color="#111" flood-opacity=".28"/><feComposite in2="brEdge" operator="in" result="brRim"/>
+            <feMorphology in="SourceAlpha" operator="dilate" radius="1" result="grown"/>
+            <feComposite in="grown" in2="SourceAlpha" operator="out" result="ring"/>
+            <feFlood flood-color="#111" flood-opacity=".22"/><feComposite in2="ring" operator="in" result="rim"/>
+            <feOffset in="SourceAlpha" dx="2" dy="2" result="down"/>
+            <feComposite in="SourceAlpha" in2="down" operator="out" result="tlEdge"/>
+            <feFlood flood-color="#fff"/><feComposite in2="tlEdge" operator="in" result="spec"/>
+            <feFlood flood-color="#fff" flood-opacity=".04"/><feComposite in2="SourceAlpha" operator="in" result="fill"/>
+            <feMerge><feMergeNode in="shadow"/><feMergeNode in="fill"/><feMergeNode in="lens"/><feMergeNode in="brRim"/><feMergeNode in="rim"/><feMergeNode in="spec"/></feMerge>
+          </filter>
+        </defs>
+        <text x="0" y="228" filter="url(#hope-glass)">HOPE</text>
+      </svg>
+      <!-- hand-drawn underline -->
+      <svg class="scribble" viewBox="0 0 600 40" preserveAspectRatio="none"><path d="M6 28 C 90 14, 170 30, 250 20 S 420 8, 520 22 C 552 26, 576 18, 594 12" fill="none" stroke="#1C4632" stroke-width="5" stroke-linecap="round"/></svg>
     </div>
-    <div id="spring" class="spring" data-base="demo/health-plus/"></div>
-    <img class="spring-fallback" src="demo/health-plus/img/branch.webp" alt="" aria-hidden="true">
-
-    <div class="hero-top wrap">
-      <p class="eyebrow glass-chip" data-i18n="home.hero.eyebrow">Health Plus Clinic · Irong Chesaba Makha Leikai, Manipur</p>
+    <div class="hero-copy">
+      <h1 class="hero-line"><span class="sr-only">HOPE. </span><span data-i18n="home.hero.line">Life begins again. Care begins close to home.</span></h1>
+      <a class="link-arrow" href="#contact"><span data-i18n="cta.contact">Contact the Clinic</span><svg><use href="#i-arrow"/></svg></a>
     </div>
-
-    <div class="hero-copy wrap">
-      <p class="hero-kicker" data-i18n="home.hero.kicker">After every winter, there is</p>
-      <h1 class="sr-only"><span data-i18n="home.hero.word">HOPE</span>. <span data-i18n="home.hero.line">Life begins again. Care begins close to home.</span></h1>
-      <div class="hero-bottom glass">
-        <div class="hero-msg">
-          <p class="hero-line" data-i18n="home.hero.line">Life begins again. Care begins close to home.</p>
-          <p class="hero-text" data-i18n="home.hero.text">Health Plus Clinic is a neighbourhood clinic offering medical consultation and diagnostic services for families in and around Irong Chesaba Makha Leikai.</p>
-        </div>
-        <div class="btn-row">
-          <a class="btn btn-solid" href="#contact"><span data-i18n="cta.contact">Contact the Clinic</span><svg><use href="#i-arrow"/></svg></a>
-          <a class="btn btn-glass" href="#services" data-i18n="cta.explore">Explore Our Services</a>
-        </div>
-      </div>
-      <button class="glass-chip replay" type="button" id="replay"><svg><use href="#i-replay"/></svg><span data-i18n="home.hero.replay">Replay spring</span></button>
     </div>
+    <div id="spring" class="branch" aria-hidden="true"></div>
   </div>
 
-  <!-- 2 · Introduction -->
-  <div class="section wrap split intro">
-    <div class="rv">
-      <p class="eyebrow" data-i18n="home.intro.eyebrow">Welcome</p>
+  <!-- 2 · About: text offset left, photo bleeding off the right edge -->
+  <div class="s-about">
+    <div class="about-text rv">
       <h2 class="display" data-i18n="home.intro.title">A clinic that belongs to its neighbourhood.</h2>
-      <p class="lead" data-i18n="home.intro.p1">Health Plus Clinic is located in Irong Chesaba Makha Leikai, Manipur. We offer medical consultation together with laboratory and diagnostic facilities, so people in our community can find care without travelling far.</p>
+      <p class="lead" data-i18n="home.hero.text">Health Plus Clinic is a neighbourhood clinic offering medical consultation and diagnostic services for families in and around Irong Chesaba Makha Leikai.</p>
       <p data-i18n="home.intro.p2">Whether you are visiting for the first time or coming back with your family, our aim is simple: to listen, to explain clearly, and to help you take the next step in your care.</p>
-      <a class="link-arrow" href="#about"><span data-i18n="home.intro.link">More about the clinic</span><svg><use href="#i-arrow"/></svg></a>
-    </div>
-    <figure class="rv photo-stack">
-      <div class="fluted tall" data-src="demo/health-plus/img/family.webp" data-pos="62% 40%" data-flutes="0.18,0.62" role="img" data-i18n-attr="aria-label:img.family.alt" aria-label="A smiling father carrying his young son on his shoulders under a blue sky"></div>
-      <figcaption class="glass float-note">
-        <svg><use href="#i-heart"/></svg>
-        <span data-i18n="home.intro.note">Care for every member of the family</span>
-      </figcaption>
-    </figure>
-  </div>
-
-  <!-- 3 · Services -->
-  <div class="section wrap">
-   <div class="stage stage-dark svc-stage">
-    <div class="section-head rv">
-      <p class="eyebrow" data-i18n="home.services.eyebrow">Our Services</p>
-      <h2 class="display" data-i18n="home.services.title">Care you can find in one place.</h2>
-      <p class="muted" data-i18n="home.services.intro">These are the services Health Plus Clinic has announced. Please contact the clinic to confirm current availability and timings.</p>
-    </div>
-    <div class="cards4">
-      <a class="glass card svc rv" href="#services">
-        <span class="ico"><svg><use href="#i-steth"/></svg></span>
-        <h3 data-i18n="svc.consult.name">Medical Consultation</h3>
-        <p data-i18n="svc.consult.short">Talk to a medical professional about your symptoms, concerns or ongoing care, and understand your options in clear, simple language.</p>
-        <span class="more"><span data-i18n="cta.learn">Learn more</span><svg><use href="#i-arrow"/></svg></span>
-      </a>
-      <a class="glass card svc rv" href="#dermatology">
-        <span class="ico"><svg><use href="#i-skin"/></svg></span>
-        <h3 data-i18n="svc.derma.name">Dermatology OPD</h3>
-        <p data-i18n="svc.derma.short">Outpatient consultations for skin, hair and nail concerns. OPD schedule: [CURRENT OPD SCHEDULE].</p>
-        <span class="more"><span data-i18n="cta.learn">Learn more</span><svg><use href="#i-arrow"/></svg></span>
-      </a>
-      <a class="glass card svc rv" href="#diagnostics">
-        <span class="ico"><svg><use href="#i-flask"/></svg></span>
-        <h3 data-i18n="svc.lab.name">Laboratory Facilities</h3>
-        <p data-i18n="svc.lab.short">Laboratory facilities at the clinic help support your doctor's assessment. Ask us which tests are available and when.</p>
-        <span class="more"><span data-i18n="cta.learn">Learn more</span><svg><use href="#i-arrow"/></svg></span>
-      </a>
-      <a class="glass card svc rv" href="#diagnostics">
-        <span class="ico"><svg><use href="#i-scan"/></svg></span>
-        <h3 data-i18n="svc.diag.name">Health Plus Diagnostics</h3>
-        <p data-i18n="svc.diag.short">Diagnostic services connected with the clinic that help doctors understand your health more clearly.</p>
-        <span class="more"><span data-i18n="cta.learn">Learn more</span><svg><use href="#i-arrow"/></svg></span>
-      </a>
-    </div>
-   </div>
-  </div>
-
-  <!-- 4 · Why choose -->
-  <div class="section band">
-    <div class="fluted band-bg" data-src="demo/health-plus/img/generations.webp" data-pos="60% 30%" data-flutes="0,1" data-count="22" aria-hidden="true"></div>
-    <div class="wrap band-inner">
-      <div class="glass glass-strong why rv">
-        <p class="eyebrow" data-i18n="home.why.eyebrow">Why Health Plus Clinic</p>
-        <h2 class="display" data-i18n="home.why.title">Simple reasons, close to home.</h2>
-        <ul class="why-list">
-          <li><span class="ico"><svg><use href="#i-home"/></svg></span><div><h3 data-i18n="home.why.1.t">Consultation in your locality</h3><p data-i18n="home.why.1.p">Medical consultation within your own neighbourhood, so care is easier to reach.</p></div></li>
-          <li><span class="ico"><svg><use href="#i-flask"/></svg></span><div><h3 data-i18n="home.why.2.t">Laboratory at the clinic</h3><p data-i18n="home.why.2.p">Laboratory and diagnostic facilities in the same place as your consultation, which can save an extra trip.</p></div></li>
-          <li><span class="ico"><svg><use href="#i-skin"/></svg></span><div><h3 data-i18n="home.why.3.t">A dermatology OPD</h3><p data-i18n="home.why.3.p">The clinic has announced a dedicated outpatient service for skin, hair and nail concerns.</p></div></li>
-          <li><span class="ico"><svg><use href="#i-users"/></svg></span><div><h3 data-i18n="home.why.4.t">Rooted in the community</h3><p data-i18n="home.why.4.p">The clinic has reached out to residents directly, including a house-to-house healthcare campaign.</p></div></li>
-        </ul>
+      <div class="about-links">
+        <a class="btn btn-glass lg" href="#contact" data-i18n="cta.contact">Contact the Clinic</a>
+        <a class="link-arrow" href="#services"><span data-i18n="cta.explore">Explore Our Services</span><svg><use href="#i-arrow"/></svg></a>
       </div>
     </div>
+    <div class="about-photo fluted" data-src="demo/health-plus/img/family.webp" data-pos="58% 35%" role="img" data-i18n-attr="aria-label:img.family.alt" aria-label="A smiling father carrying his young son on his shoulders under a blue sky"></div>
   </div>
 
-  <!-- 5 · Professionals -->
-  <div class="section wrap split pros">
-    <div class="rv">
-      <p class="eyebrow" data-i18n="home.pros.eyebrow">Healthcare Professionals</p>
-      <h2 class="display" data-i18n="home.pros.title">The people behind your care.</h2>
-      <p data-i18n="home.pros.text">Profiles of the clinic's doctors and healthcare professionals, with their qualifications and consultation times, will be shared here once confirmed by the clinic.</p>
-      <a class="link-arrow" href="#doctors"><span data-i18n="home.pros.link">Meet our professionals</span><svg><use href="#i-arrow"/></svg></a>
-    </div>
-    <div class="rv pro-peek">
-      <article class="glass pro-mini">
-        <div class="avatar"><svg><use href="#i-person"/></svg></div>
-        <div><h3 data-i18n="doc.name">[DOCTOR NAME]</h3><p data-i18n="doc.qual">[DOCTOR QUALIFICATIONS]</p><p class="muted" data-i18n="doc.spec">[SPECIALISATION]</p></div>
-      </article>
-      <article class="glass pro-mini shift">
-        <div class="avatar"><svg><use href="#i-person"/></svg></div>
-        <div><h3 data-i18n="doc.name">[DOCTOR NAME]</h3><p data-i18n="doc.qual">[DOCTOR QUALIFICATIONS]</p><p class="muted" data-i18n="doc.spec">[SPECIALISATION]</p></div>
-      </article>
-    </div>
+  <!-- 3 · Services: a plain list -->
+  <div class="s-services wrap">
+    <h2 class="display rv" data-i18n="home.services.title">Care you can find in one place.</h2>
+    <ol class="svc-list rv">
+      <li><a href="#services"><span class="n">01</span><span class="t" data-i18n="svc.consult.name">Medical Consultation</span><span class="d" data-i18n="svc.consult.short">Talk to a medical professional about your symptoms, concerns or ongoing care, and understand your options in clear, simple language.</span><svg><use href="#i-arrow"/></svg></a></li>
+      <li><a href="#dermatology"><span class="n">02</span><span class="t" data-i18n="svc.derma.name">Dermatology OPD</span><span class="d" data-i18n="svc.derma.short">Outpatient consultations for skin, hair and nail concerns. OPD schedule: [CURRENT OPD SCHEDULE].</span><svg><use href="#i-arrow"/></svg></a></li>
+      <li><a href="#diagnostics"><span class="n">03</span><span class="t" data-i18n="svc.lab.name">Laboratory Facilities</span><span class="d" data-i18n="svc.lab.short">Laboratory facilities at the clinic help support your doctor's assessment. Ask us which tests are available and when.</span><svg><use href="#i-arrow"/></svg></a></li>
+      <li><a href="#diagnostics"><span class="n">04</span><span class="t" data-i18n="svc.diag.name">Health Plus Diagnostics</span><span class="d" data-i18n="svc.diag.short">Diagnostic services connected with the clinic that help doctors understand your health more clearly.</span><svg><use href="#i-arrow"/></svg></a></li>
+    </ol>
+    <p class="muted small rv" data-i18n="home.services.intro">These are the services Health Plus Clinic has announced. Please contact the clinic to confirm current availability and timings.</p>
   </div>
 
-  <!-- 6 · Diagnostics -->
-  <div class="section wrap">
-    <div class="stage stage-light diag-feature rv">
-      <div>
-        <p class="eyebrow" data-i18n="home.diag.eyebrow">Diagnostic Facilities</p>
-        <h2 class="display" data-i18n="home.diag.title">Answers that guide your care.</h2>
-        <p data-i18n="home.diag.text">Health Plus Diagnostics and the clinic's laboratory support your doctor's assessment with tests carried out close to home.</p>
-        <a class="btn btn-solid" href="#diagnostics"><span data-i18n="cta.diag">Learn About Our Diagnostics</span><svg><use href="#i-arrow"/></svg></a>
-      </div>
-      <dl class="facts">
-        <div><dt data-i18n="label.tests">Available tests</dt><dd data-i18n="ph.tests">[LIST OF AVAILABLE TESTS]</dd></div>
-        <div><dt data-i18n="label.labhours">Laboratory hours</dt><dd data-i18n="ph.labhours">[LABORATORY HOURS]</dd></div>
-        <div><dt data-i18n="label.enquire">Enquiries</dt><dd data-i18n="ph.phone">[CLINIC PHONE NUMBER]</dd></div>
-      </dl>
-    </div>
+  <!-- 4 · One big fact -->
+  <div class="s-fact wrap rv">
+    <span class="fact-n">4</span>
+    <p class="fact-t" data-i18n="home.fact.text">services under one roof in Irong Chesaba Makha Leikai: consultation, a dermatology OPD, a laboratory and diagnostics.</p>
   </div>
 
-  <!-- 7 · Community -->
-  <div class="section community">
-    <div class="wrap split">
-      <figure class="rv touch">
-        <img src="demo/health-plus/img/touch.webp" alt="An adult's finger gently reaching towards a baby's small hand" data-i18n-attr="alt:img.touch.alt" width="736" height="1104">
-        <figcaption class="glass glass-dark" data-i18n="home.comm.quote">Every new beginning needs a caring hand.</figcaption>
-      </figure>
-      <div class="rv">
-        <p class="eyebrow" data-i18n="home.comm.eyebrow">Community</p>
-        <h2 class="display" data-i18n="home.comm.title">Care that reaches the doorstep.</h2>
-        <p data-i18n="home.comm.p1">In November 2024, Health Plus Clinic announced a house-to-house healthcare campaign for residents of the locality.</p>
-        <p data-i18n="home.comm.p2">We see outreach like this as part of who we are: a clinic that knows its neighbours. Upcoming programmes: [UPCOMING COMMUNITY PROGRAMMES].</p>
-        <a class="link-arrow light" href="#about"><span data-i18n="home.comm.link">Our commitment to the community</span><svg><use href="#i-arrow"/></svg></a>
-      </div>
-    </div>
+  <!-- 5 · One full-width line -->
+  <div class="s-line">
+    <p class="wrap" data-i18n="home.comm.quote">Every new beginning needs a caring hand.</p>
   </div>
 
-  <!-- 8 · Contact -->
-  <div class="section wrap">
-    <div class="section-head rv">
-      <p class="eyebrow" data-i18n="home.contact.eyebrow">Contact &amp; Location</p>
+  <!-- 6 · Visit -->
+  <div class="s-visit wrap">
+    <div class="visit-text rv">
       <h2 class="display" data-i18n="home.contact.title">We are here when you need us.</h2>
+      <dl class="visit-facts">
+        <div><dt data-i18n="label.address">Address</dt><dd data-i18n="ph.address">[FULL CLINIC ADDRESS], Irong Chesaba Makha Leikai, Manipur</dd></div>
+        <div><dt data-i18n="label.phone">Phone</dt><dd data-i18n="ph.phone">[CLINIC PHONE NUMBER]</dd></div>
+        <div><dt data-i18n="label.hours">Opening hours</dt><dd data-i18n="ph.hours">[OPENING HOURS]</dd></div>
+        <div><dt data-i18n="label.email">Email</dt><dd data-i18n="ph.email">[CLINIC EMAIL ADDRESS]</dd></div>
+      </dl>
+      <a class="link-arrow" href="https://www.google.com/maps/search/?api=1&amp;query=Irong+Chesaba+Makha+Leikai+Manipur" target="_blank" rel="noopener"><span data-i18n="cta.location">Find Our Location</span><svg><use href="#i-arrow"/></svg></a>
     </div>
-    <div class="contact-grid stage stage-light rv">
-      <div class="glass contact-list">
-        <div class="ci"><span class="ico"><svg><use href="#i-pin"/></svg></span><div><h3 data-i18n="label.address">Address</h3><p data-i18n="ph.address">[FULL CLINIC ADDRESS], Irong Chesaba Makha Leikai, Manipur</p></div></div>
-        <div class="ci"><span class="ico"><svg><use href="#i-phone"/></svg></span><div><h3 data-i18n="label.phone">Phone</h3><p data-i18n="ph.phone">[CLINIC PHONE NUMBER]</p></div></div>
-        <div class="ci"><span class="ico"><svg><use href="#i-mail"/></svg></span><div><h3 data-i18n="label.email">Email</h3><p data-i18n="ph.email">[CLINIC EMAIL ADDRESS]</p></div></div>
-        <div class="ci"><span class="ico"><svg><use href="#i-clock"/></svg></span><div><h3 data-i18n="label.hours">Opening hours</h3><p data-i18n="ph.hours">[OPENING HOURS]</p></div></div>
-        <div class="btn-row">
-          <a class="btn btn-solid" href="#contact"><span data-i18n="cta.appt">Enquire About Appointments</span><svg><use href="#i-arrow"/></svg></a>
-          <a class="btn btn-glass" href="https://www.google.com/maps/search/?api=1&query=Irong+Chesaba+Makha+Leikai+Manipur" target="_blank" rel="noopener" data-i18n="cta.location">Find Our Location</a>
-        </div>
-      </div>
-      <div class="glass map-card">
-        <div class="map" data-q="Irong Chesaba Makha Leikai, Manipur"></div>
-        <p class="map-note" data-i18n="map.note">Map shows the locality. The exact clinic pin will be added once confirmed.</p>
-      </div>
-    </div>
+    <div class="map rv" data-q="Irong Chesaba Makha Leikai, Manipur"></div>
   </div>
 </section>
 
@@ -652,15 +562,20 @@
   </div>
   <div class="wrap footer-base">
     <p data-i18n="footer.disclaimer">The information on this website is general and is not a substitute for medical advice. Services and schedules are subject to confirmation by the clinic.</p>
-    <p><span data-i18n="footer.copy">© Health Plus Clinic</span> · <a href="https://millitech.vercel.app" target="_blank" rel="noopener" data-i18n="footer.credit">Website concept by MilliTech</a></p>
+    <p><span data-i18n="footer.copy">© Health Plus Clinic</span></p>
+    <a class="dev-by" href="https://millitech.vercel.app" target="_blank" rel="noopener">
+      <span>Developed by</span>
+      <svg viewBox="0 0 720 640" aria-hidden="true"><g fill="currentColor"><path d="M360 10 L708 200 L708 518 L518 625 L518 520 L628 462 L628 246 L360 100 L92 246 L92 462 L204 520 L204 625 L12 518 L12 200 Z"/><path d="M360 156 L594 282 L594 483 L518 526 L518 331 L360 246 L204 331 L204 526 L126 483 L126 282 Z"/><path d="M318 271 L402 271 L402 384 L460 350 L480 350 L508 405 L401 463 L401 576 L319 576 L319 463 L212 405 L240 350 L260 350 L318 384 Z"/></g></svg>
+      <b>MILLITECH</b>
+    </a>
   </div>
 </footer>
 
-<div class="demo-ribbon glass" id="ribbon">
+<div class="demo-ribbon" id="ribbon">
   <span data-i18n="ribbon.text">Demo preview by MilliTech. Details in [BRACKETS] are waiting for the clinic's confirmation.</span>
   <button type="button" aria-label="Dismiss" id="ribbon-x">×</button>
 </div>
-<div class="toast glass" id="toast" role="status" aria-live="polite"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- per-page SEO copy (translated with everything else) -->
 <div hidden id="seo">
@@ -684,9 +599,8 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="demo/health-plus/js/leaves.js"></script>
 <script src="demo/health-plus/i18n/mni.js"></script>
 <script src="demo/health-plus/js/site.js"></script>
-<script src="demo/health-plus/js/spring.js"></script>
+<script src="demo/health-plus/js/branch.js"></script>
 </body>
 </html>
