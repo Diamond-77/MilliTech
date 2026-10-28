@@ -15,6 +15,8 @@ The demo lives in `demo-health-plus.html` and `demo/health-plus/`. It follows th
 - Footer #0F0F0F. No gradients anywhere.
 
 ## Pieces
+- **Nav:** logo left, all seven pages spread evenly across the bar, language switch right. Below 1100px the links fold into the menu button.
+- **Map:** a still picture of the locality (from the clinic's design) sits under the live Google map, so the frame is never empty.
 - **Liquid glass (`.lg`):** clear, no tint, 2px blur, thin dark rim, with edge refraction in Chromium. Used on the nav, the services bar and the service pills.
 - **Services bar radius:** top-left 70, top-right 40, bottom-right 70, bottom-left 40.
 - **Crosshair frame (`.xframe`):** hand-drawn lines running past the corners, slightly tilted.
@@ -24,7 +26,7 @@ The demo lives in `demo-health-plus.html` and `demo/health-plus/`. It follows th
 - **Link:** blue underline with a ↗ arrow.
 
 ## Home, one line per screen
-1. **Intro:** dotted hands (sampled from Home Screen 1) reach the blue mark on black. On touch the mark turns black, the name appears below it, the page goes white, the dots go grey and black, and the hands pull back. Click, scroll or a key skips it; `?intro=0` starts at the end.
+1. **Intro:** dotted hands (sampled from Home Screen 1) reach the blue mark on black. On touch the mark turns black, the name appears below it, the page goes white, the dots go grey and black, and the hands pull back. The dots are drawn with three.js (r128): wrists rock, each finger bends on its own beat, and patches of dots blink off, sweep away and come back as square pixels. Without WebGL the hands are drawn still. Click, scroll or a key skips it; `?intro=0` starts at the end.
 2. **Neighbourhood:** centred heading, framed text left and right, family photo in the middle, then the pill and the link.
 3. **Services:** pinned while scrolling. The 01/04 counter, the glass bar (active item blue in brackets, the rest grey and blurred), and the inner-logo drawing under the text, resolving from big pixels.
 4. **The 4:** two image tiles above, the big blue 4 with the fact line, then the full-width blue band.

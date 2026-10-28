@@ -119,10 +119,25 @@
     $$('.page:not([hidden]) .rv:not(.in)').forEach(el => io ? io.observe(el) : el.classList.add('in'));
   }
 
-  /* ---------------- maps (loaded when the page shows) ---------------- */
+  /* ---------------- maps (loaded when the page shows) ----------------
+     A still picture of the locality sits underneath; the live Google map loads on top.
+     Where the host blocks embedded frames (a preview sandbox), the frame is dropped and
+     the picture stays, still linking to Google Maps. */
+  const mapLink = q => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+  let framesBlocked = false;
+  document.addEventListener('securitypolicyviolation', e => {
+    if (!/frame-src|child-src|default-src/.test(e.violatedDirective) || !/google/.test(e.blockedURI || '')) return;
+    framesBlocked = true;
+    $$('.map iframe').forEach(f => f.remove());
+  });
   function loadMaps() {
     $$('.page:not([hidden]) .map:not(.loaded)').forEach(m => {
       m.classList.add('loaded');
+      const a = document.createElement('a');
+      a.className = 'map-still'; a.href = mapLink(m.dataset.q); a.target = '_blank'; a.rel = 'noopener';
+      a.setAttribute('aria-label', 'Open the map in Google Maps');
+      m.appendChild(a);
+      if (framesBlocked) return;
       const f = document.createElement('iframe');
       f.loading = 'lazy'; f.title = 'Map';
       f.referrerPolicy = 'no-referrer-when-downgrade';
