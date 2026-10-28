@@ -9,7 +9,7 @@
 <link rel="icon" type="image/webp" href="demo/health-plus/img/logo-mark.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="demo/health-plus/css/site.css">
 </head>
 <body>
@@ -152,7 +152,7 @@
 
   <!-- 4 · Why choose -->
   <div class="section band">
-    <div class="fluted band-bg" data-src="demo/health-plus/img/family.webp" data-pos="70% 35%" data-flutes="0,1" data-count="22" aria-hidden="true"></div>
+    <div class="fluted band-bg" data-src="demo/health-plus/img/family.webp" data-pos="45% 30%" data-flutes="0,1" data-count="22" aria-hidden="true"></div>
     <div class="wrap band-inner">
       <div class="glass glass-strong why rv">
         <p class="eyebrow" data-i18n="home.why.eyebrow">Why Health Plus Clinic</p>
@@ -681,10 +681,14 @@
   <span data-i18n="form.missing">Please add your name and phone number.</span>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="demo/health-plus/js/leaves.js"></script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
 <script src="demo/health-plus/i18n/mni.js"></script>
 <script src="demo/health-plus/js/site.js"></script>
-<script src="demo/health-plus/js/spring.js"></script>
+<script type="module" src="demo/health-plus/js/hero3d.js"></script>
 </body>
 </html>

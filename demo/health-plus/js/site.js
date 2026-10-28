@@ -53,6 +53,8 @@
     });
     $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
     store.set('hp-lang', lang);
+    window.HP_WORD = t('home.hero.word');
+    window.HPSpring && window.HPSpring.setWord(window.HP_WORD);
     setSeo(current);
     if (announce && lang === 'mni' && !Object.keys(MNI).length) toast(t('toast.mni'));
   }
@@ -94,7 +96,7 @@
     closeMenu();
     if (changed) window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
     window.HPSpring && window.HPSpring.pause(route !== 'home');
-    requestAnimationFrame(() => { layoutFluted(); observeReveals(); loadMaps(); window.dispatchEvent(new Event('resize')); });
+    requestAnimationFrame(() => { observeReveals(); loadMaps(); window.dispatchEvent(new Event('resize')); });
   }
   addEventListener('hashchange', go);
 
@@ -111,76 +113,12 @@
   };
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
 
-  /* ---------------- fluted (reeded) glass ----------------
-     Each flute shows a horizontally magnified slice of the photo behind it, the way
-     ribbed glass bends what is behind it. data-flutes="from,to" sets which part of the
-     width is covered (0..1), data-count how many ribs fit across the full width. */
+  /* ---------------- photos ---------------- */
   const fluted = $$('.fluted');
-  const imgSize = {};
   fluted.forEach(el => {
-    const src = el.dataset.src;
-    el.style.backgroundImage = `url("${src}")`;
+    el.style.backgroundImage = `url("${el.dataset.src}")`;
     el.style.backgroundPosition = el.dataset.pos || '50% 50%';
-    const img = new Image();
-    img.onload = () => { imgSize[src] = [img.naturalWidth, img.naturalHeight]; buildFlutes(el); };
-    img.src = src;
   });
-
-  function buildFlutes(el) {
-    const size = imgSize[el.dataset.src]; if (!size) return;
-    const W = el.clientWidth, H = el.clientHeight; if (!W || !H) return;
-    const [iw, ih] = size;
-    const cover = Math.max(W / iw, H / ih), bw = iw * cover, bh = ih * cover;
-    const [px, py] = (el.dataset.pos || '50% 50%').split(' ').map(v => parseFloat(v) / 100);
-    const ox = (W - bw) * px, oy = (H - bh) * py;
-    const [f0, f1] = (el.dataset.flutes || '0,1').split(',').map(Number);
-    const count = +(el.dataset.count || (W < 560 ? 9 : 16));
-    const sw = W / count;
-    let box = el.querySelector('.flutes');
-    if (!box) { box = document.createElement('div'); box.className = 'flutes'; el.appendChild(box); }
-    box.innerHTML = '';
-    const mag = 1.32;
-    const i0 = Math.round(f0 * count), i1 = Math.round(f1 * count);
-    const strips = [];
-    for (let i = i0; i < i1; i++) {
-      const s = document.createElement('i');
-      s.style.left = (i * sw) + 'px'; s.style.width = Math.ceil(sw + 0.5) + 'px';
-      s.style.backgroundImage = `url("${el.dataset.src}")`;
-      s.style.backgroundSize = `${bw * mag}px ${bh}px`;
-      s.dataset.cx = i * sw + sw / 2;
-      box.appendChild(s); strips.push(s);
-    }
-    el._flute = { strips, sw, mag, ox, oy };
-    paintFlutes(el, 0);
-  }
-
-  function paintFlutes(el, phase) {
-    const f = el._flute; if (!f) return;
-    f.strips.forEach((s, j) => {
-      const cx = +s.dataset.cx;
-      const drift = Math.sin(j * 0.85 + phase) * f.sw * 0.45;
-      const bx = f.sw / 2 - f.mag * (cx + drift - f.ox);
-      s.style.backgroundPosition = `${bx}px ${f.oy}px`;
-    });
-  }
-
-  function layoutFluted() { fluted.forEach(el => { if (el.offsetParent !== null) buildFlutes(el); }); }
-  let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(layoutFluted, 120); });
-
-  // ribs breathe slowly as you scroll
-  let ticking = false;
-  addEventListener('scroll', () => {
-    if (ticking) return; ticking = true;
-    requestAnimationFrame(() => {
-      ticking = false;
-      fluted.forEach(el => {
-        if (!el._flute || el.offsetParent === null) return;
-        const r = el.getBoundingClientRect();
-        if (r.bottom < 0 || r.top > innerHeight) return;
-        paintFlutes(el, (r.top / innerHeight) * 2.2);
-      });
-    });
-  }, { passive: true });
 
   /* ---------------- reveal on scroll ---------------- */
   const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => {

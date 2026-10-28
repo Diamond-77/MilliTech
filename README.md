@@ -4,7 +4,7 @@ Static site for MilliTech, a web service agency in Imphal, Manipur. No build ste
 
 - `index.html`: the whole home page (3D conveyor hero with three.js, offer carousel, sample demos, claim form).
 - `service-menu.html` (served at `/service-menu`): landing page style menu. Three.js cover, 11 style spreads, and an order form that sends the picked style to WhatsApp. Style data is the `STYLES` array in the page; images live in `menu/img/` as `<slug>-main.webp`, `<slug>-2.webp`, `<slug>-3.webp` (2 and 3 are cropped to the first screen, 16:10).
-- `demo-health-plus.html` (served at `/demo-health-plus`): client demo for Health Plus Clinic. Assets in `demo/health-plus/`. The hero branch is `img/branch.webp` with `img/branch-data.png` (growth order, thickness, up-facing) and `js/leaves.js` (leaf points). Copy lives in the HTML with `data-i18n` keys; Romanised Meiteilon goes in `i18n/mni.js` (generate it from the filled translation sheet with `i18n/sheet-to-mni.py`), and `DEFAULT_LANG` in `js/site.js` picks the starting language.
+- `demo-health-plus.html` (served at `/demo-health-plus`): client demo for Health Plus Clinic, kept apart from the agency pages (nothing links to it). Assets in `demo/health-plus/`. The hero is `js/hero3d.js`: a procedural 3D branch (three.js 0.160 from jsDelivr) that comes into leaf; add `?p=1.35` to the URL to freeze it at any moment. Copy lives in the HTML with `data-i18n` keys; Romanised Meiteilon goes in `i18n/mni.js` (generate it from the translated content file with `i18n/txt-to-mni.py`), and `DEFAULT_LANG` in `js/site.js` picks the starting language.
 - `privacy.html`, `terms.html`, `refunds.html`, `cookies.html`: legal pages.
 - `favicon.svg`: the emblem.
 
