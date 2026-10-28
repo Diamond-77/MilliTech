@@ -76,6 +76,7 @@ h1, h2, h3, p, dl, dd, figure, ol { margin: 0; }
 .nav.open .burger span:first-child { transform: translateY(4px) rotate(45deg); }
 .nav.open .burger span:last-child { transform: translateY(-4px) rotate(-45deg); }
 
+.nav-quick { display: none; }
 body.intro .nav { opacity: 0; transform: translate(-50%, -24px); pointer-events: none; }
 
 /* ---------- shared pieces ---------- */
@@ -365,9 +366,13 @@ body.intro .demo-ribbon { display: none; }
   }
   .nav-links a { font-size: 18px; padding: 12px 0; border-bottom: 1px solid #eee; }
   .nav-links a:last-child { border: 0; }
-  .lang { margin-left: auto; }
   .nav.open .nav-links { transform: none; opacity: 1; pointer-events: auto; }
   .burger { display: block; }
+  /* the essentials stay in the bar; everything else is in the menu */
+  .nav-quick { display: flex; gap: clamp(12px, 3.4vw, 34px); margin: 0 auto 0 clamp(10px, 3vw, 30px); }
+  .nav-quick a { font: 400 clamp(12px, 2.1vw, 17px)/1 var(--f-head); text-transform: uppercase; white-space: nowrap; }
+  .nav-quick a.active { color: var(--blue); }
+  .lang { margin-left: 0; }
 }
 @media (max-width: 640px) {
   body { font-size: 11px; }
@@ -379,6 +384,9 @@ body.intro .demo-ribbon { display: none; }
   .link-up { font-size: 10.5px; }
   .care-slide canvas { width: 86%; }
   .hero-logo { top: 52%; }
+  .nav-quick .q-wide { display: none; }
+  .nav { gap: 8px; }
+  .lang button { padding: 6px 8px; }
   .demo-ribbon { font-size: 10px; padding: 6px 8px 6px 12px; }
   .s-four { padding-top: 120px; }
   .four { padding-left: 0; }
