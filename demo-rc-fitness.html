@@ -1,0 +1,1070 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="demo/rc-fitness/img/logo-mark.svg" type="image/svg+xml">
+<meta property="og:title" content="RC Fitness Samurou | Gym & Fitness Centre in Imphal West">
+<meta property="og:description" content="Bodybuilding, weight training, cardio, Zumba, aerobic sessions, personal training and membership plans in Samurou, Imphal West.">
+<meta property="og:image" content="demo/rc-fitness/media/edit-poster.jpg">
+<title>RC Fitness Samurou | Gym &amp; Fitness Centre in Imphal West</title>
+<meta name="description" content="Explore RC Fitness in Samurou, Imphal West. Discover bodybuilding, weight training, cardio, Zumba, aerobic sessions, personal training, and membership plans.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bakbak+One&family=Bai+Jamjuree:wght@400;500;600;700&family=Baloo+Paaji+2:wght@600;700;800&display=swap">
+<style>
+  /* Layout: the client's own hero (logo / pill nav / record deck, dotted wordmark, framed reveal, copy + two blocks),
+     then full-width bands of real photos. Text sits beside photos, never on them. No gradients. Single light look. */
+  :root {
+    --paper: #ffffff;
+    --mist: #f6f6f6;
+    --ink: #0b0b0b;
+    --red: #e3342b;
+    --red-deep: #c4231b;
+    --grey: #6d6d6d;
+    --line: #0b0b0b;
+    --cyan: #23c4d6;
+    --lime: #b8e04a;
+    --head: "Bakbak One", "Arial Black", Impact, sans-serif;
+    --body: "Bai Jamjuree", "Segoe UI", Arial, sans-serif;
+    --num: "Baloo Paaji 2", "Bakbak One", "Arial Black", sans-serif;
+    --gut: max(16px, env(safe-area-inset-left, 0px));
+    --gutr: max(16px, env(safe-area-inset-right, 0px));
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.55; overflow-x: hidden; }
+  a { color: inherit; }
+  img { display: block; max-width: 100%; }
+  h1, h2, h3 { font-family: var(--head); font-weight: 400; text-transform: uppercase; line-height: .95; margin: 0; text-wrap: balance; }
+  h2 { font-size: clamp(40px, 6.2vw, 92px); letter-spacing: -.005em; }
+  h3 { font-size: 26px; }
+  p { margin: 0; max-width: 62ch; }
+  .wrap { max-width: 1320px; margin: 0 auto; padding-left: var(--gut); padding-right: var(--gutr); }
+  section { padding-block: clamp(64px, 9vw, 128px); }
+  .eyebrow { font-weight: 600; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--red); display: flex; gap: 10px; align-items: center; }
+  .eyebrow::before { content: ""; width: 10px; height: 11px; background: currentColor; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
+  .lede { font-size: 19px; color: #2a2a2a; }
+  .head { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 24px 48px; align-items: end; margin-bottom: clamp(32px, 5vw, 64px); }
+  .head > div { display: grid; gap: 16px; }
+  .fine { font-size: 13px; color: var(--grey); }
+  .photo { position: relative; overflow: hidden; background: #1a1a1a; max-width: 100%; }
+  .photo img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2,.7,.2,1); }
+  .photo:hover img { transform: scale(1.04); }
+  .need { display: grid; place-items: center; background: var(--mist); border: 1.5px dashed #bdbdbd; color: var(--grey); font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; text-align: center; padding: 12px; }
+  .r-43 { aspect-ratio: 4 / 3; } .r-34 { aspect-ratio: 3 / 4; } .r-45 { aspect-ratio: 4 / 5; } .r-11 { aspect-ratio: 1; } .r-169 { aspect-ratio: 16 / 9; } .r-21 { aspect-ratio: 21 / 9; }
+
+  /* Buttons: hero uses solid blocks like the design */
+  .btns { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn { font-family: var(--head); font-size: 19px; letter-spacing: .03em; text-transform: uppercase; text-decoration: none;
+         display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 24px 12px; border: 2px solid var(--ink); background: var(--paper); color: var(--ink); cursor: pointer; transition: transform .15s, box-shadow .15s; }
+  .btn.solid { background: var(--red); border-color: var(--red); color: #fff; }
+  .btn.dark { background: var(--ink); color: #fff; }
+  .btn:hover { transform: translate(-3px, -3px); box-shadow: 5px 5px 0 var(--ink); }
+  .btn.solid:hover { box-shadow: 5px 5px 0 var(--ink); }
+  a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+
+  /* ---------- HERO (client design) ---------- */
+  .hero { background: var(--mist); padding-block: 26px 0; position: relative; }
+  .hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 64px; background: var(--paper); }
+  .hero { padding-top: calc(env(safe-area-inset-top, 0px) + 130px); }
+  .top { position: fixed; z-index: 50; top: calc(env(safe-area-inset-top, 0px) + 16px); left: 50%; transform: translateX(-50%);
+         width: min(1320px, 100%); padding-left: var(--gut); padding-right: var(--gutr);
+         display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: clamp(12px, 3vw, 48px); align-items: center; pointer-events: none; }
+  .top > * { pointer-events: auto; }
+  /* Liquid glass, same recipe as the Health Plus nav: clear, 2px blur, bright top-left rim, thin dark rim, edge refraction in Chromium */
+  .lg { background: rgba(255, 255, 255, .06); -webkit-backdrop-filter: blur(2px) saturate(1.3); backdrop-filter: blur(2px) saturate(1.3);
+        box-shadow: inset 1px 1px 0 rgba(255,255,255,.9), inset -1px -1px 0 rgba(255,255,255,.35), inset 0 0 0 1px rgba(13,13,13,.55), 0 6px 18px rgba(13,13,13,.07); }
+  .mark { width: 76px; display: block; flex: none; }
+  .mark img { width: 100%; height: auto; }
+  .pill { list-style: none; margin: 0; padding: 0 clamp(16px, 2.4vw, 36px); height: 70px; display: flex; align-items: center; justify-content: space-between; gap: 6px; border-radius: 35px; }
+  .pill a { display: flex; align-items: center; gap: 7px; text-decoration: none; color: var(--red); font-size: 16px; font-weight: 600; padding: 8px 4px; white-space: nowrap; }
+  .pill a:hover span { text-decoration: underline; text-underline-offset: 4px; }
+  .pill svg { width: 20px; height: 20px; flex: none; }
+  .deck-wrap { display: flex; align-items: center; gap: 6px; padding: 4px 12px 4px 4px; border-radius: 26px; }
+  .deck { width: 88px; height: 88px; border: 0; padding: 0; background: none; cursor: pointer; position: relative; }
+  .deck svg { width: 100%; height: 100%; overflow: visible; }
+  .deck .vinyl { transform-origin: 50px 50px; }
+  .playing .deck .vinyl, .playing .bigdisc .spin { animation: spin 2.4s linear infinite; }
+  .deck .arm { transform-origin: 78px 18px; transition: transform .5s cubic-bezier(.3,.8,.3,1); transform: rotate(-14deg); }
+  .playing .deck .arm { transform: rotate(6deg); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .feel { font-family: var(--head); font-size: 15px; line-height: 1.05; display: grid; text-align: center; }
+  .wordmark { margin: clamp(44px, 7vw, 96px) auto clamp(32px, 5vw, 64px); width: min(760px, 92%); display: block; }
+  .wordmark svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .wordmark rect { fill: #000; transform-box: fill-box; transform-origin: center; animation: blink 3.2s cubic-bezier(.6,0,.4,1) infinite, beat 1.6s ease-in-out infinite; transition: transform .25s; }
+  /* hold pure black, snap through to full red, hold, back: strong contrast instead of a muddy mid-tone */
+  @keyframes blink { 0%, 34% { fill: #000; } 46%, 84% { fill: #ff1a12; } 96%, 100% { fill: #000; } }
+  @keyframes beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(.82); } }
+  .wordmark rect.hot { animation: none; fill: #ff1a12; transform: scale(1.25); }
+  @media (prefers-reduced-motion: reduce) { .wordmark rect { animation: none; } }
+  .reveal { position: relative; z-index: 1; aspect-ratio: 1614 / 974; border: 1.5px solid var(--ink); background: var(--ink); overflow: hidden; max-width: 100%; }
+  .reveal canvas, .reveal img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; touch-action: pan-y; cursor: crosshair; }
+  .hero-bottom { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .8fr) minmax(0, .7fr); gap: 18px; align-items: stretch; padding-block: 28px 0; }
+  .hero-bottom .lede { font-size: clamp(18px, 1.7vw, 23px); line-height: 1.35; color: var(--ink); padding: 0 20px; }
+  .block { font-family: var(--head); font-size: clamp(20px, 2.2vw, 30px); text-transform: uppercase; text-decoration: none; display: flex; align-items: flex-end; justify-content: space-between; padding: 16px 20px; min-height: 108px; transition: transform .15s, box-shadow .15s; }
+  .block.red { background: var(--red); color: #fff; }
+  .block.line { border: 2px solid var(--ink); background: var(--paper); }
+  .block:hover { transform: translate(-3px, -3px); box-shadow: 6px 6px 0 var(--ink); }
+  .block i { font-style: normal; font-family: var(--body); font-weight: 700; font-size: 28px; line-height: 1; }
+  .hero-facts { display: flex; flex-wrap: wrap; gap: 8px 28px; padding: 22px 20px 0; font-size: 14px; font-weight: 600; color: var(--grey); position: relative; z-index: 1; }
+  .hero-facts b { color: var(--ink); font-family: var(--num); font-weight: 800; font-size: 20px; margin-right: 4px; }
+
+  @media (max-width: 1180px) { .pill span { display: none; } .pill { justify-content: space-around; } }
+  @media (max-width: 900px) {
+    .hero { padding-top: calc(env(safe-area-inset-top, 0px) + 112px); }
+    .pill { height: 58px; border-radius: 29px; }
+    .pill svg { width: 22px; height: 22px; }
+    .hero-bottom { grid-template-columns: 1fr 1fr; }
+    .hero-bottom .lede { grid-column: 1 / -1; padding: 0; }
+    .hero-facts { padding-inline: 0; }
+  }
+  @media (max-width: 520px) {
+    .mark { width: 46px; }
+    .deck { width: 60px; height: 60px; }
+    .feel { font-size: 11px; }
+    .pill { height: 50px; border-radius: 25px; padding: 0 8px; }
+    .pill svg { width: 19px; height: 19px; }
+    .pill li:nth-child(4), .pill li:nth-child(6) { display: none; }
+    .hero { padding-top: calc(env(safe-area-inset-top, 0px) + 96px); }
+    .top { top: calc(env(safe-area-inset-top, 0px) + 10px); gap: 10px; }
+    .pill a { padding: 6px 2px; }
+    .block { min-height: 86px; padding: 12px 14px; }
+  }
+
+  /* ---------- Music popup (inspired by the client's settings card) ---------- */
+  .tunes { border: 0; padding: 0; background: transparent; max-width: calc(100vw - 32px); width: 560px; color: var(--ink); }
+  .tunes::backdrop { background: rgba(60, 60, 60, .72); }
+  .card { background: #eeeeee; border-radius: 44px; padding: 34px 0 30px; display: grid; gap: 22px; justify-items: center; overflow: hidden; }
+  .bigdisc { width: 228px; height: 228px; border-radius: 34px; background: #e2e2e2; box-shadow: inset 0 0 0 1px #d6d6d6, 0 14px 30px rgba(0,0,0,.08); display: grid; place-items: center; border: 0; cursor: pointer; padding: 0; }
+  .bigdisc svg { width: 172px; height: 172px; }
+  .bigdisc .spin { transform-origin: 50% 50%; }
+  .now { text-align: center; display: grid; gap: 2px; }
+  .now b { font-family: var(--head); font-size: 26px; text-transform: uppercase; line-height: 1; }
+  .now span { font-size: 13px; color: var(--grey); font-weight: 500; }
+  .shelf { display: flex; gap: 14px; overflow-x: auto; width: 100%; padding: 6px 28px 10px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .shelf::-webkit-scrollbar { display: none; }
+  .cd { flex: none; width: 96px; border: 0; background: none; padding: 0; cursor: pointer; display: grid; gap: 6px; justify-items: center; scroll-snap-align: start; font: 600 12px var(--body); color: var(--ink); }
+  .cd svg { width: 92px; height: 92px; transition: transform .25s; }
+  .cd:hover svg { transform: translateY(-4px) rotate(-14deg); }
+  .cd[aria-pressed="true"] svg { transform: translateY(-6px); filter: drop-shadow(0 6px 0 var(--ink)); }
+  .cd span { max-width: 96px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .controls { display: flex; gap: 10px; align-items: center; }
+  .ctl { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--ink); background: #fff; display: grid; place-items: center; cursor: pointer; }
+  .ctl svg { width: 18px; height: 18px; }
+  .continue { width: min(320px, 80%); height: 62px; border-radius: 32px; border: 0; background: var(--ink); color: #fff; font: 500 22px var(--body); cursor: pointer; }
+  .continue:hover { background: var(--red); }
+  #vol { width: 110px; accent-color: var(--red); }
+
+  /* ---------- Rating strip ---------- */
+  .strip { background: var(--ink); color: #fff; }
+  .strip .wrap { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .strip .cell { padding: 24px 0 24px 22px; display: grid; gap: 2px; border-left: 1px solid #2c2c2c; }
+  .strip .cell:first-child { border-left: 0; padding-left: 0; }
+  .strip .big { font-family: var(--num); font-weight: 800; font-size: 46px; line-height: 1; }
+  .strip .big i { font-style: normal; color: var(--red); }
+  .strip small { font-size: 12px; color: #b0b0b0; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; }
+  @media (max-width: 760px) { .strip .wrap { grid-template-columns: 1fr 1fr; } .strip .cell:nth-child(3) { border-left: 0; padding-left: 0; } .strip .cell:nth-child(n+3) { border-top: 1px solid #2c2c2c; } }
+
+  /* ---------- Intro ---------- */
+  .intro-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr) minmax(0, .9fr); gap: 20px; align-items: start; }
+  .intro-grid .txt { display: grid; gap: 20px; align-content: start; }
+  .intro-grid .photo:nth-child(3) { margin-top: 80px; }
+  .tick { display: grid; gap: 10px; list-style: none; padding: 0; margin: 0; }
+  .tick li { display: grid; grid-template-columns: 24px 1fr; gap: 6px; font-weight: 600; }
+  .tick li::before { content: "+"; font-family: var(--head); color: var(--red); font-size: 22px; line-height: 1.05; }
+  @media (max-width: 900px) { .intro-grid { grid-template-columns: 1fr 1fr; } .intro-grid .txt { grid-column: 1 / -1; } .intro-grid .photo:nth-child(3) { margin-top: 40px; } }
+
+  /* ---------- Programmes ---------- */
+  .prog { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; background: var(--line); border: 2px solid var(--line); }
+  .card-p { background: var(--paper); display: grid; grid-template-rows: auto 1fr; }
+  .card-p .photo, .card-p .need { border-bottom: 2px solid var(--line); }
+  .card-p .need { border-top: 0; border-left: 0; border-right: 0; border-bottom-style: solid; border-bottom-color: var(--line); }
+  .card-p .body { padding: 16px 16px 18px; display: grid; gap: 8px; align-content: start; }
+  .card-p .num { font-family: var(--num); font-weight: 800; color: var(--red); font-size: 18px; line-height: 1; }
+  .card-p p { font-size: 14.5px; color: #333; }
+  .card-p a { font-family: var(--head); font-size: 15px; text-transform: uppercase; color: var(--red); text-decoration: none; }
+  .card-p:hover h3 { color: var(--red); }
+  @media (max-width: 1100px) { .prog { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 700px) { .prog { grid-template-columns: repeat(2, minmax(0, 1fr)); } .card-p .body { padding: 12px; } .card-p h3 { font-size: 20px; } .card-p p { font-size: 13.5px; } }
+
+  /* ---------- Experience (video, full width) ---------- */
+  .exp { background: var(--ink); color: #fff; overflow-x: clip; }
+  .exp .lede { color: #d4d4d4; }
+  .theatre { position: relative; width: 100vw; margin-left: calc(50% - 50vw); background: #000; aspect-ratio: 1280 / 554; max-height: 86vh; }
+  .theatre video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .sound { position: absolute; right: calc(var(--gutr) + 4px); bottom: 18px; font: 600 13px var(--body); letter-spacing: .06em; text-transform: uppercase; color: #fff; background: rgba(11,11,11,.7); border: 1.5px solid #fff; padding: 10px 14px; cursor: pointer; display: flex; gap: 8px; align-items: center; }
+  .sound:hover { background: var(--red); border-color: var(--red); }
+  .mosaic { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
+  .mosaic figure { margin: 0; grid-column: span 2; display: grid; gap: 8px; }
+  .mosaic figure.wide { grid-column: span 3; }
+  .mosaic figcaption { font-size: 12px; color: #a8a8a8; text-transform: uppercase; letter-spacing: .1em; font-weight: 600; }
+  @media (max-width: 700px) { .mosaic { grid-template-columns: 1fr 1fr; } .mosaic figure, .mosaic figure.wide { grid-column: span 1; } }
+
+  /* ---------- Price tables ---------- */
+  .plans { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 24px; align-items: stretch; }
+  .table { border: 2px solid var(--line); background: var(--paper); }
+  .row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 16px; align-items: center; padding: 18px 20px; border-top: 1px solid #dcdcdc; }
+  .row:first-child { border-top: 0; }
+  .row.th { background: var(--ink); color: #fff; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; font-weight: 600; padding-block: 10px; }
+  .row .name { font-family: var(--head); font-size: 26px; text-transform: uppercase; line-height: 1; }
+  .row .name small { display: block; font-family: var(--body); font-weight: 500; font-size: 13px; text-transform: none; color: var(--grey); margin-top: 6px; }
+  .price { font-family: var(--num); font-weight: 800; font-size: 40px; line-height: 1; text-align: right; font-variant-numeric: tabular-nums; min-width: 5ch; }
+  .was { font-family: var(--num); font-weight: 600; font-size: 22px; color: #a0a0a0; text-decoration: line-through; text-align: right; min-width: 4ch; }
+  .off { display: inline-block; font-family: var(--body); font-weight: 700; font-size: 11px; background: var(--red); color: #fff; padding: 3px 7px; margin-left: 8px; vertical-align: middle; letter-spacing: .04em; }
+  .row.hl { background: #fff1f0; }
+  .side { display: flex; flex-direction: column; gap: 16px; }
+  .plans > .table { align-self: start; }
+  .side .fill { flex: 1 1 0; min-height: 140px; }
+  @media (max-width: 900px) { .plans { grid-template-columns: 1fr; } }
+  @media (max-width: 520px) { .row { padding: 14px; gap: 10px; } .row .name { font-size: 21px; } .price { font-size: 30px; } .was { font-size: 17px; } }
+
+  /* ---------- Students (red band) ---------- */
+  .students { background: var(--red); color: #fff; }
+  .students .eyebrow { color: #fff; }
+  .students .lede { color: #fff; }
+  .stu { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 40px; align-items: center; }
+  .stu-prices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; background: var(--ink); border: 2px solid var(--ink); }
+  .stu-prices div { background: #fff; color: var(--ink); padding: 20px 16px; display: grid; gap: 4px; }
+  .stu-prices span { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--grey); font-weight: 600; }
+  .stu-prices b { font-family: var(--num); font-weight: 800; font-size: clamp(34px, 4.6vw, 60px); line-height: 1; }
+  .idcard { display: flex; gap: 12px; align-items: center; font-weight: 700; }
+  .idcard i { width: 46px; height: 30px; border: 2px solid #fff; display: grid; place-items: center; font-style: normal; font-size: 10px; flex: none; }
+  .students .need { background: var(--red-deep); border-color: #fff; color: #fff; }
+  @media (max-width: 900px) { .stu { grid-template-columns: 1fr; } }
+  @media (max-width: 520px) { .stu-prices div { padding: 14px 10px; } }
+
+  /* ---------- Group ---------- */
+  .group { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 24px; }
+  .group .photos { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-content: start; }
+  .group .photos > :first-child { grid-column: 1 / -1; }
+  .gcards { display: flex; flex-direction: column; gap: 14px; }
+  .gcards .fill { flex: 1 1 0; min-height: 180px; }
+  .gcard { border: 2px solid var(--line); padding: 20px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 20px; align-items: center; }
+  .gcard p { font-size: 14.5px; color: #333; grid-column: 1; }
+  .gcard .price { grid-row: 1 / span 3; grid-column: 2; }
+  .gcard.combo { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .gcard.combo p { color: #cfcfcf; }
+  .tagline { color: var(--red); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; }
+  @media (max-width: 900px) { .group { grid-template-columns: 1fr; } }
+
+  /* ---------- PT ---------- */
+  .pt { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 32px; align-items: stretch; }
+  .pt > .photo { aspect-ratio: auto; min-height: 320px; }
+  .steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px; background: var(--line); border: 2px solid var(--line); }
+  .steps div { background: var(--paper); padding: 14px 12px; display: grid; gap: 2px; }
+  .steps .pct { font-family: var(--num); font-weight: 800; font-size: 50px; line-height: 1; color: var(--red); }
+  .steps .pct.zero { color: #c8c8c8; }
+  .steps span { font-size: 11px; text-transform: uppercase; color: var(--grey); letter-spacing: .08em; font-weight: 600; }
+  @media (max-width: 900px) { .pt { grid-template-columns: 1fr; } .pt > .photo { aspect-ratio: 4 / 5; min-height: 0; } }
+  @media (max-width: 520px) { .steps .pct { font-size: 34px; } }
+
+  /* ---------- Why ---------- */
+  .why { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; background: var(--line); border: 2px solid var(--line); }
+  .why div { background: var(--paper); padding: 26px 22px; display: grid; gap: 10px; align-content: start; }
+  .why .k { font-family: var(--num); font-weight: 800; font-size: 60px; line-height: .9; color: var(--red); }
+  .why p { font-size: 15px; color: #333; }
+  @media (max-width: 900px) { .why { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .why { grid-template-columns: 1fr; } }
+
+  /* ---------- Gallery ---------- */
+  .gallery { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 220px; grid-auto-flow: dense; gap: 12px; }
+  .gallery .w2 { grid-column: span 2; } .gallery .h2 { grid-row: span 2; }
+  .ig { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 22px; flex-wrap: wrap; }
+  .ig b { font-family: var(--head); font-size: clamp(24px, 3vw, 36px); text-transform: uppercase; font-weight: 400; }
+  @media (max-width: 700px) { .gallery { grid-template-columns: 1fr 1fr; grid-auto-rows: 150px; } }
+
+  /* ---------- Contact ---------- */
+  .contact { background: var(--ink); color: #fff; }
+  .contact .lede { color: #d4d4d4; }
+  .contact .btn { background: var(--ink); color: #fff; border-color: #fff; }
+  .contact .btn.solid { background: var(--red); border-color: var(--red); }
+  .contact .btn:hover { box-shadow: 5px 5px 0 #fff; }
+  .cgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 36px; }
+  .facts { display: grid; gap: 24px; align-content: start; }
+  .facts dl { margin: 0; display: grid; gap: 18px; }
+  .facts dt { font-size: 12px; color: #a8a8a8; text-transform: uppercase; letter-spacing: .1em; font-weight: 600; margin-bottom: 2px; }
+  .facts dd { margin: 0; font-size: 19px; font-weight: 600; }
+  .facts dd.phone { font-family: var(--num); font-weight: 800; font-size: 54px; line-height: 1; user-select: all; }
+  .hours { width: 100%; border-collapse: collapse; }
+  .hours td { padding: 9px 0; border-top: 1px solid #2f2f2f; font-size: 15px; }
+  .hours td:last-child { text-align: right; font-weight: 700; }
+  .map { border: 2px solid #fff; background: #151515; aspect-ratio: 4 / 3; position: relative; overflow: hidden; }
+  .map svg.roads { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .map .pin { position: absolute; left: 54%; top: 46%; transform: translate(-50%, -100%); display: grid; justify-items: center; gap: 6px; }
+  .map .pin img { width: 42px; }
+  .map iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; filter: grayscale(.2) contrast(1.05); }
+  .map .pin span { background: #fff; color: var(--ink); font-size: 11px; font-weight: 700; padding: 3px 7px; text-transform: uppercase; white-space: nowrap; letter-spacing: .06em; }
+  @media (max-width: 900px) { .cgrid { grid-template-columns: 1fr; } .facts dd.phone { font-size: 44px; } }
+
+  /* ---------- FAQ ---------- */
+  .faq { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 40px; align-items: stretch; }
+  .faq .head { display: flex; flex-direction: column; align-items: stretch; gap: 18px; margin: 0; }
+  .faq .head .fill { flex: 1 1 0; min-height: 220px; }
+  details { border-top: 2px solid var(--line); }
+  details:last-child { border-bottom: 2px solid var(--line); }
+  summary { list-style: none; cursor: pointer; padding: 18px 0; display: grid; grid-template-columns: 38px minmax(0, 1fr) 24px; gap: 10px; align-items: baseline; font-weight: 700; font-size: 18px; }
+  summary::-webkit-details-marker { display: none; }
+  summary .q { font-family: var(--num); font-weight: 800; color: var(--red); }
+  summary::after { content: "+"; font-family: var(--head); font-size: 28px; line-height: .6; color: var(--red); }
+  details[open] summary::after { content: "−"; }
+  details .a { padding: 0 34px 20px 48px; color: #333; }
+  @media (max-width: 900px) { .faq { grid-template-columns: 1fr; } .faq .head .fill { flex: none; aspect-ratio: 16 / 9; min-height: 0; } details .a { padding-left: 0; padding-right: 0; } }
+
+  /* ---------- Footer ---------- */
+  footer { background: var(--ink); color: #fff; padding-block: 56px 26px; border-top: 1px solid #222; overflow: hidden; }
+  .fgrid { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); gap: 28px; }
+  .fgrid h4 { margin: 0 0 12px; font-weight: 600; font-size: 12px; color: #a8a8a8; text-transform: uppercase; letter-spacing: .12em; }
+  .fgrid ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  .fgrid a { text-decoration: none; } .fgrid a:hover { color: var(--red); }
+  .fbrand { display: grid; gap: 14px; align-content: start; }
+  .fbrand img { width: 64px; }
+  .fbrand p { color: #a8a8a8; font-size: 14px; }
+  .giant { margin-top: 48px; width: calc(100vw - 24px); margin-left: calc(50% - 50vw + 12px); display: block; }
+  .giant text { font-family: var(--head); fill: var(--red); }
+  .legal { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 18px; padding-top: 16px; border-top: 1px solid #2a2a2a; font-size: 13px; color: #a8a8a8; }
+  .dev-by { display: inline-flex; align-items: center; gap: .5em; color: #cfcfcf; text-decoration: none; padding: 6px 10px; margin: -6px -10px; border-radius: 4px; transition: background .2s; }
+  .dev-by svg { width: 1.6em; height: 1.45em; color: #c8ff2e; transition: transform .3s; }
+  .dev-by b { font-family: var(--head); font-weight: 400; font-size: 1.15em; letter-spacing: .06em; color: #fff; }
+  .dev-by i { font-style: normal; color: #c8ff2e; }
+  .dev-by:hover { background: #1c1c1c; } .dev-by:hover svg { transform: rotate(-8deg) scale(1.1); }
+  .legal { align-items: center; }
+  @media (max-width: 800px) { .fgrid { grid-template-columns: 1fr 1fr; } .fbrand { grid-column: 1 / -1; } }
+  @media (max-width: 700px) { .head { grid-template-columns: 1fr; } .lede { font-size: 17px; } }
+
+  /* demo ribbon, as on the Health Plus demo */
+  .demo-ribbon { position: fixed; z-index: 60; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); transform: translateX(-50%); width: max-content; max-width: calc(100% - 32px);
+    display: flex; gap: 12px; align-items: center; background: var(--ink); color: #fff; font-size: 13px; padding: 9px 10px 9px 16px; border-radius: 999px; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+  .demo-ribbon a { color: #c8ff2e; }
+  .demo-ribbon button { border: 0; background: #2a2a2a; color: #fff; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 15px; line-height: 1; }
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="top">
+      <a class="mark" href="#top" aria-label="RC Fitness home"><img src="demo/rc-fitness/img/logo-mark.svg" alt="RC Fitness logo"></a>
+      <nav aria-label="Main">
+        <ul class="pill lg" id="pill">
+          <li><a href="#top" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9H3z"/><path d="M10 20v-6h4v6"/></svg><span>Home</span></a></li>
+          <li><a href="#programmes" aria-label="Programmes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5l11 11"/><path d="M3 10l7-7"/><path d="M14 21l7-7"/><path d="M4.5 4.5L3 6"/><path d="M19.5 19.5L21 18"/></svg><span>Programmes</span></a></li>
+          <li><a href="#membership" aria-label="Membership"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg><span>Membership</span></a></li>
+          <li><a href="#students" aria-label="Students"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg><span>Students</span></a></li>
+          <li><a href="#group" aria-label="Classes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg><span>Classes</span></a></li>
+          <li><a href="#personal" aria-label="Trainer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 21c1-5 15-5 16 0"/></svg><span>Trainer</span></a></li>
+          <li><a href="#gallery" aria-label="Gallery"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5-5-9 8"/></svg><span>Gallery</span></a></li>
+          <li><a href="#contact" aria-label="Contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 006 6L16 13l5 2v4a2 2 0 01-2 2A17 17 0 013 5a2 2 0 012-2z"/></svg><span>Contact</span></a></li>
+        </ul>
+      </nav>
+      <div class="deck-wrap lg" id="deck-wrap">
+        <button class="deck" id="deck" type="button" aria-label="Music: choose a background song" aria-haspopup="dialog">
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <rect x="3" y="3" width="94" height="94" rx="24" fill="#f3f3f3" stroke="#dcdcdc"/>
+            <g class="vinyl">
+              <circle cx="50" cy="50" r="32" fill="#1b1b1b"/>
+              <circle cx="50" cy="50" r="26" fill="none" stroke="#2e2e2e" stroke-width="1"/>
+              <circle cx="50" cy="50" r="20" fill="none" stroke="#2e2e2e" stroke-width="1"/>
+              <path d="M30 30 A28 28 0 0 1 50 22" stroke="#5a4a3a" stroke-width="2" fill="none" opacity=".8"/>
+              <circle cx="50" cy="50" r="11" fill="#e3342b"/>
+              <circle cx="50" cy="50" r="1.6" fill="#fff"/>
+            </g>
+            <g class="arm"><circle cx="78" cy="18" r="5" fill="#e9e9e9" stroke="#cfcfcf"/><path d="M78 18 L70 40" stroke="#d2d2d2" stroke-width="4" stroke-linecap="round"/><circle cx="70" cy="40" r="2" fill="#e3342b"/></g>
+            <circle cx="18" cy="82" r="5" fill="#ececec" stroke="#cfcfcf"/>
+            <g fill="#9a9a9a"><circle cx="76" cy="82" r="1.2"/><circle cx="80" cy="82" r="1.2"/><circle cx="84" cy="82" r="1.2"/><circle cx="76" cy="86" r="1.2"/><circle cx="80" cy="86" r="1.2"/><circle cx="84" cy="86" r="1.2"/></g>
+          </svg>
+        </button>
+        <span class="feel" aria-hidden="true"><span>F</span><span>E</span><span>E</span><span>L</span></span>
+      </div>
+    </div>
+
+    <h1 class="wordmark" aria-label="RC Fitness"><svg id="dots" aria-hidden="true"></svg></h1>
+
+    <div class="reveal" id="reveal">
+      <img id="reveal-fallback" src="demo/rc-fitness/img/sketch-bw.webp" alt="Sketch of a gym floor with red pillars and dumbbell racks" hidden>
+      <canvas id="gl" aria-label="Move across the sketch to reveal the gym floor photo underneath"></canvas>
+    </div>
+    <div class="hero-bottom">
+      <p class="lede">Take the next step towards your fitness goals at RC Fitness, Samurou. Explore strength training, cardio, bodybuilding, group fitness and personal training programmes under one roof.</p>
+      <a class="block red" href="#contact">Join RC Fitness<i>→</i></a>
+      <a class="block line" href="#programmes">Explore programmes<i>↓</i></a>
+    </div>
+    <div class="hero-facts"><span><b>4.8★</b> from 12 public reviews</span><span>Awang Leikai, Samurou</span><span>Sunday closed</span></div>
+  </div>
+</header>
+
+<dialog class="tunes" id="tunes" aria-labelledby="now-title">
+  <div class="card">
+    <button class="bigdisc" id="bigdisc" type="button" aria-label="Play or pause">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><g class="spin" id="big-art"></g></svg>
+    </button>
+    <div class="now"><b id="now-title">Pick a song</b><span id="now-sub">Tap a disc below. Songs play one after another and loop.</span></div>
+    <div class="controls">
+      <button class="ctl" id="prev" type="button" aria-label="Previous song"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z" fill="currentColor"/></svg></button>
+      <button class="ctl" id="toggle" type="button" aria-label="Play"><svg viewBox="0 0 24 24"><path id="toggle-ic" d="M7 4v16l13-8z" fill="currentColor"/></svg></button>
+      <button class="ctl" id="next" type="button" aria-label="Next song"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z" fill="currentColor"/></svg></button>
+      <input id="vol" type="range" min="0" max="1" step="0.01" value="0.6" aria-label="Volume">
+    </div>
+    <div class="shelf" id="shelf" role="group" aria-label="Background songs"></div>
+    <input id="upload" type="file" accept="audio/*" multiple hidden>
+    <button class="continue" id="continue" type="button">continue</button>
+  </div>
+</dialog>
+
+<main>
+
+<div class="strip" aria-label="At a glance">
+  <div class="wrap">
+    <div class="cell"><span class="big">4.8<i>★</i></span><small>12 reviews · public listing</small></div>
+    <div class="cell"><span class="big">10</span><small>Programmes and services</small></div>
+    <div class="cell"><span class="big">₹1,500</span><small>Student plan · 3 months</small></div>
+    <div class="cell"><span class="big">6 days</span><small>A week · Sunday closed</small></div>
+  </div>
+</div>
+
+<section aria-labelledby="h-intro">
+  <div class="wrap intro-grid">
+    <div class="txt">
+      <span class="eyebrow">RC Fitness, Samurou</span>
+      <h2 id="h-intro">Your fitness journey starts here.</h2>
+      <p class="lede">Whether you are starting out or looking for a place to continue your regular training, RC Fitness offers different programmes to suit your interests.</p>
+      <p>From weight training and cardio to aerobic, Zumba and personal training, find a programme that fits your routine.</p>
+      <ul class="tick">
+        <li>New to the gym? Start with a monthly plan.</li>
+        <li>Already training? Pick a longer plan.</li>
+        <li>In school? Ask about the student plan.</li>
+      </ul>
+    </div>
+    <div class="photo r-34"><img src="demo/rc-fitness/img/asset1.webp" alt="Plate-loaded machines on the RC Fitness gym floor" loading="lazy"></div>
+    <div class="photo r-34"><img src="demo/rc-fitness/img/the-building-from-outside.webp" alt="The RC Fitness building in Samurou with its signboard" loading="lazy"></div>
+  </div>
+</section>
+
+<section id="programmes" aria-labelledby="h-prog" style="padding-top:0">
+  <div class="wrap">
+    <div class="head">
+      <div><span class="eyebrow">Our programmes</span><h2 id="h-prog">Find your way to fitness.</h2></div>
+      <p class="lede">Ten ways to train at RC Fitness. Pick one to start, or mix a few into your week.</p>
+    </div>
+    <div class="prog">
+      <article class="card-p"><div class="photo r-45"><img src="demo/rc-fitness/img/asset11.webp" alt="Member showing a bodybuilding physique" loading="lazy"></div><div class="body"><span class="num">01</span><h3>Bodybuilding</h3><p>Gym-based training focused on building muscle and strength, one session at a time.</p><a href="#contact">Enquire →</a></div></article>
+      <article class="card-p"><div class="photo r-45"><img src="demo/rc-fitness/img/asset10.webp" alt="Dumbbell rack" loading="lazy"></div><div class="body"><span class="num">02</span><h3>Weight training</h3><p>Resistance training with weights for strength and general physical fitness.</p><a href="#contact">Enquire →</a></div></article>
+      <article class="card-p"><div class="photo r-45"><img src="demo/rc-fitness/img/cardio-machines.webp" alt="Treadmills and cross-trainers in the cardio section" loading="lazy"></div><div class="body"><span class="num">03</span><h3>Cardio training</h3><p>Cardiovascular exercise to build stamina as part of a regular routine.</p><a href="#contact">Enquire →</a></div></article>
+      <article class="card-p"><div class="photo r-45"><img src="demo/rc-fitness/img/f44.webp" alt="Member training on a machine" loading="lazy"></div><div class="body"><span class="num">04</span><h3>Fat loss programme</h3><p>A programme for people working towards their fitness and weight-management goals.</p><a href="#contact">Enquire →</a></div></article>
+      <article class="card-p"><div class="photo r-45"><img src="demo/rc-fitness/img/asset8.webp" alt="Open studio room with blue floor mats" loading="lazy"></div><div class="body"><span class="num">05</span><h3>Aerobic</h3><p>Group aerobic sessions that keep your heart rate up and your body moving.</p><a href="#group">See fees →</a></div></article>
+      <article class="card-p"><div class="photo r-45"><img src="demo/rc-fitness/img/a-zumba-class.webp" alt="Members dancing in a Zumba class" loading="lazy"></div><div class="body"><span class="num">06</span><h3>Zumba</h3><p>Music-based group fitness that mixes dance moves with aerobic exercise.</p><a href="#group">See fees →</a></div></article>
+      <article class="card-p"><div class="photo r-45"><img src="demo/rc-fitness/img/a-trainer-guiding-a-member.webp" alt="Trainer guiding a member on a bench press" loading="lazy"></div><div class="body"><span class="num">07</span><h3>Personal training</h3><p>Individual training support, with its own packages from one month to a year.</p><a href="#personal">See packages →</a></div></article>
+      <article class="card-p"><div class="photo r-45"><img src="demo/rc-fitness/img/plyometric-or-jump-work.webp" alt="Members doing box jumps" loading="lazy"></div><div class="body"><span class="num">08</span><h3>Plyometric training</h3><p>Explosive, jump-based movements, also offered as a class set to music.</p><a href="#group">See fees →</a></div></article>
+      <article class="card-p"><div class="photo r-45"><img src="demo/rc-fitness/img/battling-ropes.webp" alt="Member working with battling ropes" loading="lazy"></div><div class="body"><span class="num">09</span><h3>Battling ropes</h3><p>Full-body rope work that builds power and conditioning in short, hard rounds.</p><a href="#contact">Enquire →</a></div></article>
+      <article class="card-p"><div class="photo r-45"><img src="demo/rc-fitness/img/diet-or-nutrition.webp" alt="Nutrition chart of carbs, protein and fats" loading="lazy"></div><div class="body"><span class="num">10</span><h3>Diet &amp; nutrition</h3><p>Nutrition guidance to support your training. Ask the gym what is included.</p><a href="#contact">Enquire →</a></div></article>
+    </div>
+  </div>
+</section>
+
+<section class="exp" aria-labelledby="h-exp">
+  <div class="wrap">
+    <div class="head">
+      <div><span class="eyebrow">Inside the gym</span><h2 id="h-exp">More than just a workout.</h2></div>
+      <p class="lede">See the floor, the weights and the people who train here, before you walk in.</p>
+    </div>
+    <div class="theatre">
+      <video id="edit" src="demo/rc-fitness/media/edit.mp4" poster="demo/rc-fitness/media/edit-poster.jpg" muted loop playsinline preload="metadata" aria-label="RC Fitness training video"></video>
+      <button class="sound" id="sound" type="button" aria-pressed="false">🔈 Sound on</button>
+    </div>
+    <div class="mosaic">
+      <figure><div class="photo r-43"><img src="demo/rc-fitness/img/asset2.webp" alt="Machines and plate stands on the gym floor" loading="lazy"></div><figcaption>Gym floor</figcaption></figure>
+      <figure><div class="photo r-43"><img src="demo/rc-fitness/img/asset5.webp" alt="Smith machine with plates" loading="lazy"></div><figcaption>Weight-training area</figcaption></figure>
+      <figure><div class="photo r-43"><img src="demo/rc-fitness/img/asset9.webp" alt="Leg press machine" loading="lazy"></div><figcaption>Leg machines</figcaption></figure>
+      <figure class="wide"><div class="photo r-43"><img src="demo/rc-fitness/img/f18.webp" alt="Member doing dumbbell curls" loading="lazy"></div><figcaption>Free weights</figcaption></figure>
+      <figure class="wide"><div class="photo r-43"><img src="demo/rc-fitness/img/asset8.webp" alt="Studio room with blue mats and mirrors" loading="lazy"></div><figcaption>Aerobic and Zumba room</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section id="membership" aria-labelledby="h-mem">
+  <div class="wrap">
+    <div class="head">
+      <div><span class="eyebrow">Gym membership</span><h2 id="h-mem">Find a membership that fits your routine.</h2></div>
+      <p class="lede">Choose from monthly, three-month, six-month and annual plans. Longer plans are listed at half the regular fee.</p>
+    </div>
+    <div class="plans">
+      <div class="table" role="table" aria-label="Standard gym membership fees">
+        <div class="row th" role="row"><span role="columnheader">Plan</span><span role="columnheader">Regular</span><span role="columnheader">You pay</span></div>
+        <div class="row" role="row"><span class="name" role="cell">Monthly<small>Pay month by month</small></span><span class="was" role="cell"></span><span class="price" role="cell">₹1,500</span></div>
+        <div class="row" role="row"><span class="name" role="cell">3 months<span class="off">50% OFF</span><small>Works out to ₹750 a month</small></span><span class="was" role="cell">₹4,500</span><span class="price" role="cell">₹2,250</span></div>
+        <div class="row" role="row"><span class="name" role="cell">6 months<span class="off">50% OFF</span><small>Works out to ₹750 a month</small></span><span class="was" role="cell">₹9,000</span><span class="price" role="cell">₹4,500</span></div>
+        <div class="row hl" role="row"><span class="name" role="cell">1 year<span class="off">50% OFF</span><small>Works out to ₹750 a month</small></span><span class="was" role="cell">₹18,000</span><span class="price" role="cell">₹9,000</span></div>
+      </div>
+      <div class="side">
+        <div class="table"><div class="row"><span class="name">Admission<small>One-time joining fee</small></span><span></span><span class="price">₹1,000</span></div></div>
+        <p class="fine">Fees from the RC Fitness fee chart. Call or visit the gym to confirm current fees before you join.</p>
+        <div class="btns"><a class="btn solid" href="#contact">Enquire about membership</a></div>
+        <div class="photo fill"><img src="demo/rc-fitness/img/asset4.webp" alt="Cable machine column" loading="lazy"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="students" class="students" aria-labelledby="h-stu">
+  <div class="wrap stu">
+    <div class="photo r-43"><img src="demo/rc-fitness/img/students-training.webp" alt="Young member at the gym" loading="lazy"></div>
+    <div style="display:grid;gap:22px">
+      <span class="eyebrow">Up to Class XII</span>
+      <h2 id="h-stu">Fitness options for students.</h2>
+      <p class="lede">RC Fitness offers dedicated pricing for students up to Class XII. Bring your student ID card and choose a three-month, six-month or annual plan.</p>
+      <div class="stu-prices">
+        <div><span>3 months</span><b>₹1,500</b></div>
+        <div><span>6 months</span><b>₹3,000</b></div>
+        <div><span>1 year</span><b>₹6,000</b></div>
+      </div>
+      <p class="idcard"><i>ID</i>Student ID card is compulsory.</p>
+      <div class="btns"><a class="btn dark" href="#contact">Ask about student membership</a></div>
+    </div>
+  </div>
+</section>
+
+<section id="group" aria-labelledby="h-grp">
+  <div class="wrap">
+    <div class="head">
+      <div><span class="eyebrow">Aerobic · Zumba · Plyometric</span><h2 id="h-grp">Move with the music.</h2></div>
+      <p class="lede">Join aerobic sessions, Zumba or plyometric exercise with music. Choose a single programme, or take the combined option that includes the gym.</p>
+    </div>
+    <div class="group">
+      <div class="photos">
+        <div class="photo r-169"><img src="demo/rc-fitness/img/asset8.webp" alt="Studio room with blue mats" loading="lazy"></div>
+        <div class="photo r-11"><img src="demo/rc-fitness/img/an-aerobic-class.webp" alt="Members in an aerobic class" loading="lazy"></div>
+        <div class="photo r-11"><img src="demo/rc-fitness/img/a-zumba-class.webp" alt="Zumba class" loading="lazy"></div>
+      </div>
+      <div class="gcards">
+        <div class="gcard"><h3>Aerobic / Zumba only</h3><p>Group sessions only, without gym floor access.</p><span class="price">₹600</span></div>
+        <div class="gcard combo"><span class="tagline">Most complete</span><h3>Aerobic + Zumba + Gym</h3><p>Group sessions plus access to the gym floor.</p><span class="price">₹800</span></div>
+        <div class="gcard"><h3>Plyometric with music</h3><p>Explosive jump-based training, set to music.</p><span class="price">₹600</span></div>
+        <p class="fine">Ask the gym for the current class timings and billing period.</p>
+        <div class="btns"><a class="btn solid" href="#contact">Enquire about group fitness</a></div>
+        <div class="photo fill"><img src="demo/rc-fitness/img/f44.webp" alt="Member training on a bench" loading="lazy"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="personal" aria-labelledby="h-pt" style="padding-top:0">
+  <div class="wrap pt">
+    <div class="photo r-45"><img src="demo/rc-fitness/img/a-trainer-guiding-a-member.webp" alt="Trainer spotting a member on the bench" loading="lazy"></div>
+    <div style="display:grid;gap:22px;min-width:0">
+      <span class="eyebrow">Personal trainer packages</span>
+      <h2 id="h-pt">Train with a more personal approach.</h2>
+      <p class="lede">Looking for individual training support? Choose a one-month, three-month, six-month or annual package. The longer the package, the bigger the discount.</p>
+      <div class="steps" aria-label="Discount by package length">
+        <div><span class="pct zero">0%</span><span>1 month</span></div>
+        <div><span class="pct">10%</span><span>3 months</span></div>
+        <div><span class="pct">15%</span><span>6 months</span></div>
+        <div><span class="pct">20%</span><span>1 year</span></div>
+      </div>
+      <div class="table" role="table" aria-label="Personal trainer fees">
+        <div class="row th" role="row"><span role="columnheader">Package</span><span role="columnheader">Regular</span><span role="columnheader">You pay</span></div>
+        <div class="row" role="row"><span class="name" role="cell">1 month</span><span class="was" role="cell"></span><span class="price" role="cell">₹3,000</span></div>
+        <div class="row" role="row"><span class="name" role="cell">3 months<span class="off">10% OFF</span></span><span class="was" role="cell">₹9,000</span><span class="price" role="cell">₹8,100</span></div>
+        <div class="row" role="row"><span class="name" role="cell">6 months<span class="off">15% OFF</span></span><span class="was" role="cell">₹18,000</span><span class="price" role="cell">₹15,300</span></div>
+        <div class="row hl" role="row"><span class="name" role="cell">1 year<span class="off">20% OFF</span></span><span class="was" role="cell">₹36,000</span><span class="price" role="cell">₹28,800</span></div>
+      </div>
+      <div class="btns"><a class="btn solid" href="#contact">Enquire about personal training</a></div>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="h-why" style="padding-top:0">
+  <div class="wrap">
+    <div class="head">
+      <div><span class="eyebrow">Why RC Fitness</span><h2 id="h-why">A place to keep moving forward.</h2></div>
+      <p class="lede">A neighbourhood gym with plenty of ways to train and prices you can plan around.</p>
+    </div>
+    <div class="why">
+      <div><span class="k">01</span><h3>Right here in Samurou</h3><p>A local fitness centre in Awang Leikai, close to home for people in Samurou and nearby.</p></div>
+      <div><span class="k">10</span><h3>Ways to train</h3><p>Weights, cardio, bodybuilding, group classes, ropes and personal training in one place.</p></div>
+      <div><span class="k">XII</span><h3>Student plans</h3><p>Separate pricing for students up to Class XII, from ₹1,500 for three months.</p></div>
+      <div><span class="k">PT</span><h3>Personal training</h3><p>Packages from one month to a year, with up to 20% off the longer ones.</p></div>
+      <div><span class="k">♫</span><h3>Aerobic &amp; Zumba</h3><p>Group sessions to music, on their own or combined with gym access.</p></div>
+      <div><span class="k">4.8</span><h3>Rated by members</h3><p>4.8 out of 5 from 12 reviews on the public listing. Reviewers mention a clean space, helpful trainers and fair prices.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="gallery" aria-labelledby="h-gal" style="padding-top:0">
+  <div class="wrap">
+    <div class="head">
+      <div><span class="eyebrow">Gallery</span><h2 id="h-gal">Inside RC Fitness.</h2></div>
+      <p class="lede">The floor, the machines and the people who train here.</p>
+    </div>
+    <div class="gallery">
+      <div class="photo w2 h2"><img src="demo/rc-fitness/img/asset2.webp" alt="Gym floor with machines" loading="lazy"></div>
+      <div class="photo"><img src="demo/rc-fitness/img/asset3.webp" alt="Plate-loaded row machine" loading="lazy"></div>
+      <div class="photo h2"><img src="demo/rc-fitness/img/asset6.webp" alt="Cable machine" loading="lazy"></div>
+      <div class="photo"><img src="demo/rc-fitness/img/asset10.webp" alt="Dumbbells on a rack" loading="lazy"></div>
+      <div class="photo w2"><img src="demo/rc-fitness/img/f9.webp" alt="Member training with dumbbells" loading="lazy"></div>
+      <div class="photo"><img src="demo/rc-fitness/img/asset12.webp" alt="Front desk" loading="lazy"></div>
+      <div class="photo w2"><img src="demo/rc-fitness/img/cardio-machines.webp" alt="Cardio machines" loading="lazy"></div>
+      <div class="photo"><img src="demo/rc-fitness/img/asset9.webp" alt="Leg press" loading="lazy"></div>
+      <div class="photo w2 h2"><img src="demo/rc-fitness/img/the-building-from-outside.webp" alt="The RC Fitness building in Samurou with its signboard" loading="lazy"></div>
+      <div class="photo "><img src="demo/rc-fitness/img/battling-ropes.webp" alt="Battling ropes" loading="lazy"></div>
+      <div class="photo "><img src="demo/rc-fitness/img/plyometric-or-jump-work.webp" alt="Box jumps" loading="lazy"></div>
+      <div class="photo w2"><img src="demo/rc-fitness/img/an-aerobic-class.webp" alt="Aerobic class" loading="lazy"></div>
+      <div class="photo"><img src="demo/rc-fitness/img/asset5.webp" alt="Smith machine" loading="lazy"></div>
+      <div class="photo"><img src="demo/rc-fitness/img/asset1.webp" alt="Plate-loaded machines on the gym floor" loading="lazy"></div>
+    </div>
+    <div class="ig">
+      <b>@rc_fitnessamurou</b>
+      <a class="btn" href="https://www.instagram.com/rc_fitnessamurou/" target="_blank" rel="noopener">Follow on Instagram ↗</a>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact" aria-labelledby="h-con">
+  <div class="wrap">
+    <div class="head">
+      <div><span class="eyebrow">Visit or call</span><h2 id="h-con">Ready to start training?</h2></div>
+      <p class="lede">Visit RC Fitness in Awang Leikai, Samurou, or call to ask about membership, programmes and training options.</p>
+    </div>
+    <div class="cgrid">
+      <div class="facts">
+        <dl>
+          <div><dt>Phone</dt><dd class="phone">87983 03540</dd></div>
+          <div><dt>Address</dt><dd>RC Fitness, Awang Leikai, Samurou<br>Imphal West, Manipur 795009</dd></div>
+          <div><dt>Instagram</dt><dd>@rc_fitnessamurou</dd></div>
+          <div><dt>Opening hours</dt><dd>
+            <table class="hours">
+              <tr><td>Summer, Mon–Sat</td><td>5:00 AM – 8:00 PM</td></tr>
+              <tr><td>Winter, Mon–Sat</td><td>6:00 AM – 7:00 PM</td></tr>
+              <tr><td>Sunday</td><td>Closed</td></tr>
+            </table>
+          </dd></div>
+        </dl>
+        <div class="btns">
+          <a class="btn solid" href="tel:+918798303540">Call now</a>
+          <a class="btn" href="https://www.google.com/maps/search/?api=1&amp;query=RC+Fitness+Samurou+Imphal" target="_blank" rel="noopener">Get directions ↗</a>
+          <a class="btn" href="https://www.instagram.com/rc_fitnessamurou/" target="_blank" rel="noopener">Instagram ↗</a>
+        </div>
+      </div>
+      <div class="map" aria-label="Map of Samurou">
+        <svg class="roads" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <g fill="none" stroke="#3a3a3a" stroke-width="10" stroke-linecap="round"><path d="M-20 210 C 80 190, 140 150, 230 150 S 360 120, 430 80"/><path d="M200 -20 L 215 150 L 205 320"/></g>
+          <g fill="none" stroke="#262626" stroke-width="4"><path d="M-20 60 L 430 110"/><path d="M60 -20 L 90 320"/><path d="M320 -20 L 300 320"/><path d="M-20 270 L 430 250"/></g>
+          <text x="20" y="196" fill="#6b6b6b" font-family="sans-serif" font-size="10">TO IMPHAL</text>
+          <text x="228" y="40" fill="#6b6b6b" font-family="sans-serif" font-size="10">SAMUROU</text>
+        </svg>
+        <div class="pin"><img src="demo/rc-fitness/img/logo-mark.svg" alt=""><span>RC Fitness</span></div>
+        <iframe title="Map: RC Fitness, Awang Leikai, Samurou" src="https://www.google.com/maps?q=RC%20Fitness%2C%20Awang%20Leikai%2C%20Samurou%2C%20Imphal%20West%2C%20Manipur%20795009&amp;z=15&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="h-faq">
+  <div class="wrap faq">
+    <div class="head">
+      <div><span class="eyebrow">FAQ</span><h2 id="h-faq">Questions before you join.</h2></div>
+      <p>Still unsure? Call <b>87983 03540</b> or visit the gym.</p>
+      <div class="photo fill"><img src="demo/rc-fitness/img/asset11.webp" alt="Member seated at a machine" loading="lazy"></div>
+    </div>
+    <div>
+      <details open><summary><span class="q">01</span>Where is RC Fitness located?</summary><div class="a"><p>Awang Leikai, Samurou, Imphal West, Manipur 795009.</p></div></details>
+      <details><summary><span class="q">02</span>What are the membership fees?</summary><div class="a"><p>Monthly ₹1,500. Three months ₹2,250, six months ₹4,500 and one year ₹9,000 at the listed 50% discount. Admission is ₹1,000.</p></div></details>
+      <details><summary><span class="q">03</span>Does RC Fitness offer student membership?</summary><div class="a"><p>Yes, for students up to Class XII: ₹1,500 for three months, ₹3,000 for six months and ₹6,000 for a year.</p></div></details>
+      <details><summary><span class="q">04</span>Is a student ID card compulsory?</summary><div class="a"><p>Yes. A student ID card is required for student membership.</p></div></details>
+      <details><summary><span class="q">05</span>What fitness programmes are available?</summary><div class="a"><p>Bodybuilding, weight training, cardio, a fat loss programme, aerobic, Zumba, plyometric training, battling ropes, personal training, and diet and nutrition guidance.</p></div></details>
+      <details><summary><span class="q">06</span>Does the gym offer personal training?</summary><div class="a"><p>Yes, as separately priced packages of one, three, six or twelve months.</p></div></details>
+      <details><summary><span class="q">07</span>What are the personal trainer fees?</summary><div class="a"><p>₹3,000 for one month, ₹8,100 for three months (10% off), ₹15,300 for six months (15% off) and ₹28,800 for a year (20% off).</p></div></details>
+      <details><summary><span class="q">08</span>Are aerobic and Zumba programmes available?</summary><div class="a"><p>Yes. Aerobic / Zumba only is ₹600, Aerobic + Zumba + Gym is ₹800, and plyometric exercise with music is ₹600.</p></div></details>
+      <details><summary><span class="q">09</span>What are the gym's opening hours?</summary><div class="a"><p>Summer: 5:00 AM to 8:00 PM. Winter: 6:00 AM to 7:00 PM. Call to check before you visit.</p></div></details>
+      <details><summary><span class="q">10</span>Is the gym open on Sundays?</summary><div class="a"><p>No, the gym is closed on Sunday.</p></div></details>
+      <details><summary><span class="q">11</span>How can I enquire about joining?</summary><div class="a"><p>Call 87983 03540, message @rc_fitnessamurou on Instagram, or visit the gym in Awang Leikai, Samurou.</p></div></details>
+      <details><summary><span class="q">12</span>Are there different membership durations?</summary><div class="a"><p>Yes: monthly, three months, six months and one year. Students can choose three months, six months or one year.</p></div></details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div class="fbrand"><img src="demo/rc-fitness/img/logo-mark.svg" alt="RC Fitness logo"><p>Gym and fitness centre in Awang Leikai, Samurou, Imphal West, Manipur 795009.</p></div>
+      <div><h4>Train</h4><ul><li><a href="#programmes">Programmes</a></li><li><a href="#group">Group fitness</a></li><li><a href="#personal">Personal training</a></li></ul></div>
+      <div><h4>Join</h4><ul><li><a href="#membership">Membership</a></li><li><a href="#students">Students</a></li><li><a href="#contact">Contact</a></li></ul></div>
+      <div><h4>Hours</h4><ul><li>Summer 5 AM – 8 PM</li><li>Winter 6 AM – 7 PM</li><li>Sunday closed</li></ul></div>
+    </div>
+    <svg class="giant" viewBox="0 0 1000 150" aria-hidden="true"><text x="0" y="140" font-size="190" textLength="1000" lengthAdjust="spacingAndGlyphs">RC FITNESS</text></svg>
+    <div class="legal"><span>© RC Fitness, Samurou</span>
+      <a class="dev-by" href="https://millitech.vercel.app" target="_blank" rel="noopener">
+        <span>Developed by</span>
+        <svg viewBox="0 0 720 640" aria-hidden="true"><g fill="currentColor"><path d="M360 10 L708 200 L708 518 L518 625 L518 520 L628 462 L628 246 L360 100 L92 246 L92 462 L204 520 L204 625 L12 518 L12 200 Z"/><path d="M360 156 L594 282 L594 483 L518 526 L518 331 L360 246 L204 331 L204 526 L126 483 L126 282 Z"/><path d="M318 271 L402 271 L402 384 L460 350 L480 350 L508 405 L401 463 L401 576 L319 576 L319 463 L212 405 L240 350 L260 350 L318 384 Z"/></g></svg>
+        <b>MILLITECH</b><i aria-hidden="true">↗</i>
+      </a></div>
+  </div>
+</footer>
+
+<div class="demo-ribbon" id="ribbon"><span>Demo preview by <a href="https://millitech.vercel.app" target="_blank" rel="noopener">MilliTech</a>. Fees and hours are waiting for the gym's confirmation.</span><button type="button" aria-label="Dismiss" onclick="this.parentNode.remove()">×</button></div>
+
+<script>
+// ---------- Liquid glass refraction for the nav (same as Health Plus; Chromium only, others keep the rim) ----------
+(() => {
+  const brands = (navigator.userAgentData && navigator.userAgentData.brands) || [];
+  if (!brands.some(b => /Chromium/.test(b.brand))) return;
+  const NS = "http://www.w3.org/2000/svg";
+  let defs = null, n = 0;
+  function edgeMap(w, h, r, band) {
+    const c = document.createElement("canvas"); c.width = w; c.height = h;
+    const g = c.getContext("2d"), img = g.createImageData(w, h), d = img.data;
+    const hx = w / 2 - r, hy = h / 2 - r;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const px = x + .5 - w / 2, py = y + .5 - h / 2, qx = Math.abs(px) - hx, qy = Math.abs(py) - hy;
+      let nx, ny, inside;
+      if (qx > 0 && qy > 0) { const l = Math.hypot(qx, qy) || 1; nx = qx / l * Math.sign(px); ny = qy / l * Math.sign(py); inside = r - l; }
+      else if (qx > qy) { nx = Math.sign(px); ny = 0; inside = r - Math.max(qx, 0); }
+      else { nx = 0; ny = Math.sign(py); inside = r - Math.max(qy, 0); }
+      const t = Math.max(0, 1 - inside / band), m = t * t, i = (y * w + x) * 4;
+      d[i] = 128 - nx * m * 127; d[i + 1] = 128 - ny * m * 127; d[i + 2] = 128; d[i + 3] = 255;
+    }
+    g.putImageData(img, 0, 0);
+    return c.toDataURL();
+  }
+  function refract(el) {
+    const w = el.offsetWidth, h = el.offsetHeight;
+    if (!w || !h) return;
+    if (!defs) {
+      const svg = document.createElementNS(NS, "svg");
+      svg.setAttribute("aria-hidden", "true"); svg.style.cssText = "position:absolute;width:0;height:0";
+      defs = document.createElementNS(NS, "defs"); svg.appendChild(defs); document.body.appendChild(svg);
+    }
+    let f = el._lg;
+    if (!f) {
+      f = document.createElementNS(NS, "filter"); f.id = "glass-" + (++n);
+      f.setAttribute("filterUnits", "userSpaceOnUse"); f.setAttribute("primitiveUnits", "userSpaceOnUse");
+      f.setAttribute("color-interpolation-filters", "sRGB");
+      f.innerHTML = '<feImage result="map" preserveAspectRatio="none"/><feDisplacementMap in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="G"/>';
+      defs.appendChild(f); el._lg = f;
+    }
+    const r = Math.min(h / 2, w / 2, parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0);
+    const band = Math.min(16, h / 2.4);
+    f.setAttribute("x", 0); f.setAttribute("y", 0); f.setAttribute("width", w); f.setAttribute("height", h);
+    const im = f.firstChild;
+    im.setAttribute("x", 0); im.setAttribute("y", 0); im.setAttribute("width", w); im.setAttribute("height", h);
+    im.setAttribute("href", edgeMap(w, h, r, band));
+    f.lastChild.setAttribute("scale", Math.round(band * 1.6));
+    el.style.backdropFilter = `url(#${f.id}) blur(1px)`;
+  }
+  const all = () => document.querySelectorAll(".lg").forEach(refract);
+  let tm; addEventListener("resize", () => { clearTimeout(tm); tm = setTimeout(all, 150); });
+  document.fonts && document.fonts.ready.then(all);
+  setTimeout(all, 300);
+})();
+
+// ---------- Dot-matrix wordmark: each dot fades black ↔ red on its own beat ----------
+(() => {
+  const G = {
+    R: ["11110","10001","10001","11110","10100","10010","10001"],
+    C: ["01110","10001","10000","10000","10000","10001","01110"],
+    F: ["11111","10000","10000","11110","10000","10000","10000"],
+    I: ["01110","00100","00100","00100","00100","00100","01110"],
+    T: ["11111","00100","00100","00100","00100","00100","00100"],
+    N: ["10001","11001","10101","10011","10001","10001","10001"],
+    E: ["11111","10000","10000","11110","10000","10000","11111"],
+    S: ["01111","10000","10000","01110","00001","00001","11110"],
+    " ": ["00000","00000","00000","00000","00000","00000","00000"]
+  };
+  const word = "RC FITNESS", cell = 10, dot = 8.2, gap = 2;   // letter = 5 cells + gap
+  const svg = document.getElementById("dots");
+  const w = word.length * (5 + gap) * cell - gap * cell, h = 7 * cell;
+  svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+  let out = "", col = 0;
+  for (const ch of word) {
+    G[ch].forEach((row, y) => [...row].forEach((b, x) => {
+      if (b !== "1") return;
+      const gx = col + x;
+      const delay = -(gx * 0.09 + y * 0.05 + Math.random() * 0.35).toFixed(2);   // a diagonal wave with a little scatter
+      out += `<rect x="${gx * cell + (cell - dot) / 2}" y="${y * cell + (cell - dot) / 2}" width="${dot}" height="${dot}" style="animation-delay:${delay}s, ${(delay / 2).toFixed(2)}s"/>`;
+    }));
+    col += 5 + gap;
+  }
+  svg.innerHTML = out;
+  // Dots near the pointer (or finger) light up red and swell, then settle back into the wave
+  const rects = [...svg.querySelectorAll("rect")];
+  function poke(e) {
+    const r = svg.getBoundingClientRect(), k = w / r.width;
+    const px = (e.clientX - r.left) * k, py = (e.clientY - r.top) * k;
+    rects.forEach(el => {
+      const dx = +el.getAttribute("x") + dot / 2 - px, dy = +el.getAttribute("y") + dot / 2 - py;
+      if (dx * dx + dy * dy < 900) { el.classList.add("hot"); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove("hot"), 420); }
+    });
+  }
+  svg.addEventListener("pointermove", poke);
+  svg.style.touchAction = "pan-y";
+})();
+
+// ---------- Background music: turntable button, CD picker, endless playlist ----------
+(() => {
+  const tracks = [
+    { title: "Iron Pulse", sub: "126 BPM · warm-up", src: "demo/rc-fitness/music/iron-pulse.mp3", color: "#e3342b", ring: "#b51f18" },
+    { title: "Night Shift", sub: "92 BPM · steady sets", src: "demo/rc-fitness/music/night-shift.mp3", color: "#1b1b1b", ring: "#3c3c3c" },
+    { title: "Last Set", sub: "140 BPM · finisher", src: "demo/rc-fitness/music/last-set.mp3", color: "#23c4d6", ring: "#139aab" }
+  ];
+  const audio = new Audio(); audio.preload = "none"; audio.volume = .6;
+  let cur = -1;
+  const $ = id => document.getElementById(id);
+  const dlg = $("tunes"), shelf = $("shelf"), wrap = document.body;
+  const cdArt = (t, r = 46) => `
+    <circle cx="50" cy="50" r="${r}" fill="${t ? t.color : "#bdbdbd"}"/>
+    <path d="M50 50 L${50 + r * .97} ${50 - r * .24} A${r} ${r} 0 0 0 ${50 + r * .5} ${50 - r * .87} Z" fill="#fff" opacity=".22"/>
+    <path d="M50 50 L${50 - r * .97} ${50 + r * .24} A${r} ${r} 0 0 0 ${50 - r * .5} ${50 + r * .87} Z" fill="#fff" opacity=".12"/>
+    <circle cx="50" cy="50" r="${r * .36}" fill="${t ? t.ring : "#a9a9a9"}"/>
+    <circle cx="50" cy="50" r="${r * .26}" fill="#f4f4f4" stroke="#9a9a9a" stroke-width="1"/>
+    <circle cx="50" cy="50" r="${r * .12}" fill="#eeeeee" stroke="#777" stroke-width="1.2"/>`;
+  const addArt = `<circle cx="50" cy="50" r="45" fill="#f7f7f7" stroke="#9a9a9a" stroke-width="2" stroke-dasharray="6 5"/><path d="M50 34v32M34 50h32" stroke="#0b0b0b" stroke-width="4" stroke-linecap="round"/>`;
+
+  function renderShelf() {
+    shelf.innerHTML = tracks.map((t, i) =>
+      `<button class="cd" type="button" data-i="${i}" aria-pressed="${i === cur}"><svg viewBox="0 0 100 100" aria-hidden="true">${cdArt(t)}</svg><span>${t.title}</span></button>`).join("") +
+      `<button class="cd" type="button" id="add-mp3"><svg viewBox="0 0 100 100" aria-hidden="true">${addArt}</svg><span>Add MP3</span></button>`;
+  }
+  function renderNow() {
+    const t = tracks[cur];
+    $("big-art").innerHTML = cdArt(t, 47);
+    $("now-title").textContent = t ? t.title : "Pick a song";
+    $("now-sub").textContent = t ? `${t.sub} · then ${tracks[(cur + 1) % tracks.length].title}` : "Tap a disc below. Songs play one after another and loop.";
+    const playing = !audio.paused;
+    wrap.classList.toggle("playing", playing);
+    $("toggle-ic").setAttribute("d", playing ? "M6 4h4v16H6zM14 4h4v16h-4z" : "M7 4v16l13-8z");
+    $("toggle").setAttribute("aria-label", playing ? "Pause" : "Play");
+    shelf.querySelectorAll(".cd[data-i]").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.i === cur)));
+  }
+  function play(i) {
+    cur = (i + tracks.length) % tracks.length;
+    audio.src = tracks[cur].src;
+    audio.play().catch(() => {}).finally(renderNow);
+    renderNow();
+  }
+  function toggle() {
+    if (cur < 0) return play(0);
+    audio.paused ? audio.play().catch(() => {}) : audio.pause();
+  }
+  audio.addEventListener("ended", () => play(cur + 1));          // endless: next song, wraps to the first
+  audio.addEventListener("play", renderNow);
+  audio.addEventListener("pause", renderNow);
+  audio.addEventListener("error", () => { if (cur >= 0 && tracks.length > 1) setTimeout(() => play(cur + 1), 400); });
+
+  $("deck").addEventListener("click", () => { renderNow(); dlg.showModal(); });
+  $("continue").addEventListener("click", () => { if (cur < 0) play(0); else if (audio.paused) audio.play().catch(() => {}); dlg.close(); });
+  dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+  $("bigdisc").addEventListener("click", toggle);
+  $("toggle").addEventListener("click", toggle);
+  $("prev").addEventListener("click", () => play(cur < 0 ? 0 : cur - 1));
+  $("next").addEventListener("click", () => play(cur + 1));
+  $("vol").addEventListener("input", e => { audio.volume = +e.target.value; });
+  shelf.addEventListener("click", e => {
+    const b = e.target.closest(".cd"); if (!b) return;
+    if (b.id === "add-mp3") return $("upload").click();
+    play(+b.dataset.i);
+  });
+  const lime = [["#b8e04a", "#8db52c"], ["#f2a93b", "#c98521"], ["#8a6cf0", "#6447cc"]];
+  $("upload").addEventListener("change", e => {
+    const first = tracks.length;
+    [...e.target.files].forEach((f, k) => {
+      const c = lime[(first + k) % lime.length];
+      tracks.push({ title: f.name.replace(/\.[^.]+$/, ""), sub: "Your song", src: URL.createObjectURL(f), color: c[0], ring: c[1] });
+    });
+    e.target.value = "";
+    renderShelf();
+    if (tracks.length > first) play(first);
+  });
+  renderShelf(); renderNow();
+
+  // Let the video take over when someone turns its sound on
+  const vid = $("edit"), snd = $("sound");
+  snd.addEventListener("click", () => {
+    vid.muted = !vid.muted;
+    snd.setAttribute("aria-pressed", String(!vid.muted));
+    snd.textContent = vid.muted ? "🔈 Sound on" : "🔇 Sound off";
+    if (!vid.muted) { audio.pause(); vid.play().catch(() => {}); }
+  });
+  new IntersectionObserver(es => es.forEach(en => {
+    if (en.isIntersecting) vid.play().catch(() => {});
+    else { vid.pause(); if (!vid.muted) { vid.muted = true; snd.textContent = "🔈 Sound on"; snd.setAttribute("aria-pressed", "false"); } }
+  }), { threshold: .35 }).observe(vid);
+})();
+
+// ---------- Hero reveal: liquid brush + a reveal that runs along the mirror's edge ----------
+(() => {
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const box = document.getElementById("reveal");
+  const canvas = document.getElementById("gl");
+  const gl = canvas.getContext("webgl", { antialias: false, premultipliedAlpha: false });
+  if (!gl) { document.getElementById("reveal-fallback").hidden = false; canvas.hidden = true; return; }
+  const trail = document.createElement("canvas");
+  const tctx = trail.getContext("2d", { willReadFrequently: true });
+  let fadeAcc = 0;
+
+  const VERT = `attribute vec2 p; varying vec2 vUv; void main(){ vUv = p * .5 + .5; gl_Position = vec4(p, 0., 1.); }`;
+  const FRAG = `
+    precision highp float;
+    varying vec2 vUv;
+    uniform sampler2D uOuter, uReveal, uTrail;
+    uniform vec2 uRes, uImg;
+    uniform vec4 uSeg[14];      // edge segments in image pixels: x0, y0, x1, y1
+    uniform float uTime, uGuide;
+    vec2 hash(vec2 p){ p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3))); return -1. + 2. * fract(sin(p) * 43758.5453123); }
+    float noise(vec2 p){
+      vec2 i = floor(p), f = fract(p); vec2 u = f * f * (3. - 2. * f);
+      return mix(mix(dot(hash(i), f), dot(hash(i + vec2(1,0)), f - vec2(1,0)), u.x),
+                 mix(dot(hash(i + vec2(0,1)), f - vec2(0,1)), dot(hash(i + vec2(1,1)), f - vec2(1,1)), u.x), u.y);
+    }
+    float fbm(vec2 p){ float v = 0., a = .5; for (int i = 0; i < 4; i++){ v += a * noise(p); p = p * 2.03 + 17.1; a *= .5; } return v; }
+    vec2 cover(vec2 uv){ float rs = uRes.x / uRes.y, ri = uImg.x / uImg.y; vec2 s = rs > ri ? vec2(1., ri / rs) : vec2(rs / ri, 1.); return (uv - .5) * s + .5; }
+
+    // Reveal streaks run along the room's main edges: the mirror frame, the pillars, the soffit and the wall base
+    float edgeGuide(vec2 px, float t){
+      float g = 0.;
+      for (int k = 0; k < 14; k++){
+        vec2 a = uSeg[k].xy, b = uSeg[k].zw;
+        vec2 ba = b - a, pa = px - a;
+        float L = length(ba);
+        float h = clamp(dot(pa, ba) / (L * L), 0., 1.);
+        float d = length(pa - ba * h);
+        if (d > 22.) continue;
+        float fk = float(k);
+        float th = 11. + 7. * fbm(px * .03 + t * .4 + fk);
+        float band = 1. - smoothstep(th * .45, th, d);
+        float cycle = L * 1.9 + 300.;                         // run the edge, then pause before the next pass
+        float head = mod(t * (210. + 37. * mod(fk, 4.)) + fk * 173., cycle);
+        float behind = head - h * L;                          // distance from the streak's head, in px
+        float tail = max(90., L * .32);
+        float s = step(0., behind) * (1. - smoothstep(0., tail, behind)) * smoothstep(-6., 0., behind + 6.);
+        g = max(g, band * s);
+      }
+      return g;
+    }
+    void main(){
+      vec2 uv = vUv; vec2 asp = vec2(uRes.x / uRes.y, 1.); float t = uTime * .12;
+      vec2 q = uv * asp * 2.6;
+      vec2 warp = vec2(fbm(q + t), fbm(q - t + 4.7));
+      float m = texture2D(uTrail, vec2(uv.x, 1. - uv.y) + warp * .035).r;
+      vec2 iuv = cover(vec2(uv.x, 1. - uv.y));
+      m += edgeGuide(iuv * uImg, uTime) * uGuide * .75;
+      float v = m + fbm(uv * asp * 7. + t * 1.6) * .2;
+      float mask = smoothstep(.34, .39, v);
+      float rim = smoothstep(.28, .34, v) - mask;
+      vec3 col = mix(texture2D(uOuter, iuv).rgb, texture2D(uReveal, iuv + warp * .006 * mask).rgb, mask);
+      col = mix(col, vec3(.89, .2, .17), rim * .3);
+      gl_FragColor = vec4(col, 1.);
+    }`;
+  function sh(type, src){ const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER, VERT)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG));
+  gl.linkProgram(prog); gl.useProgram(prog);
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const U = n => gl.getUniformLocation(prog, n);
+  const uRes = U("uRes"), uImg = U("uImg"), uTime = U("uTime"), uGuide = U("uGuide");
+  // Edges traced on the sketch (image pixels, 1614 x 974)
+  gl.uniform4fv(U("uSeg"), new Float32Array([
+    423, 190, 1190, 190,   1190, 190, 1190, 582,   1190, 582, 423, 582,   423, 582, 423, 190,   // mirror frame
+    262, 155, 1390, 155,                                                                   // soffit
+    262, 0, 262, 610,      1390, 0, 1390, 610,                                             // front pillars
+    355, 190, 355, 585,    1265, 190, 1265, 585,                                           // pillars beside the mirror
+    500, 305, 500, 580,    1110, 305, 1110, 580,                                           // pillars in the reflection
+    417, 623, 1197, 623,                                                                   // base of the mirror wall
+    262, 610, 423, 600,    1197, 600, 1390, 610                                            // wall foot to the racks
+  ]));
+  function makeTex(unit, name){
+    const t = gl.createTexture(); gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t);
+    [gl.TEXTURE_MIN_FILTER, gl.TEXTURE_MAG_FILTER].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.LINEAR));
+    [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE));
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([240,240,240,255]));
+    gl.uniform1i(U(name), unit); return t;
+  }
+  const texO = makeTex(0, "uOuter"), texR = makeTex(1, "uReveal"), texT = makeTex(2, "uTrail");
+  let imgW = 1614, imgH = 974;
+  // outer layer: black-and-white blueprint (the original colour sketch stays in img/sketch.webp)
+  [["demo/rc-fitness/img/sketch-bw.webp", texO, 0], ["demo/rc-fitness/img/real.webp", texR, 1]].forEach(([src, tex, unit]) => {
+    const img = new Image();
+    img.onload = () => { gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img); if (unit === 0) { imgW = img.naturalWidth; imgH = img.naturalHeight; } };
+    img.src = src;
+  });
+
+  let W = 1, H = 1, TS = .4;
+  function resize(){
+    const r = box.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
+    W = r.width; H = r.height;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    TS = Math.min(.5, 420 / Math.max(W, H));
+    trail.width = Math.max(2, Math.round(W * TS)); trail.height = Math.max(2, Math.round(H * TS));
+    tctx.fillStyle = "#000"; tctx.fillRect(0, 0, trail.width, trail.height);
+  }
+  new ResizeObserver(resize).observe(box); resize();
+
+  const target = { x: 0, y: 0 }, lag = { x: 0, y: 0 }, prev = { x: 0, y: 0 };
+  let active = false, energy = 0, visible = true, guide = 1, lastMove = -1e9;
+  const local = e => { const r = canvas.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  function jump(x, y){ target.x = lag.x = prev.x = x; target.y = lag.y = prev.y = y; }
+  canvas.addEventListener("pointermove", e => {
+    const [x, y] = local(e);
+    if (e.pointerType === "mouse" && !active) { active = true; jump(x, y); }
+    if (!active) return;
+    energy = Math.min(1, energy + Math.hypot(x - target.x, y - target.y) / 60);
+    target.x = x; target.y = y; lastMove = performance.now();
+  });
+  canvas.addEventListener("pointerdown", e => { if (e.pointerType !== "mouse") { active = true; const [x, y] = local(e); jump(x, y); energy = .5; } });
+  canvas.addEventListener("pointerup", e => { if (e.pointerType !== "mouse") active = false; });
+  canvas.addEventListener("pointercancel", () => { active = false; });
+  canvas.addEventListener("pointerleave", () => { active = false; });
+  new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(box);
+
+  function blob(x, y, r, a){
+    const g = tctx.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, `rgba(255,255,255,${a})`); g.addColorStop(.5, `rgba(255,255,255,${a * .6})`); g.addColorStop(1, "rgba(255,255,255,0)");
+    tctx.fillStyle = g; tctx.beginPath(); tctx.arc(x, y, r, 0, Math.PI * 2); tctx.fill();
+  }
+  let last = performance.now(); const t0 = last;
+  function frame(now){
+    requestAnimationFrame(frame);
+    const dt = Math.min(50, now - last) / 16.667; last = now;
+    if (!visible) return;
+    const ease = 1 - Math.pow(1 - .12, dt);
+    lag.x += (target.x - lag.x) * ease; lag.y += (target.y - lag.y) * ease;
+    const dx = lag.x - prev.x, dy = lag.y - prev.y, d = Math.hypot(dx, dy);
+    energy *= Math.pow(.9, dt);
+    // The edge hint steps aside while someone is painting, and comes back after a pause
+    const want = now - lastMove < 3500 ? 0 : 1;
+    guide += (want - guide) * (1 - Math.pow(1 - .05, dt));
+    // Slow linear fade (about 4 s from full): subtract whole steps so 8-bit pixels always reach black
+    fadeAcc += .75 * dt;
+    const step = Math.floor(fadeAcc);
+    if (step > 0) {
+      fadeAcc -= step;
+      const img = tctx.getImageData(0, 0, trail.width, trail.height), px = img.data;
+      for (let i = 0; i < px.length; i += 4) { const v = px[i] - step; px[i] = px[i + 1] = px[i + 2] = v < 0 ? 0 : v; }
+      tctx.putImageData(img, 0, 0);
+    }
+    if (active && d > .3) {
+      tctx.globalCompositeOperation = "lighter";
+      const sp = Math.min(1, d / dt / 25);
+      const r = Math.min(W, H) * .085 * (.6 + .6 * sp) * TS;
+      const steps = Math.max(1, Math.ceil(d * TS / (r * .3)));
+      const a = Math.min(1, .45 + energy) * Math.min(.8, 3 / steps);
+      for (let i = 1; i <= steps; i++) { const f = i / steps; blob((prev.x + dx * f) * TS, (prev.y + dy * f) * TS, r, a); }
+    }
+    prev.x = lag.x; prev.y = lag.y;
+    gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, texT);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, trail);
+    gl.uniform2f(uRes, canvas.width, canvas.height); gl.uniform2f(uImg, imgW, imgH);
+    gl.uniform1f(uTime, reduced ? 3 : (now - t0) / 1000);
+    gl.uniform1f(uGuide, guide);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
