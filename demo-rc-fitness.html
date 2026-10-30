@@ -624,7 +624,7 @@
       <p class="lede">See the floor, the weights and the people who train here, before you walk in.</p>
     </div>
     <div class="theatre">
-      <video id="edit" src="demo/rc-fitness/media/edit.mp4" poster="demo/rc-fitness/media/edit-poster.jpg" muted loop playsinline preload="metadata" aria-label="RC Fitness training video"></video>
+      <video id="edit" data-src="demo/rc-fitness/media/edit.mp4" data-src-phone="demo/rc-fitness/media/edit-m.mp4" poster="demo/rc-fitness/media/edit-poster.jpg" muted loop playsinline preload="none" aria-label="RC Fitness training video"></video>
       <button class="sound" id="sound" type="button" aria-pressed="false">🔈 Sound on</button>
       <button class="sound fs" id="fs" type="button">⛶ Full screen</button>
     </div>
@@ -1036,6 +1036,10 @@
 
   // Let the video take over when someone turns its sound on
   const vid = $("edit"), snd = $("sound");
+  // Phones get a lighter 720px cut (2.4 MB instead of 7.7 MB), and loading starts well before the section is on screen
+  vid.src = matchMedia("(max-width: 600px)").matches ? vid.dataset.srcPhone : vid.dataset.src;
+  const warm = new IntersectionObserver(es => { if (!es[0].isIntersecting) return; warm.disconnect(); vid.preload = "auto"; vid.load(); }, { rootMargin: "1200px 0px" });
+  warm.observe(vid);
   snd.addEventListener("click", () => {
     vid.muted = !vid.muted;
     snd.setAttribute("aria-pressed", String(!vid.muted));
