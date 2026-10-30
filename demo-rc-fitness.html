@@ -379,7 +379,7 @@
     <h1 class="wordmark" aria-label="RC Fitness"><svg id="dots" aria-hidden="true"></svg></h1>
 
     <div class="reveal" id="reveal">
-      <img id="reveal-fallback" src="demo/rc-fitness/img/sketch.webp" alt="Sketch of a gym floor with red pillars and dumbbell racks" hidden>
+      <img id="reveal-fallback" src="demo/rc-fitness/img/sketch-bw.webp" alt="Sketch of a gym floor with red pillars and dumbbell racks" hidden>
       <canvas id="gl" aria-label="Move across the sketch to reveal the gym floor photo underneath"></canvas>
     </div>
     <div class="hero-bottom">
@@ -966,7 +966,8 @@
   }
   const texO = makeTex(0, "uOuter"), texR = makeTex(1, "uReveal"), texT = makeTex(2, "uTrail");
   let imgW = 1614, imgH = 974;
-  [["demo/rc-fitness/img/sketch.webp", texO, 0], ["demo/rc-fitness/img/real.webp", texR, 1]].forEach(([src, tex, unit]) => {
+  // outer layer: black-and-white blueprint (the original colour sketch stays in img/sketch.webp)
+  [["demo/rc-fitness/img/sketch-bw.webp", texO, 0], ["demo/rc-fitness/img/real.webp", texR, 1]].forEach(([src, tex, unit]) => {
     const img = new Image();
     img.onload = () => { gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img); if (unit === 0) { imgW = img.naturalWidth; imgH = img.naturalHeight; } };
     img.src = src;
