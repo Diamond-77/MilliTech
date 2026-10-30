@@ -203,7 +203,7 @@
   @media (max-width: 700px) { .mosaic { grid-template-columns: 1fr 1fr; } .mosaic figure, .mosaic figure.wide { grid-column: span 1; } }
 
   /* ---------- Price tables ---------- */
-  .plans { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .plans { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 24px; align-items: stretch; }
   .table { border: 2px solid var(--line); background: var(--paper); }
   .row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 16px; align-items: center; padding: 18px 20px; border-top: 1px solid #dcdcdc; }
   .row:first-child { border-top: 0; }
@@ -214,7 +214,9 @@
   .was { font-family: var(--num); font-weight: 600; font-size: 22px; color: #a0a0a0; text-decoration: line-through; text-align: right; min-width: 4ch; }
   .off { display: inline-block; font-family: var(--body); font-weight: 700; font-size: 11px; background: var(--red); color: #fff; padding: 3px 7px; margin-left: 8px; vertical-align: middle; letter-spacing: .04em; }
   .row.hl { background: #fff1f0; }
-  .side { display: grid; gap: 16px; }
+  .side { display: flex; flex-direction: column; gap: 16px; }
+  .plans > .table { align-self: start; }
+  .side .fill { flex: 1 1 0; min-height: 140px; }
   @media (max-width: 900px) { .plans { grid-template-columns: 1fr; } }
   @media (max-width: 520px) { .row { padding: 14px; gap: 10px; } .row .name { font-size: 21px; } .price { font-size: 30px; } .was { font-size: 17px; } }
 
@@ -237,7 +239,8 @@
   .group { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 24px; }
   .group .photos { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-content: start; }
   .group .photos > :first-child { grid-column: 1 / -1; }
-  .gcards { display: grid; gap: 14px; align-content: start; }
+  .gcards { display: flex; flex-direction: column; gap: 14px; }
+  .gcards .fill { flex: 1 1 0; min-height: 180px; }
   .gcard { border: 2px solid var(--line); padding: 20px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 20px; align-items: center; }
   .gcard p { font-size: 14.5px; color: #333; grid-column: 1; }
   .gcard .price { grid-row: 1 / span 3; grid-column: 2; }
@@ -247,14 +250,14 @@
   @media (max-width: 900px) { .group { grid-template-columns: 1fr; } }
 
   /* ---------- PT ---------- */
-  .pt { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 32px; align-items: start; }
-  .pt > .photo { position: sticky; top: 24px; }
+  .pt { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 32px; align-items: stretch; }
+  .pt > .photo { aspect-ratio: auto; min-height: 320px; }
   .steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px; background: var(--line); border: 2px solid var(--line); }
   .steps div { background: var(--paper); padding: 14px 12px; display: grid; gap: 2px; }
   .steps .pct { font-family: var(--num); font-weight: 800; font-size: 50px; line-height: 1; color: var(--red); }
   .steps .pct.zero { color: #c8c8c8; }
   .steps span { font-size: 11px; text-transform: uppercase; color: var(--grey); letter-spacing: .08em; font-weight: 600; }
-  @media (max-width: 900px) { .pt { grid-template-columns: 1fr; } .pt > .photo { position: static; } }
+  @media (max-width: 900px) { .pt { grid-template-columns: 1fr; } .pt > .photo { aspect-ratio: 4 / 5; min-height: 0; } }
   @media (max-width: 520px) { .steps .pct { font-size: 34px; } }
 
   /* ---------- Why ---------- */
@@ -296,8 +299,9 @@
   @media (max-width: 900px) { .cgrid { grid-template-columns: 1fr; } .facts dd.phone { font-size: 44px; } }
 
   /* ---------- FAQ ---------- */
-  .faq { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 40px; align-items: start; }
-  .faq .head { grid-template-columns: 1fr; margin: 0; position: sticky; top: 24px; }
+  .faq { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 40px; align-items: stretch; }
+  .faq .head { display: flex; flex-direction: column; align-items: stretch; gap: 18px; margin: 0; }
+  .faq .head .fill { flex: 1 1 0; min-height: 220px; }
   details { border-top: 2px solid var(--line); }
   details:last-child { border-bottom: 2px solid var(--line); }
   summary { list-style: none; cursor: pointer; padding: 18px 0; display: grid; grid-template-columns: 38px minmax(0, 1fr) 24px; gap: 10px; align-items: baseline; font-weight: 700; font-size: 18px; }
@@ -306,7 +310,7 @@
   summary::after { content: "+"; font-family: var(--head); font-size: 28px; line-height: .6; color: var(--red); }
   details[open] summary::after { content: "−"; }
   details .a { padding: 0 34px 20px 48px; color: #333; }
-  @media (max-width: 900px) { .faq { grid-template-columns: 1fr; } .faq .head { position: static; } details .a { padding-left: 0; padding-right: 0; } }
+  @media (max-width: 900px) { .faq { grid-template-columns: 1fr; } .faq .head .fill { flex: none; aspect-ratio: 16 / 9; min-height: 0; } details .a { padding-left: 0; padding-right: 0; } }
 
   /* ---------- Footer ---------- */
   footer { background: var(--ink); color: #fff; padding-block: 56px 26px; border-top: 1px solid #222; overflow: hidden; }
@@ -497,7 +501,7 @@
         <div class="table"><div class="row"><span class="name">Admission<small>One-time joining fee</small></span><span></span><span class="price">₹1,000</span></div></div>
         <p class="fine">Fees from the RC Fitness fee chart. Call or visit the gym to confirm current fees before you join.</p>
         <div class="btns"><a class="btn solid" href="#contact">Enquire about membership</a></div>
-        <div class="photo r-43"><img src="demo/rc-fitness/img/asset4.webp" alt="Cable machine column" loading="lazy"></div>
+        <div class="photo fill"><img src="demo/rc-fitness/img/asset4.webp" alt="Cable machine column" loading="lazy"></div>
       </div>
     </div>
   </div>
@@ -539,6 +543,7 @@
         <div class="gcard"><h3>Plyometric with music</h3><p>Explosive jump-based training, set to music.</p><span class="price">₹600</span></div>
         <p class="fine">Ask the gym for the current class timings and billing period.</p>
         <div class="btns"><a class="btn solid" href="#contact">Enquire about group fitness</a></div>
+        <div class="photo fill"><img src="demo/rc-fitness/img/f44.webp" alt="Member training on a bench" loading="lazy"></div>
       </div>
     </div>
   </div>
@@ -605,6 +610,8 @@
       <div class="photo "><img src="demo/rc-fitness/img/battling-ropes.webp" alt="Battling ropes" loading="lazy"></div>
       <div class="photo "><img src="demo/rc-fitness/img/plyometric-or-jump-work.webp" alt="Box jumps" loading="lazy"></div>
       <div class="photo w2"><img src="demo/rc-fitness/img/an-aerobic-class.webp" alt="Aerobic class" loading="lazy"></div>
+      <div class="photo"><img src="demo/rc-fitness/img/asset5.webp" alt="Smith machine" loading="lazy"></div>
+      <div class="photo"><img src="demo/rc-fitness/img/asset1.webp" alt="Plate-loaded machines on the gym floor" loading="lazy"></div>
     </div>
     <div class="ig">
       <b>@rc_fitnessamurou</b>
@@ -658,6 +665,7 @@
     <div class="head">
       <div><span class="eyebrow">FAQ</span><h2 id="h-faq">Questions before you join.</h2></div>
       <p>Still unsure? Call <b>87983 03540</b> or visit the gym.</p>
+      <div class="photo fill"><img src="demo/rc-fitness/img/asset11.webp" alt="Member seated at a machine" loading="lazy"></div>
     </div>
     <div>
       <details open><summary><span class="q">01</span>Where is RC Fitness located?</summary><div class="a"><p>Awang Leikai, Samurou, Imphal West, Manipur 795009.</p></div></details>
