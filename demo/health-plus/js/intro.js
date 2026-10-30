@@ -208,7 +208,7 @@
     const loop = now => {
       idleRaf = requestAnimationFrame(loop);
       if (!hero.offsetParent || hero.getBoundingClientRect().bottom < 0 || document.hidden) return;
-      R.draw(REST, 1, 1, now / 1000, 1);
+      R.draw(REST, 1, 1, now / 1000, calm ? 0.5 : 1);
     };
     idleRaf = requestAnimationFrame(loop);
   }
@@ -221,14 +221,16 @@
     ['click', 'keydown', 'wheel', 'touchstart'].forEach(e => removeEventListener(e, skip));
   }
 
+  // Android turns on "reduce motion" by itself in battery saver, so that setting does not skip the
+  // intro: it plays the same slow reach, and afterwards the fingers move more calmly
+  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const start = () => {
+    if (R) return;
     R = glRenderer() || flatRenderer();
     layout();
-    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const still = reduced || /[?&]intro=0/.test(location.search) || (location.hash && !/^#\/?home/.test(location.hash));
+    const still = /[?&]intro=0/.test(location.search) || (location.hash && !/^#\/?home/.test(location.hash));
     if (still) {
-      done = true; hero.classList.add('touched'); finish();
-      if (reduced) R.draw(REST, 1, 1, 0, 0); else idle();
+      done = true; hero.classList.add('touched'); finish(); idle();
       return;
     }
     ['click', 'keydown', 'wheel', 'touchstart'].forEach(e => addEventListener(e, skip, { passive: true }));
@@ -239,5 +241,7 @@
   addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (!R) return; layout(); if (done) R.draw(REST, 1, 1, performance.now() / 1000, 1); }, 120); });
   addEventListener('hashchange', () => { if (!R) return; if (!done) skip(); setTimeout(layout, 50); });
   const img = mark.querySelector('img');
-  (img.complete ? Promise.resolve() : new Promise(r => img.addEventListener('load', r, { once: true }))).then(start);
+  // start once the mark has loaded, or after 1.5s on a slow or failed load so the intro still plays
+  if (img.complete) start();
+  else { img.addEventListener('load', start, { once: true }); img.addEventListener('error', start, { once: true }); setTimeout(start, 1500); }
 })();
