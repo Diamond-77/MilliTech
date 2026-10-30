@@ -103,6 +103,12 @@
   @media (prefers-reduced-motion: reduce) { .wordmark rect { animation: none; } }
   .reveal { position: relative; z-index: 1; aspect-ratio: 1614 / 974; border: 1.5px solid var(--ink); background: var(--ink); overflow: hidden; max-width: 100%; }
   .reveal canvas, .reveal img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; touch-action: pan-y; cursor: crosshair; }
+  .ghost { position: absolute; left: 0; top: 0; z-index: 2; pointer-events: none; opacity: 0; transition: opacity .35s; will-change: transform; }
+  .ghost.on { opacity: 1; }
+  .ghost svg { width: 30px; height: 30px; display: block; filter: drop-shadow(0 3px 6px rgba(0,0,0,.35)); }
+  .ghost .tap { display: none; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; background: rgba(255,255,255,.55); border: 2px solid #fff; box-shadow: 0 0 0 2px rgba(11,11,11,.5), 0 6px 16px rgba(0,0,0,.25); }
+  .ghost b { position: absolute; left: 30px; top: 28px; white-space: nowrap; font: 600 12px var(--body); letter-spacing: .06em; text-transform: uppercase; background: var(--ink); color: #fff; padding: 5px 9px; }
+  @media (pointer: coarse) { .ghost svg { display: none; } .ghost .tap { display: block; } .ghost b { left: 30px; top: 18px; } }
   .hero-bottom { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .8fr) minmax(0, .7fr); gap: 18px; align-items: stretch; padding-block: 28px 0; }
   .hero-bottom .lede { font-size: clamp(18px, 1.7vw, 23px); line-height: 1.35; color: var(--ink); padding: 0 20px; }
   .block { font-family: var(--head); font-size: clamp(20px, 2.2vw, 30px); text-transform: uppercase; text-decoration: none; display: flex; align-items: flex-end; justify-content: space-between; padding: 16px 20px; min-height: 108px; transition: transform .15s, box-shadow .15s; }
@@ -532,6 +538,7 @@
     <div class="reveal" id="reveal">
       <img id="reveal-fallback" src="demo/rc-fitness/img/sketch-bw.webp" alt="Sketch of a gym floor with red pillars and dumbbell racks" hidden>
       <canvas id="gl" aria-label="Move across the sketch to reveal the gym floor photo underneath"></canvas>
+      <div class="ghost" id="ghost" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 2l15 9.2-6.6 1.4 3.9 7.4-2.8 1.5-3.9-7.5L4 19z" fill="#fff" stroke="#0b0b0b" stroke-width="1.6" stroke-linejoin="round"/></svg><span class="tap"></span><b id="ghost-say">Move to reveal</b></div>
     </div>
     <div class="hero-bottom">
       <p class="lede">Take the next step towards your fitness goals at RC Fitness, Samurou. Explore strength training, cardio, bodybuilding, group fitness and personal training programmes under one roof.</p>
@@ -1229,6 +1236,33 @@
     box.addEventListener("pointerleave", () => { active = false; });
     new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(box);
 
+    // First-visit demo: a pointer sweeps across once so people know the sketch can be scratched
+    const ghost = document.getElementById("ghost");
+    const coarse = matchMedia("(pointer: coarse)").matches;
+    document.getElementById("ghost-say").textContent = coarse ? "Drag to reveal" : "Move to reveal";
+    let demo = null;
+    const stopDemo = () => { if (!demo) return; demo = null; ghost.classList.remove("on"); };
+    box.addEventListener("pointerdown", stopDemo); box.addEventListener("pointermove", e => { if (e.pointerType === "mouse" || active) stopDemo(); });
+    if (!reduced) {
+      const io = new IntersectionObserver(es => {
+        if (!es[0].isIntersecting) return;
+        io.disconnect();
+        setTimeout(() => { if (active) return; demo = { t0: performance.now(), dur: 2200 }; ghost.classList.add("on"); }, 450);
+      }, { threshold: .6 });
+      io.observe(box);
+    }
+    function demoStep(now){
+      let k = Math.min(1, (now - demo.t0) / demo.dur);
+      // let the lagging brush finish the stroke on slow phones before letting go
+      if (k >= 1 && Math.hypot(target.x - lag.x, target.y - lag.y) < 6) { stopDemo(); active = false; return; }
+      const e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;         // ease in-out
+      const x = W * (.16 + .68 * e), y = H * (.55 - .16 * Math.sin(e * Math.PI * 2.2));
+      if (!active) { active = true; jump(x, y); }
+      target.x = x; target.y = y; lastMove = now; energy = Math.min(1, energy + .08);
+      ghost.style.transform = `translate(${lag.x}px, ${lag.y}px)`;
+      if (k >= 1) ghost.classList.remove("on");
+    }
+
     function blob(x, y, r, a){
       const g = tctx.createRadialGradient(x, y, 0, x, y, r);
       g.addColorStop(0, `rgba(255,255,255,${a})`); g.addColorStop(.5, `rgba(255,255,255,${a * .6})`); g.addColorStop(1, "rgba(255,255,255,0)");
@@ -1239,6 +1273,7 @@
       requestAnimationFrame(frame);
       const dt = Math.min(50, now - last) / 16.667; last = now;
       if (!visible) return;
+      if (demo) demoStep(now);
       const ease = 1 - Math.pow(1 - .12, dt);
       lag.x += (target.x - lag.x) * ease; lag.y += (target.y - lag.y) * ease;
       const dx = lag.x - prev.x, dy = lag.y - prev.y, d = Math.hypot(dx, dy);
