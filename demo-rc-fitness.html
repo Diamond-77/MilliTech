@@ -893,7 +893,8 @@
   const gl = canvas.getContext("webgl", { antialias: false, premultipliedAlpha: false });
   if (!gl) { document.getElementById("reveal-fallback").hidden = false; canvas.hidden = true; return; }
   const trail = document.createElement("canvas");
-  const tctx = trail.getContext("2d");
+  const tctx = trail.getContext("2d", { willReadFrequently: true });
+  let fadeAcc = 0;
 
   const VERT = `attribute vec2 p; varying vec2 vUv; void main(){ vUv = p * .5 + .5; gl_Position = vec4(p, 0., 1.); }`;
   const FRAG = `
@@ -901,7 +902,7 @@
     varying vec2 vUv;
     uniform sampler2D uOuter, uReveal, uTrail;
     uniform vec2 uRes, uImg;
-    uniform vec4 uMirror;       // mirror wall in image pixels: x0, y0, x1, y1
+    uniform vec4 uSeg[14];      // edge segments in image pixels: x0, y0, x1, y1
     uniform float uTime, uGuide;
     vec2 hash(vec2 p){ p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3))); return -1. + 2. * fract(sin(p) * 43758.5453123); }
     float noise(vec2 p){
@@ -912,26 +913,27 @@
     float fbm(vec2 p){ float v = 0., a = .5; for (int i = 0; i < 4; i++){ v += a * noise(p); p = p * 2.03 + 17.1; a *= .5; } return v; }
     vec2 cover(vec2 uv){ float rs = uRes.x / uRes.y, ri = uImg.x / uImg.y; vec2 s = rs > ri ? vec2(1., ri / rs) : vec2(rs / ri, 1.); return (uv - .5) * s + .5; }
 
-    // Two reveal streaks chase each other round the mirror's border
-    float mirrorGuide(vec2 px, float t){
-      float x0 = uMirror.x, y0 = uMirror.y, x1 = uMirror.z, y1 = uMirror.w;
-      float w = x1 - x0, h = y1 - y0, P = 2. * (w + h);
-      float dT = abs(px.y - y0), dB = abs(px.y - y1), dL = abs(px.x - x0), dR = abs(px.x - x1);
-      float inX = step(x0 - 14., px.x) * step(px.x, x1 + 14.), inY = step(y0 - 14., px.y) * step(px.y, y1 + 14.);
-      float d = 1e5, s = 0.;
-      if (inX > .5 && dT < d) { d = dT; s = px.x - x0; }
-      if (inY > .5 && dR < d) { d = dR; s = w + px.y - y0; }
-      if (inX > .5 && dB < d) { d = dB; s = w + h + x1 - px.x; }
-      if (inY > .5 && dL < d) { d = dL; s = 2. * w + h + y1 - px.y; }
-      s /= P;
-      float th = 12. + 7. * fbm(px * .03 + t * .4);
-      float band = 1. - smoothstep(th * .45, th, d);
+    // Reveal streaks run along the room's main edges: the mirror frame, the pillars, the soffit and the wall base
+    float edgeGuide(vec2 px, float t){
       float g = 0.;
-      for (int k = 0; k < 2; k++){
-        float l = fract(t * .07 + float(k) * .5 - s);   // 0 at the head, grows along the tail
-        g = max(g, (1. - smoothstep(0., .16, l)) * smoothstep(0., .006, l + .006));
+      for (int k = 0; k < 14; k++){
+        vec2 a = uSeg[k].xy, b = uSeg[k].zw;
+        vec2 ba = b - a, pa = px - a;
+        float L = length(ba);
+        float h = clamp(dot(pa, ba) / (L * L), 0., 1.);
+        float d = length(pa - ba * h);
+        if (d > 22.) continue;
+        float fk = float(k);
+        float th = 11. + 7. * fbm(px * .03 + t * .4 + fk);
+        float band = 1. - smoothstep(th * .45, th, d);
+        float cycle = L * 1.9 + 300.;                         // run the edge, then pause before the next pass
+        float head = mod(t * (210. + 37. * mod(fk, 4.)) + fk * 173., cycle);
+        float behind = head - h * L;                          // distance from the streak's head, in px
+        float tail = max(90., L * .32);
+        float s = step(0., behind) * (1. - smoothstep(0., tail, behind)) * smoothstep(-6., 0., behind + 6.);
+        g = max(g, band * s);
       }
-      return band * g;
+      return g;
     }
     void main(){
       vec2 uv = vUv; vec2 asp = vec2(uRes.x / uRes.y, 1.); float t = uTime * .12;
@@ -939,7 +941,7 @@
       vec2 warp = vec2(fbm(q + t), fbm(q - t + 4.7));
       float m = texture2D(uTrail, vec2(uv.x, 1. - uv.y) + warp * .035).r;
       vec2 iuv = cover(vec2(uv.x, 1. - uv.y));
-      m += mirrorGuide(iuv * uImg, uTime) * uGuide * .75;
+      m += edgeGuide(iuv * uImg, uTime) * uGuide * .75;
       float v = m + fbm(uv * asp * 7. + t * 1.6) * .2;
       float mask = smoothstep(.34, .39, v);
       float rim = smoothstep(.28, .34, v) - mask;
@@ -955,8 +957,17 @@
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
   const loc = gl.getAttribLocation(prog, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
   const U = n => gl.getUniformLocation(prog, n);
-  const uRes = U("uRes"), uImg = U("uImg"), uTime = U("uTime"), uGuide = U("uGuide"), uMirror = U("uMirror");
-  gl.uniform4f(uMirror, 423, 190, 1190, 582);
+  const uRes = U("uRes"), uImg = U("uImg"), uTime = U("uTime"), uGuide = U("uGuide");
+  // Edges traced on the sketch (image pixels, 1614 x 974)
+  gl.uniform4fv(U("uSeg"), new Float32Array([
+    423, 190, 1190, 190,   1190, 190, 1190, 582,   1190, 582, 423, 582,   423, 582, 423, 190,   // mirror frame
+    262, 155, 1390, 155,                                                                   // soffit
+    262, 0, 262, 610,      1390, 0, 1390, 610,                                             // front pillars
+    355, 190, 355, 585,    1265, 190, 1265, 585,                                           // pillars beside the mirror
+    500, 305, 500, 580,    1110, 305, 1110, 580,                                           // pillars in the reflection
+    417, 623, 1197, 623,                                                                   // base of the mirror wall
+    262, 610, 423, 600,    1197, 600, 1390, 610                                            // wall foot to the racks
+  ]));
   function makeTex(unit, name){
     const t = gl.createTexture(); gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t);
     [gl.TEXTURE_MIN_FILTER, gl.TEXTURE_MAG_FILTER].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.LINEAR));
@@ -1016,12 +1027,18 @@
     lag.x += (target.x - lag.x) * ease; lag.y += (target.y - lag.y) * ease;
     const dx = lag.x - prev.x, dy = lag.y - prev.y, d = Math.hypot(dx, dy);
     energy *= Math.pow(.9, dt);
-    // The mirror hint steps aside while someone is painting, and comes back after a pause
-    const want = now - lastMove < 1800 ? 0 : 1;
+    // The edge hint steps aside while someone is painting, and comes back after a pause
+    const want = now - lastMove < 3500 ? 0 : 1;
     guide += (want - guide) * (1 - Math.pow(1 - .05, dt));
-    tctx.globalCompositeOperation = "source-over";
-    tctx.fillStyle = `rgba(0,0,0,${1 - Math.pow(1 - .05, dt)})`;
-    tctx.fillRect(0, 0, trail.width, trail.height);
+    // Slow linear fade (about 4 s from full): subtract whole steps so 8-bit pixels always reach black
+    fadeAcc += .75 * dt;
+    const step = Math.floor(fadeAcc);
+    if (step > 0) {
+      fadeAcc -= step;
+      const img = tctx.getImageData(0, 0, trail.width, trail.height), px = img.data;
+      for (let i = 0; i < px.length; i += 4) { const v = px[i] - step; px[i] = px[i + 1] = px[i + 2] = v < 0 ? 0 : v; }
+      tctx.putImageData(img, 0, 0);
+    }
     if (active && d > .3) {
       tctx.globalCompositeOperation = "lighter";
       const sp = Math.min(1, d / dt / 25);
