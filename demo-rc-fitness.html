@@ -207,6 +207,9 @@
   .sound { position: absolute; right: calc(var(--gutr) + 4px); bottom: 18px; font: 600 13px var(--body); letter-spacing: .06em; text-transform: uppercase; color: #fff; background: rgba(11,11,11,.7); border: 1.5px solid #fff; padding: 10px 14px; cursor: pointer; display: flex; gap: 8px; align-items: center; }
   .sound:hover { background: var(--red); border-color: var(--red); }
   .sound.fs { display: none; }
+  .vplay { position: absolute; left: 50%; top: 50%; width: 72px; height: 72px; margin: -36px 0 0 -36px; border-radius: 50%; border: 2px solid #fff; background: rgba(227,52,43,.92); color: #fff; display: grid; place-items: center; cursor: pointer; }
+  .vplay[hidden] { display: none; }
+  .vplay svg { width: 30px; height: 30px; margin-left: 4px; }
   .mosaic { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
   .mosaic figure { margin: 0; grid-column: span 2; display: grid; gap: 8px; }
   .mosaic figure.wide { grid-column: span 3; }
@@ -626,7 +629,8 @@
       <p class="lede">See the floor, the weights and the people who train here, before you walk in.</p>
     </div>
     <div class="theatre">
-      <video id="edit" data-src="demo/rc-fitness/media/edit.mp4" data-src-phone="demo/rc-fitness/media/edit-m.mp4" poster="demo/rc-fitness/media/edit-poster.jpg" muted loop playsinline preload="none" aria-label="RC Fitness training video"></video>
+      <video id="edit" data-src="demo/rc-fitness/media/edit.mp4" data-src-phone="demo/rc-fitness/media/edit-m.mp4" poster="demo/rc-fitness/media/edit-poster.jpg" muted autoplay loop playsinline webkit-playsinline disablepictureinpicture preload="metadata" aria-label="RC Fitness training video"></video>
+      <button class="vplay" id="vplay" type="button" aria-label="Play the video" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></button>
       <button class="sound" id="sound" type="button" aria-pressed="false">🔈 Sound on</button>
       <button class="sound fs" id="fs" type="button">⛶ Full screen</button>
     </div>
@@ -1038,10 +1042,25 @@
 
   // Let the video take over when someone turns its sound on
   const vid = $("edit"), snd = $("sound");
-  // Phones get a lighter 720px cut (2.4 MB instead of 7.7 MB), and loading starts well before the section is on screen
+  // Phones get a lighter 720px cut (2.4 MB instead of 7.7 MB)
   vid.src = matchMedia("(max-width: 600px)").matches ? vid.dataset.srcPhone : vid.dataset.src;
-  const warm = new IntersectionObserver(es => { if (!es[0].isIntersecting) return; warm.disconnect(); vid.preload = "auto"; vid.load(); }, { rootMargin: "1200px 0px" });
+  vid.muted = true; vid.defaultMuted = true;            // iOS only autoplays when muted is set as a property too
+  const vplay = $("vplay");
+  let inView = false;
+  // Ask to play, and keep asking until the browser agrees (iOS can refuse a play() made before data arrives)
+  const tryPlay = () => {
+    if (!inView || document.fullscreenElement || vid.webkitDisplayingFullscreen) return;
+    const p = vid.play();
+    if (p) p.then(() => { vplay.hidden = true; }, e => { if (e && e.name === "NotAllowedError") vplay.hidden = false; });   // e.g. Low Power Mode: show a play button
+  };
+  ["loadedmetadata", "loadeddata", "canplay"].forEach(ev => vid.addEventListener(ev, tryPlay));
+  vid.addEventListener("playing", () => { vplay.hidden = true; if (!inView) vid.pause(); });   // autoplay never runs off screen
+  vplay.addEventListener("click", () => { vid.play().then(() => { vplay.hidden = true; }, () => {}); });
+  // Start buffering well before the section is on screen (preload only, never load(): load() cancels a pending play)
+  const warm = new IntersectionObserver(es => { if (!es[0].isIntersecting) return; warm.disconnect(); vid.preload = "auto"; }, { rootMargin: "1200px 0px" });
   warm.observe(vid);
+  // Any first touch on the page counts as permission on stricter phones
+  addEventListener("touchend", () => { if (inView && vid.paused) tryPlay(); }, { passive: true });
   snd.addEventListener("click", () => {
     vid.muted = !vid.muted;
     snd.setAttribute("aria-pressed", String(!vid.muted));
@@ -1059,7 +1078,8 @@
   });
   new IntersectionObserver(es => es.forEach(en => {
     if (document.fullscreenElement || vid.webkitDisplayingFullscreen) return;
-    if (en.isIntersecting) vid.play().catch(() => {});
+    inView = en.isIntersecting;
+    if (inView) tryPlay();
     else { vid.pause(); if (!vid.muted) { vid.muted = true; snd.textContent = "🔈 Sound on"; snd.setAttribute("aria-pressed", "false"); } }
   }), { threshold: .35 }).observe(vid);
 })();
