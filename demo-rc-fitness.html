@@ -102,7 +102,9 @@
   .wordmark rect.hot { animation: none; fill: #ff1a12; transform: scale(1.25); }
   @media (prefers-reduced-motion: reduce) { .wordmark rect { animation: none; } }
   .reveal { position: relative; z-index: 1; aspect-ratio: 1614 / 974; border: 1.5px solid var(--ink); background: var(--ink); overflow: hidden; max-width: 100%; }
-  .reveal canvas, .reveal img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; touch-action: pan-y; cursor: crosshair; }
+  .reveal canvas, .reveal img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; touch-action: none; cursor: crosshair; }
+  /* the sketch is a drawing pad: a finger moving on it never scrolls or pulls the page to refresh */
+  .reveal { touch-action: none; overscroll-behavior: contain; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
   .ghost { position: absolute; left: 0; top: 0; z-index: 2; pointer-events: none; opacity: 0; transition: opacity .35s; will-change: transform; }
   .ghost.on { opacity: 1; }
   .ghost svg { width: 30px; height: 30px; display: block; filter: drop-shadow(0 3px 6px rgba(0,0,0,.35)); }
@@ -1251,6 +1253,8 @@
       target.x = x; target.y = y; lastMove = performance.now();
     });
     box.addEventListener("pointerdown", e => { if (e.pointerType !== "mouse") { active = true; const [x, y] = local(e); jump(x, y); energy = .5; lastMove = performance.now(); } });
+    // iOS Safari still starts a scroll / pull-to-refresh from touchmove, so stop it at the source
+    box.addEventListener("touchmove", e => { if (e.cancelable) e.preventDefault(); }, { passive: false });
     box.addEventListener("pointerup", e => { if (e.pointerType !== "mouse") active = false; });
     box.addEventListener("pointercancel", () => { active = false; });
     box.addEventListener("pointerleave", () => { active = false; });
