@@ -7,7 +7,8 @@
 <meta name="description" content="A short set of questions so MilliTech can build your flower shop's website and WhatsApp ordering app.">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#f6efe2">
-<link rel="icon" href="/favicon.svg">
+<link rel="icon" href="/favicon.svg" id="favicon">
+<link rel="apple-touch-icon" href="/favicon.svg" id="touchIcon">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,400;1,6..96,500&family=Hanken+Grotesk:wght@400;500;600;700&family=Reenie+Beanie&display=swap" rel="stylesheet">
@@ -73,6 +74,8 @@ h1 em { font-weight: 500; background: linear-gradient(transparent 62%, var(--pin
 .demo-link b { display: block; font-family: var(--display); font-style: italic; font-weight: 500; font-size: 21px; line-height: 1.15; }
 .demo-link small { color: var(--ink-soft); font-size: 14px; }
 .demo-link .arrow { margin-left: auto; font-size: 24px; }
+
+.shop-logo { display: block; width: clamp(130px, 38vw, 180px); height: auto; margin: 0 auto 18px; }
 
 /* Slips */
 form { display: flex; flex-direction: column; gap: 26px; padding-block: 10px 30px; }
@@ -167,6 +170,7 @@ footer a { font-weight: 700; }
 
 <div class="wrap">
   <header class="intro">
+    <img class="shop-logo" id="shopLogo" alt="" hidden>
     <p class="kicker">a few questions for you</p>
     <h1>Let’s make your website <em id="shopTitle">bloom.</em></h1>
     <p class="lede">Your answers tell us how your shop works and how you want it to look. There are no wrong answers. Skip anything you’re unsure about and we’ll talk about it on WhatsApp.</p>
@@ -195,6 +199,20 @@ footer a { font-weight: 700; }
     document.title = SHOP + ' · Website Brief';
   }
   if (DEMO) {
+    // The shop's own logo and icon live with its demo: /demo/<shop>/img/
+    var base = '/demo/' + DEMO.replace(/^\/+/, '').replace(/^demo-/, '') + '/img/';
+    var logo = document.getElementById('shopLogo');
+    logo.onload = function () { logo.hidden = false; };
+    logo.onerror = function () { logo.remove(); };
+    logo.alt = (SHOP || 'Shop') + ' logo';
+    logo.src = base + 'logo.webp';
+    var probe = new Image();
+    probe.onload = function () {
+      document.getElementById('favicon').setAttribute('href', base + 'favicon-64.png');
+      document.getElementById('favicon').setAttribute('type', 'image/png');
+      document.getElementById('touchIcon').setAttribute('href', base + 'apple-touch-icon.png');
+    };
+    probe.src = base + 'favicon-64.png';
     var dl = document.getElementById('demoLink');
     dl.href = '/' + DEMO.replace(/^\/+/, '');
     dl.hidden = false;
