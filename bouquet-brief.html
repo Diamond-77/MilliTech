@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Your Website Brief · MilliTech</title>
+<meta name="description" content="A short set of questions so MilliTech can build your flower shop's website and WhatsApp ordering app.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f6efe2">
+<link rel="icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,400;1,6..96,500&family=Hanken+Grotesk:wght@400;500;600;700&family=Reenie+Beanie&display=swap" rel="stylesheet">
+<style>
+/* Layout: one narrow column of paper "slips", one per topic, with a sticky progress strip. */
+:root {
+  --paper: #f6efe2;
+  --sheet: #fffdf8;
+  --ink: #1f2a52;
+  --ink-soft: #545c80;
+  --line: rgba(31, 42, 82, 0.22);
+  --pink: #f6c9d0;
+  --orange: #f9cfa3;
+  --green: #cfe1c1;
+  --butter: #f6e6a6;
+  --lilac: #ddd2ee;
+  --rose: #c9434f;
+  --display: 'Bodoni Moda', 'Didot', Georgia, serif;
+  --body: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --hand: 'Reenie Beanie', 'Bradley Hand', cursive;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.5;
+  background: var(--paper) url('/demo/leikoi-kromatics/img/paper.jpg') repeat; background-size: 384px;
+}
+button, input, textarea, select { font: inherit; color: inherit; }
+a { color: inherit; }
+.wrap {
+  max-width: 680px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* Progress strip */
+.bar {
+  position: sticky; top: 0; z-index: 10;
+  background: rgba(246, 239, 226, 0.94); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--line);
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.bar .wrap { display: flex; align-items: center; gap: 12px; min-height: 52px; }
+.bar-brand { font-weight: 700; font-size: 13px; letter-spacing: 0.14em; }
+.bar-track { flex: 1; height: 6px; border-radius: 6px; background: rgba(31, 42, 82, 0.1); overflow: hidden; }
+.bar-fill { height: 100%; width: 0; background: var(--ink); border-radius: 6px; transition: width 0.3s ease; }
+.bar-count { font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; min-width: 4.5em; text-align: right; }
+
+/* Intro */
+header.intro { padding-block: 36px 20px; }
+.kicker { font-family: var(--hand); font-size: 28px; line-height: 1; color: var(--ink-soft); margin: 0 0 8px; rotate: -2deg; }
+h1, h2 { font-family: var(--display); font-style: italic; font-weight: 400; line-height: 1.08; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(36px, 9vw, 54px); }
+h1 em { font-weight: 500; background: linear-gradient(transparent 62%, var(--pink) 62% 92%, transparent 92%); padding: 0 0.06em; }
+.lede { color: var(--ink-soft); margin: 14px 0 0; max-width: 34em; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.meta span { font-size: 14px; padding: 6px 12px; border-radius: 999px; background: var(--sheet); border: 1px solid var(--line); }
+.demo-link {
+  display: flex; align-items: center; gap: 14px; margin-top: 22px; padding: 14px 16px; text-decoration: none;
+  background: var(--butter); rotate: -0.6deg; box-shadow: 0 8px 18px rgba(70, 48, 30, 0.14);
+}
+.demo-link b { display: block; font-family: var(--display); font-style: italic; font-weight: 500; font-size: 21px; line-height: 1.15; }
+.demo-link small { color: var(--ink-soft); font-size: 14px; }
+.demo-link .arrow { margin-left: auto; font-size: 24px; }
+
+/* Slips */
+form { display: flex; flex-direction: column; gap: 26px; padding-block: 10px 30px; }
+.slip {
+  position: relative; background: var(--sheet); padding: 26px 20px 22px;
+  box-shadow: 0 10px 24px rgba(70, 48, 30, 0.12), 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+  border-radius: 2px;
+}
+.slip:nth-child(odd) { rotate: -0.35deg; }
+.slip:nth-child(even) { rotate: 0.35deg; }
+.tape { position: absolute; top: -11px; left: 50%; width: 84px; height: 24px; translate: -50% 0; rotate: -3deg; opacity: 0.9;
+  clip-path: polygon(0 0, 5% 20%, 0 40%, 5% 60%, 0 80%, 5% 100%, 95% 100%, 100% 80%, 95% 60%, 100% 40%, 95% 20%, 100% 0); }
+.slip h2 { font-size: clamp(27px, 6.4vw, 34px); }
+.slip .why { margin: 6px 0 4px; color: var(--ink-soft); font-size: 15.5px; }
+.q { margin-top: 22px; border: 0; padding: 0; min-width: 0; }
+.q > legend, .q > label { display: block; padding: 0; font-weight: 600; font-size: 16px; margin-bottom: 4px; }
+.q .help { display: block; font-size: 14px; color: var(--ink-soft); margin: 0 0 10px; font-weight: 400; }
+.req { color: var(--rose); font-weight: 700; }
+input[type=text], input[type=tel], input[type=date], input[type=url], textarea {
+  display: block; width: 100%; min-height: 50px; padding: 12px 14px; font-size: 16px;
+  background: #fff; border: 1.5px solid var(--line); border-radius: 10px;
+}
+textarea { min-height: 96px; resize: vertical; line-height: 1.45; }
+input::placeholder, textarea::placeholder { color: #8a90aa; }
+input:focus, textarea:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(31, 42, 82, 0.12); }
+.q.bad input { border-color: var(--rose); }
+.q .err { display: none; color: var(--rose); font-size: 14px; margin-top: 6px; }
+.q.bad .err { display: block; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { position: relative; }
+.chip input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.chip span {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 9px 15px;
+  border: 1.5px solid var(--line); border-radius: 999px; background: #fff; font-size: 15px; cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.chip input:checked + span { background: var(--ink); border-color: var(--ink); color: var(--sheet); }
+.chip input:focus-visible + span { outline: 3px solid var(--rose); outline-offset: 2px; }
+.chip i { width: 18px; height: 18px; border-radius: 50%; border: 1px solid rgba(31, 42, 82, 0.25); flex: none; }
+.chips.vibes .chip span { flex-direction: column; align-items: flex-start; gap: 0; border-radius: 14px; padding: 10px 14px; }
+.chips.vibes small { font-size: 13px; opacity: 0.8; }
+.other { margin-top: 10px; }
+
+/* Finish */
+.finish { background: #fdeaec; }
+.summary {
+  white-space: pre-wrap; font-family: var(--body); font-size: 14px; line-height: 1.5;
+  background: #fff; border: 1.5px dashed var(--line); border-radius: 10px; padding: 14px; margin: 16px 0 0;
+  max-height: 260px; overflow: auto; overflow-wrap: anywhere;
+}
+.actions { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 12px 20px;
+  border-radius: 999px; border: 1.5px solid var(--ink); font-weight: 700; font-size: 16.5px; text-decoration: none; cursor: pointer;
+}
+.btn-ink { background: var(--ink); color: var(--sheet); }
+.btn-line { background: transparent; color: var(--ink); }
+.btn:focus-visible, a:focus-visible { outline: 3px solid var(--rose); outline-offset: 3px; }
+.note { font-size: 14px; color: var(--ink-soft); margin: 12px 0 0; }
+.status { min-height: 1.4em; font-size: 14.5px; font-weight: 600; margin: 10px 0 0; }
+.saved { font-size: 13px; color: var(--ink-soft); text-align: center; margin: 0; }
+.contact { margin-top: 14px; font-size: 14.5px; }
+.contact b { user-select: all; }
+
+footer { text-align: center; padding-block: 18px 40px; font-size: 13px; letter-spacing: 0.08em; color: var(--ink-soft); }
+footer a { font-weight: 700; }
+
+@media (min-width: 720px) {
+  .slip { padding: 34px 38px 30px; }
+  .actions { flex-direction: row; }
+  .actions .btn { flex: 1; }
+}
+@media (max-width: 380px) {
+  .pair { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bar-fill, .chip span { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="bar" role="status" aria-live="polite">
+  <div class="wrap">
+    <span class="bar-brand">MILLITECH</span>
+    <div class="bar-track" aria-hidden="true"><div class="bar-fill" id="fill"></div></div>
+    <span class="bar-count" id="count">0 answered</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="intro">
+    <p class="kicker">a few questions for you</p>
+    <h1>Let’s make your website <em id="shopTitle">bloom.</em></h1>
+    <p class="lede">Your answers tell us how your shop works and how you want it to look. There are no wrong answers. Skip anything you’re unsure about and we’ll talk about it on WhatsApp.</p>
+    <div class="meta"><span>About 8 minutes</span><span>Only 3 questions are required</span><span>Your answers save on this phone</span></div>
+    <a class="demo-link" id="demoLink" href="#" target="_blank" rel="noopener" hidden>
+      <span><b>See the demo we made for you</b><small>Open it, then come back and tell us what you think</small></span>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+  </header>
+
+  <form id="brief" novalidate></form>
+</div>
+
+<footer>Developed by <a href="https://millitech.vercel.app" target="_blank" rel="noopener">MILLITECH</a> · Imphal</footer>
+
+<script>
+(function () {
+  var MILLITECH_WA = '916009271012';
+  var params = new URLSearchParams(location.search);
+  var SHOP = (params.get('shop') || '').trim().slice(0, 60);
+  var DEMO = (params.get('demo') || '').trim().replace(/[^a-z0-9\-\/]/gi, '');
+  var KEY = 'mt-brief:' + (SHOP || 'shop');
+
+  if (SHOP) {
+    document.getElementById('shopTitle').textContent = 'bloom, ' + SHOP + '.';
+    document.title = SHOP + ' · Website Brief';
+  }
+  if (DEMO) {
+    var dl = document.getElementById('demoLink');
+    dl.href = '/' + DEMO.replace(/^\/+/, '');
+    dl.hidden = false;
+  }
+
+  // Each topic is one slip. type: text | tel | url | date | area | one | many | colours | vibes
+  var TOPICS = [
+    { title: 'About your shop', why: 'So the website has the right name and details.', tape: 'var(--pink)', qs: [
+      { id: 'shop', label: 'Shop name, spelled exactly as it should appear', type: 'text', req: true, value: SHOP, ph: 'e.g. Leikoi Kromatics', ac: 'organization' },
+      { id: 'owner', label: 'Your name', type: 'text', req: true, ph: 'Your full name', ac: 'name' },
+      { id: 'wa', label: 'WhatsApp number for orders', help: 'Customers will message this number from the website.', type: 'tel', req: true, ph: '10-digit number', ac: 'tel' },
+      { id: 'ig', label: 'Instagram handle', type: 'text', ph: '@yourshop' },
+      { id: 'since', label: 'Since when have you been selling flowers?', type: 'text', ph: 'e.g. 2019' },
+      { id: 'where', label: 'Where are you?', help: 'Shop address, or the area you work from if you sell from home.', type: 'area', ph: 'Locality, landmark, Imphal West…' },
+      { id: 'hours', label: 'Opening hours', type: 'text', ph: 'e.g. 9 am to 8 pm, closed Sunday' }
+    ]},
+    { title: 'Your bouquets', why: 'So we show what you actually sell.', tape: 'var(--orange)', qs: [
+      { id: 'sell', label: 'What do you make?', help: 'Pick all that apply.', type: 'many', opts: ['Fresh flower bouquets', 'Dried flower bouquets', 'Custom bouquets', 'Single stems', 'Flower boxes', 'Gift hampers', 'Wedding flowers', 'Event decoration', 'Car decoration', 'Indoor plants'], other: true },
+      { id: 'best', label: 'Which bouquets sell the most?', type: 'area', ph: 'e.g. red roses in black wrap, sunflower bouquets…' },
+      { id: 'occasions', label: 'Which occasions do people order for?', type: 'many', opts: ['Birthdays', 'Anniversaries', 'Valentine’s Day', 'Apologies', 'Thank you', 'Graduation', 'Get well soon', 'Weddings', 'Mother’s Day', 'Just because'], other: true },
+      { id: 'price', label: 'Price range of your bouquets (₹)', type: 'pair', a: { id: 'priceFrom', ph: 'From, e.g. 300' }, b: { id: 'priceTo', ph: 'To, e.g. 3,000' } },
+      { id: 'showPrice', label: 'Should prices appear on the website?', type: 'one', opts: ['Yes, show prices', 'Show “starting from” prices', 'No, ask on WhatsApp'] }
+    ]},
+    { title: 'Orders and delivery', why: 'So the order buttons and the WhatsApp app match how you work.', tape: 'var(--green)', qs: [
+      { id: 'how', label: 'How do customers order today?', type: 'many', opts: ['Instagram DM', 'WhatsApp', 'Phone call', 'Walk in'], other: true },
+      { id: 'notice', label: 'How much notice do you need for an order?', type: 'one', opts: ['Same day', '1 day', '2 to 3 days', 'Depends on the order'] },
+      { id: 'delivery', label: 'Do you deliver?', type: 'one', opts: ['Yes', 'Pickup only', 'Both'] },
+      { id: 'areas', label: 'Delivery areas and charges', type: 'area', ph: 'e.g. Free within Imphal town, ₹100 outside…' },
+      { id: 'pay', label: 'How do customers pay?', type: 'many', opts: ['UPI', 'Google Pay', 'PhonePe', 'Cash', 'Card', 'Advance before making'], other: true }
+    ]},
+    { title: 'The look', why: 'So the website feels like your shop.', tape: 'var(--butter)', qs: [
+      { id: 'demoLike', label: 'What did you like in the demo?', type: 'many', opts: ['The tap-to-give story at the start', 'Paper background', 'Feelings picker', 'Custom order slip', 'Photo collage', 'Fonts'], other: true, showIfDemo: true },
+      { id: 'demoChange', label: 'What would you change in the demo?', type: 'area', ph: 'Anything at all', showIfDemo: true },
+      { id: 'vibe', label: 'Which words describe your shop best?', help: 'Pick up to three.', type: 'vibes', max: 3, opts: [['Romantic', 'soft and heartfelt'], ['Playful', 'cute and fun'], ['Elegant', 'clean and classy'], ['Minimal', 'simple and calm'], ['Bold', 'bright and loud'], ['Earthy', 'natural and rustic'], ['Luxury', 'premium and rich'], ['Traditional', 'rooted in Manipur']] },
+      { id: 'colours', label: 'Colours you’d like on the website', type: 'colours', opts: [['Light pink', '#f6c9d0'], ['Navy blue', '#1f2a52'], ['Light orange', '#f9cfa3'], ['Soft green', '#cfe1c1'], ['Butter yellow', '#f6e6a6'], ['Lilac', '#ddd2ee'], ['Cream', '#f6efe2'], ['Taupe', '#b9aa9a'], ['Red', '#c9434f'], ['White', '#ffffff'], ['Black', '#1a1a1a']] },
+      { id: 'avoid', label: 'Any colours or styles you don’t want?', type: 'text', ph: 'e.g. no dark backgrounds' },
+      { id: 'liked', label: 'Websites or Instagram pages you like the look of', type: 'area', ph: 'Paste links or names' }
+    ]},
+    { title: 'Photos and story', why: 'Real photos and your own words sell better than anything we write.', tape: 'var(--lilac)', qs: [
+      { id: 'photos', label: 'Can you send more photos?', type: 'many', opts: ['Bouquets', 'The shop', 'Me or my team at work', 'Happy customers (with permission)', 'Videos or reels'] },
+      { id: 'logo', label: 'Do you have your logo as a file?', type: 'one', opts: ['Yes, I can send it', 'Only a screenshot', 'No logo yet'] },
+      { id: 'story', label: 'How did your shop start?', help: 'A few lines in your own words. We’ll polish it.', type: 'area', ph: 'Why flowers, who started it, what makes you different…' },
+      { id: 'reviews', label: 'Can we show customer reviews?', type: 'one', opts: ['Yes, I have some', 'I can collect a few', 'Not yet'] }
+    ]},
+    { title: 'Website and WhatsApp app', why: 'So we build only what you need.', tape: 'var(--pink)', qs: [
+      { id: 'sections', label: 'What should the website include?', type: 'many', opts: ['Bouquet gallery', 'Order by feeling or occasion', 'Custom bouquet form', 'Prices', 'Delivery info', 'Customer reviews', 'Our story', 'Instagram link', 'Location map', 'FAQ'], other: true },
+      { id: 'app', label: 'What should the WhatsApp ordering app do?', type: 'many', opts: ['Show a catalogue', 'Take orders', 'Accept UPI payment', 'Delivery tracking', 'Booking for events', 'Loyalty points', 'Send orders to my WhatsApp', 'A simple dashboard for me'], other: true },
+      { id: 'offer', label: 'Any offer to launch with?', type: 'text', ph: 'e.g. 10% off first order' },
+      { id: 'when', label: 'When would you like it live?', type: 'date' },
+      { id: 'extra', label: 'Anything else we should know?', type: 'area', ph: 'Questions, ideas, worries…' }
+    ]}
+  ];
+
+  var form = document.getElementById('brief');
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+
+  function field(q) {
+    var id = 'q-' + q.id, h = '';
+    var label = esc(q.label) + (q.req ? ' <span class="req" aria-hidden="true">*</span>' : '');
+    var help = q.help ? '<span class="help" id="' + id + '-help">' + esc(q.help) + '</span>' : '';
+    if (q.type === 'one' || q.type === 'many' || q.type === 'colours' || q.type === 'vibes') {
+      var kind = q.type === 'one' ? 'radio' : 'checkbox';
+      h += '<fieldset class="q" data-q="' + q.id + '"' + (q.showIfDemo ? ' data-demo' : '') + '><legend>' + label + '</legend>' + help;
+      h += '<div class="chips' + (q.type === 'vibes' ? ' vibes' : '') + '">';
+      q.opts.forEach(function (o, i) {
+        var text = Array.isArray(o) ? o[0] : o;
+        var inner = q.type === 'colours' ? '<i style="background:' + o[1] + '"></i>' + esc(text)
+          : q.type === 'vibes' ? esc(text) + '<small>' + esc(o[1]) + '</small>' : esc(text);
+        h += '<label class="chip"><input type="' + kind + '" id="' + id + '-' + i + '" name="' + q.id + '" value="' + esc(text) + '"><span>' + inner + '</span></label>';
+      });
+      h += '</div>';
+      if (q.other) h += '<input class="other" type="text" id="' + id + '-other" name="' + q.id + '__other" placeholder="Something else? Type it here" aria-label="Other answer for: ' + esc(q.label) + '">';
+      return h + '</fieldset>';
+    }
+    if (q.type === 'pair') {
+      return '<fieldset class="q" data-q="' + q.id + '"><legend>' + label + '</legend><div class="pair">' +
+        '<input type="text" inputmode="numeric" id="q-' + q.a.id + '" name="' + q.a.id + '" placeholder="' + esc(q.a.ph) + '" aria-label="Lowest price">' +
+        '<input type="text" inputmode="numeric" id="q-' + q.b.id + '" name="' + q.b.id + '" placeholder="' + esc(q.b.ph) + '" aria-label="Highest price"></div></fieldset>';
+    }
+    var attrs = ' id="' + id + '" name="' + q.id + '"' + (q.ph ? ' placeholder="' + esc(q.ph) + '"' : '') + (q.help ? ' aria-describedby="' + id + '-help"' : '') + (q.req ? ' required aria-required="true"' : '') + (q.ac ? ' autocomplete="' + q.ac + '"' : '');
+    var input = q.type === 'area' ? '<textarea' + attrs + ' rows="3"></textarea>'
+      : '<input type="' + (q.type === 'tel' ? 'tel' : q.type === 'date' ? 'date' : 'text') + '"' + attrs + (q.type === 'tel' ? ' inputmode="tel"' : '') + (q.value ? ' value="' + esc(q.value) + '"' : '') + '>';
+    return '<div class="q" data-q="' + q.id + '"' + (q.showIfDemo ? ' data-demo' : '') + '><label for="' + id + '">' + label + '</label>' + help + input +
+      (q.req ? '<p class="err">' + (q.type === 'tel' ? 'Please add a 10-digit WhatsApp number.' : 'Please fill this in.') + '</p>' : '') + '</div>';
+  }
+
+  var html = '';
+  TOPICS.forEach(function (t) {
+    html += '<section class="slip"><i class="tape" style="background:' + t.tape + '" aria-hidden="true"></i><h2>' + esc(t.title) + '</h2><p class="why">' + esc(t.why) + '</p>';
+    t.qs.forEach(function (q) { html += field(q); });
+    html += '</section>';
+  });
+  html += '<section class="slip finish" id="finish"><i class="tape" style="background:var(--green)" aria-hidden="true"></i>' +
+    '<h2>Send it to us</h2><p class="why">Your answers go to MilliTech on WhatsApp. You’ll see the message before it sends.</p>' +
+    '<pre class="summary" id="summary" aria-label="Your answers"></pre>' +
+    '<div class="actions"><button class="btn btn-ink" type="submit">Send on WhatsApp</button><button class="btn btn-line" type="button" id="copy">Copy my answers</button></div>' +
+    '<p class="status" id="status" role="status"></p>' +
+    '<p class="contact">If WhatsApp doesn’t open, copy your answers and send them to <b>+91 60092 71012</b>.</p></section>' +
+    '<p class="saved" id="saved"></p>';
+  form.innerHTML = html;
+  if (!DEMO) form.querySelectorAll('[data-demo]').forEach(function (el) { el.remove(); });
+
+  // Vibes: limit to max picks
+  TOPICS.forEach(function (t) { t.qs.forEach(function (q) {
+    if (!q.max) return;
+    form.addEventListener('change', function (e) {
+      if (e.target.name !== q.id) return;
+      var on = form.querySelectorAll('input[name="' + q.id + '"]:checked');
+      if (on.length > q.max) e.target.checked = false;
+    });
+  }); });
+
+  function answers() {
+    var out = [];
+    TOPICS.forEach(function (t) {
+      var rows = [];
+      t.qs.forEach(function (q) {
+        if (q.showIfDemo && !DEMO) return;
+        var v = '';
+        if (q.type === 'pair') {
+          var a = form.elements[q.a.id].value.trim(), b = form.elements[q.b.id].value.trim();
+          if (a || b) v = '₹' + (a || '?') + ' to ₹' + (b || '?');
+        } else if (['one', 'many', 'colours', 'vibes'].indexOf(q.type) > -1) {
+          var picked = Array.prototype.map.call(form.querySelectorAll('input[name="' + q.id + '"]:checked'), function (i) { return i.value; });
+          var oth = form.elements[q.id + '__other'];
+          if (oth && oth.value.trim()) picked.push(oth.value.trim());
+          v = picked.join(', ');
+        } else {
+          v = form.elements[q.id].value.trim();
+        }
+        if (v) rows.push({ q: q, v: v });
+      });
+      out.push({ t: t, rows: rows });
+    });
+    return out;
+  }
+
+  function shortLabel(q) { return q.label.replace(/\?$/, '').replace(/, spelled exactly as it should appear/, ''); }
+
+  function message() {
+    var a = answers();
+    var name = form.elements.shop.value.trim() || 'my shop';
+    var lines = ['Hi MilliTech! Here is the website brief for ' + name + '.'];
+    a.forEach(function (s) {
+      if (!s.rows.length) return;
+      lines.push('', '*' + s.t.title + '*');
+      s.rows.forEach(function (r) { lines.push('- ' + shortLabel(r.q) + ': ' + r.v); });
+    });
+    return lines.join('\n');
+  }
+
+  var total = 0;
+  TOPICS.forEach(function (t) { t.qs.forEach(function (q) { if (!(q.showIfDemo && !DEMO)) total++; }); });
+
+  function refresh() {
+    var n = 0;
+    answers().forEach(function (s) { n += s.rows.length; });
+    document.getElementById('fill').style.width = Math.round(n / total * 100) + '%';
+    document.getElementById('count').textContent = n + ' of ' + total;
+    document.getElementById('summary').textContent = message();
+  }
+
+  // Draft saving (this device only)
+  function save() {
+    try {
+      var data = {};
+      Array.prototype.forEach.call(form.elements, function (el) {
+        if (!el.name) return;
+        if (el.type === 'checkbox' || el.type === 'radio') { if (el.checked) (data[el.name] = data[el.name] || []).push(el.value); }
+        else data[el.name] = el.value;
+      });
+      localStorage.setItem(KEY, JSON.stringify(data));
+      document.getElementById('saved').textContent = 'Saved on this phone. You can close this page and finish later.';
+    } catch (e) {}
+  }
+  function load() {
+    try {
+      var data = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (!data) return;
+      Array.prototype.forEach.call(form.elements, function (el) {
+        if (!el.name || !(el.name in data)) return;
+        if (el.type === 'checkbox' || el.type === 'radio') el.checked = data[el.name].indexOf(el.value) > -1;
+        else el.value = data[el.name];
+      });
+    } catch (e) {}
+  }
+  load();
+  refresh();
+  var t;
+  form.addEventListener('input', function (e) {
+    var q = e.target.closest('.q'); if (q) q.classList.remove('bad');
+    refresh(); clearTimeout(t); t = setTimeout(save, 400);
+  });
+  form.addEventListener('change', function () { refresh(); save(); });
+
+  function validate() {
+    var first = null;
+    ['shop', 'owner', 'wa'].forEach(function (id) {
+      var el = form.elements[id], v = el.value.trim();
+      var ok = id === 'wa' ? v.replace(/\D/g, '').replace(/^91(?=\d{10}$)/, '').length === 10 : v.length > 0;
+      el.closest('.q').classList.toggle('bad', !ok);
+      el.setAttribute('aria-invalid', ok ? 'false' : 'true');
+      if (!ok && !first) first = el;
+    });
+    if (first) { first.focus(); first.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    return !first;
+  }
+
+  var status = document.getElementById('status');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!validate()) { status.textContent = 'Please fill in the three required answers first.'; return; }
+    status.textContent = 'Opening WhatsApp. Press send there to share your answers.';
+    location.href = 'https://wa.me/' + MILLITECH_WA + '?text=' + encodeURIComponent(message());
+  });
+
+  document.getElementById('copy').addEventListener('click', function () {
+    var text = message();
+    var done = function () { status.textContent = 'Copied. Paste it into WhatsApp and send it to +91 60092 71012.'; };
+    var fallback = function () {
+      var r = document.createRange(); r.selectNodeContents(document.getElementById('summary'));
+      var s = getSelection(); s.removeAllRanges(); s.addRange(r);
+      status.textContent = 'Your answers are selected. Copy them and send them to +91 60092 71012.';
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+    else fallback();
+  });
+})();
+</script>
+</body>
+</html>
