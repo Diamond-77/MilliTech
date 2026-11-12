@@ -100,7 +100,6 @@ const dur = (c) => c.m ? `<div class="dur"><b>${c.m}</b>${c.m === 1 ? 'Month' : 
 /* ---------------- desktop ---------------- */
 const desktop = `
 <div class="desk" id="home">
-  <div class="d-notice"><div class="in mono"><span class="dot"></span><span>Latest notice</span><span class="t">Welcome to FIRSTTECT Institute. Check here for new announcements</span><a href="${SITE}notifications.php" ${ext}>View all notifications</a></div></div>
   <header class="d-head"><div class="in">
     <a class="brand" href="#home"><img src="${LOGO}" alt="FirstTect Logo" width="40" height="40"><span><b>FIRSTTECT INSTITUTE</b><small>of Information Technology Pvt Ltd</small></span></a>
     <nav class="d-nav" aria-label="Main">
@@ -285,6 +284,16 @@ function sheet(id, title, body) {
 }
 
 /* ---------------- intro ---------------- */
+function scrDots() {
+  const col = ['#6ea8ff', '#5fd39a', '#f0b24a', '#ef6a6a', '#ededed'];
+  let o = '', n = 7;
+  for (let y = 43; y <= 145; y += 6) for (let x = 51; x <= 189; x += 6) {
+    n = (n * 1103515245 + 12345) % 2147483648;
+    if (n % 10 < 3) continue;
+    o += `<circle cx="${x}" cy="${y}" r="1.6" fill="${col[n % col.length]}" opacity="${(0.35 + (n % 7) / 10).toFixed(2)}"/>`;
+  }
+  return o;
+}
 const intro = `
 <div id="intro" data-s="" role="dialog" aria-label="Intro">
   <button class="i-skip" type="button">Skip</button>
@@ -294,7 +303,8 @@ const intro = `
       <mask id="i-pm"><rect width="240" height="300" fill="#000"/><rect x="18" y="8" width="204" height="222" rx="22" fill="#fff"/><rect x="42" y="34" width="156" height="118" rx="12" fill="#000"/><rect x="132" y="184" width="62" height="6" fill="#000"/><rect x="36" y="238" width="168" height="32" rx="4" fill="#fff"/></mask>
     </defs>
     <rect width="240" height="300" fill="url(#i-pd)" mask="url(#i-pm)"/>
-    <rect x="56" y="50" width="4" height="8" fill="#7c7c7c"/><rect id="i-blink" x="64" y="50" width="6" height="8" fill="#ededed"/>
+    <g class="i-scr">${scrDots()}</g>
+    <rect x="50" y="42" width="30" height="16" fill="#0a0a0a"/><rect x="56" y="46" width="4" height="8" fill="#7c7c7c"/><rect id="i-blink" x="64" y="46" width="6" height="8" fill="#ededed"/>
   </svg></div>
   <div class="i-stage">
     <div class="i-term">
@@ -321,7 +331,7 @@ const head = `<!doctype html>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>
 (function(){var h=document.documentElement,q=location.search,seen=false;
-try{if(/[?&]intro/.test(q))sessionStorage.removeItem('ft-intro');seen=!!sessionStorage.getItem('ft-intro');}catch(e){}
+try{if(/[?&]intro/.test(q))sessionStorage.removeItem('ft-intro-3');seen=!!sessionStorage.getItem('ft-intro-3');}catch(e){}
 if(!seen&&!/[?&]skip/.test(q))h.className+=' intro-on intro-lock';})();
 </script>
 <style>

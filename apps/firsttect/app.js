@@ -7,7 +7,8 @@
      Draws one frame straight away, so it still shows if animation frames never come. */
   (function () {
     var pts = [], step = 0.1;
-    function add(x, y, z, nx, ny, nz) { pts.push([x, y, z, nx, ny, nz]); }
+    var scr = [], COL = ['#6ea8ff', '#5fd39a', '#f0b24a', '#ef6a6a', '#ededed'];
+    function add(x, y, z, nx, ny, nz) { pts.push([x, y, z, nx, ny, nz, Math.random() * 6.28, 0.6 + Math.random() * 1.6]); }
     function grid(a0, a1, b0, b1, fn) {
       for (var a = a0; a <= a1 + 1e-6; a += step) for (var b = b0; b <= b1 + 1e-6; b += step) fn(a, b);
     }
@@ -17,7 +18,7 @@
       var slot = x > 0.18 && x < 0.78 && y > 0.4 && y < 0.5;
       if (!screen && !slot) add(x, y, Z, 0, 0, 1);
     });
-    add(-0.55, -0.8, Z - 0.1, 0, 0, 1); add(-0.4, -0.8, Z - 0.1, 0, 0, 1); add(-0.3, -0.8, Z - 0.1, 0, 0, 1); /* prompt on the screen */
+grid(-0.7, 0.7, -0.9, 0.05, function (x, y) { scr.push([x, y, Z - 0.08, Math.random() * 6.28, 0.5 + Math.random() * 1.5, Math.floor(Math.random() * COL.length)]); }); /* lit screen */
     grid(-1, 1, T, B, function (x, y) { if (!(y > -0.6 && y < 0.2 && Math.round(y * 10) % 2 === 0 && x > -0.6 && x < 0.6)) add(x, y, -Z, 0, 0, -1); }); /* back, with vents */
     grid(-Z, Z, T, B, function (z, y) { add(-1, y, z, -1, 0, 0); add(1, y, z, 1, 0, 0); });
     grid(-1, 1, -Z, Z, function (x, z) { add(x, T, z, 0, -1, 0); });
@@ -33,7 +34,7 @@
       if (v.w !== r.width || v.h !== r.height) { v.w = r.width; v.h = r.height; v.cv.width = Math.round(r.width * d); v.cv.height = Math.round(r.height * d); v.d = d; }
       return true;
     }
-    function draw(v, ang) {
+    function draw(v, ang, t) {
       if (!v.ctx || !size(v)) return;
       var c = v.ctx, d = v.d, W = v.cv.width, H = v.cv.height;
       var s = Math.min(W / 4.2, H / 3.9), cx = W / 2, cy = H / 2 + 0.05 * s;
@@ -49,11 +50,29 @@
         var x = p[0] * ca + p[2] * sa, z = -p[0] * sa + p[2] * ca;
         var y = p[1] * cp - z * sp, z2 = p[1] * sp + z * cp;
         var k = 5 / (5 - z2);
-        c.globalAlpha = Math.min(1, 0.05 + f * 1.15);
+        /* each dot drifts between grey and white on its own clock */
+        c.globalAlpha = Math.min(1, 0.05 + f * 1.15) * (0.62 + 0.38 * Math.sin(t * p[7] + p[6]));
         var r = s * 0.1 * (0.34 + f * 0.3) * k;
         c.beginPath();
         c.arc(cx + x * k * s, cy + y * k * s, r / 2, 0, 6.2832);
         c.fill();
+      }
+      /* coloured dots on the screen: each one fades and changes colour over time */
+      var fs = cp * ca;
+      if (fs > 0.16) {
+        for (var j = 0; j < scr.length; j++) {
+          var q = scr[j];
+          var x2 = q[0] * ca + q[2] * sa, zz = -q[0] * sa + q[2] * ca;
+          var y2 = q[1] * cp - zz * sp, z3 = q[1] * sp + zz * cp;
+          var k2 = 5 / (5 - z3);
+          var w = 0.5 + 0.5 * Math.sin(t * q[4] + q[3]);
+          c.globalAlpha = Math.min(1, fs * 1.2) * (0.12 + 0.88 * w);
+          c.fillStyle = COL[(q[5] + Math.floor((t * q[4] + q[3]) / 6.2832)) % COL.length];
+          var r2 = s * 0.1 * 0.62 * k2;
+          c.beginPath();
+          c.arc(cx + x2 * k2 * s, cy + y2 * k2 * s, r2 / 2, 0, 6.2832);
+          c.fill();
+        }
       }
       c.globalAlpha = 1;
     }
@@ -63,7 +82,7 @@
       if (now - last > 40) {
         last = now;
         var ang = -0.45 + (still ? 0 : (now - t0) / 1000 * 0.35);
-        for (var i = 0; i < views.length; i++) if (views[i].cv.offsetParent !== null) draw(views[i], ang);
+        for (var i = 0; i < views.length; i++) if (views[i].cv.offsetParent !== null) draw(views[i], ang, still ? 0 : (now - t0) / 1000);
       }
       if (!still) requestAnimationFrame(frame);
     }
@@ -174,7 +193,7 @@
   /* replay the intro */
   $$('[data-replay]').forEach(function (b) {
     b.addEventListener('click', function () {
-      try { sessionStorage.removeItem('ft-intro'); } catch (e) {}
+      try { sessionStorage.removeItem('ft-intro-3'); } catch (e) {}
       location.href = location.pathname + '?intro';
     });
   });

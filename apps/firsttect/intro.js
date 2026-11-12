@@ -6,7 +6,7 @@
   var root = document.getElementById('intro');
   if (!root || !/\bintro-on\b/.test(html.className)) return;
 
-  var KEY = 'ft-intro';
+  var KEY = 'ft-intro-3';
   var CMD = 'npx install firsttect-institute';
   var done = false, cur = -1, waiting = false;
   var started = Date.now(), waitedMs = 0, waitStart = 0, expected = started + 4000;
@@ -71,23 +71,23 @@
 
   var LINES = [
     ['resolving firsttect-institute@2026.11 from imphal.manipur', ''],
-    ['fetch 200 courses/ccc-cbc        3 months', ''],
-    ['fetch 200 courses/dca            6 months', ''],
-    ['fetch 200 courses/adca           12 months', ''],
-    ['fetch 200 courses/programming    c c++ java python mysql', ''],
-    ['fetch 200 courses/accounting-tally   4 months', ''],
-    ['fetch 200 courses/dtp            3 months', ''],
-    ['fetch 200 courses/data-entry     2 months', ''],
-    ['fetch 200 courses/multimedia     4 months', ''],
-    ['fetch 200 courses/pgdca          12 months', ''],
-    ['fetch 200 batches/06-08 08-10 10-12 12-14 14-16 16-18', ''],
-    ['fetch 200 faculty/ranjita meiteileima naresh yaiphabi', ''],
-    ['fetch 200 faculty/sawalkumar ringkhuanliu kritika sinthaleima', ''],
-    ['link student-services/exam-application', ''],
-    ['link student-services/admit-card-download', ''],
-    ['link student-services/student-dashboard', ''],
-    ['link student-services/exam-result', ''],
-    ['link certificate-verify notice-board enquiry', ''],
+    ['fetch 200 courses/ccc-cbc        3 months', 'c1'],
+    ['fetch 200 courses/dca            6 months', 'c1'],
+    ['fetch 200 courses/adca           12 months', 'c1'],
+    ['fetch 200 courses/programming    c c++ java python mysql', 'c1'],
+    ['fetch 200 courses/accounting-tally   4 months', 'c1'],
+    ['fetch 200 courses/dtp            3 months', 'c1'],
+    ['fetch 200 courses/data-entry     2 months', 'c1'],
+    ['fetch 200 courses/multimedia     4 months', 'c1'],
+    ['fetch 200 courses/pgdca          12 months', 'c1'],
+    ['fetch 200 batches/06-08 08-10 10-12 12-14 14-16 16-18', 'c2'],
+    ['fetch 200 faculty/ranjita meiteileima naresh yaiphabi', 'c2'],
+    ['fetch 200 faculty/sawalkumar ringkhuanliu kritika sinthaleima', 'c2'],
+    ['link student-services/exam-application', 'c3'],
+    ['link student-services/admit-card-download', 'c3'],
+    ['link student-services/student-dashboard', 'c3'],
+    ['link student-services/exam-result', 'c3'],
+    ['link certificate-verify notice-board enquiry', 'c3'],
     ['build practical-training ............ ok', 'ok'],
     ['build learn create grow-your-career . ok', 'ok']
   ];
@@ -107,14 +107,13 @@
       if (i < total) {
         if (prog && prog.parentNode) logEl.removeChild(prog);
         line(LINES[i][0], LINES[i][1]);
-        if (i + 1 < total) { line(LINES[i + 1][0], LINES[i + 1][1]); i++; }
         i++;
         prog = line(bar(Math.min(1, i / total)), 'hi');
       } else {
         clearInterval(ticker); ticker = null;
         endLog();
       }
-    }, 150);
+    }, 105);
   }
 
   var ended = false;
@@ -127,20 +126,28 @@
   }
 
   var scenes = [
-    { n: 'pc', d: 1900 },
-    { n: 'zoom', d: 1800 },
+    { n: 'draw', d: 1500 },
+    { n: 'power', d: 1200 },
+    { n: 'zoom', d: 2300 },
     { n: 'type', d: 1700, on: type },
     { n: 'wait', d: 0, on: wait },
-    { n: 'log', d: 2000, on: startLog },
-    { n: 'end', d: 650, on: endLog }
+    { n: 'log', d: 2700, on: startLog },
+    { n: 'end', d: 750, on: endLog }
   ];
+
+  function mark(i) {
+    var names = [];
+    for (var k = 0; k <= i && k < scenes.length; k++) names.push(scenes[k].n);
+    root.setAttribute('data-s', scenes[Math.min(i, scenes.length - 1)].n);
+    root.setAttribute('data-p', names.join(' '));
+  }
 
   function go(i) {
     if (done) return;
     if (i >= scenes.length) { finish(); return; }
     cur = i;
     var s = scenes[i];
-    root.setAttribute('data-s', s.n);
+    mark(i);
     expected = Date.now() + s.d;
     if (s.on) { try { s.on(); } catch (e) { finish(); return; } }
     if (s.d > 0) later(function () { if (cur === i) go(i + 1); }, s.d);
@@ -150,7 +157,7 @@
     if (done || !waiting) return;
     waiting = false;
     waitedMs += Date.now() - waitStart;
-    if (rm) { cmdEl.style.display = 'none'; line('$ ' + CMD, 'w'); endLog(); root.setAttribute('data-s', 'end'); later(finish, 500); cur = scenes.length; expected = Date.now() + 500; return; }
+    if (rm) { cmdEl.style.display = 'none'; line('$ ' + CMD, 'w'); endLog(); later(finish, 500); cur = scenes.length; expected = Date.now() + 500; return; }
     go(cur + 1);
   }
 
@@ -176,8 +183,8 @@
   try {
     if (rm) {
       root.className += ' rm';
-      cur = 3;
-      root.setAttribute('data-s', 'wait');
+      cur = 4;
+      mark(4);
       wait();
     } else {
       root.style.setProperty('--S', (stage.offsetWidth / 156).toFixed(3));
