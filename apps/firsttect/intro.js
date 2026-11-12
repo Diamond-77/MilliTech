@@ -6,7 +6,6 @@
   var root = document.getElementById('intro');
   if (!root || !/\bintro-on\b/.test(html.className)) return;
 
-  var KEY = 'ft-intro-3';
   var CMD = 'npx install firsttect-institute';
   var done = false, cur = -1, waiting = false;
   var started = Date.now(), waitedMs = 0, waitStart = 0, expected = started + 4000;
@@ -30,7 +29,6 @@
     if (ticker) clearInterval(ticker);
     clearInterval(blinker);
     if (dog) clearInterval(dog);
-    try { sessionStorage.setItem(KEY, '1'); } catch (e) {}
     html.className = html.className.replace(/\bintro-lock\b/g, '');
     root.className += ' out';
     document.removeEventListener('keydown', onKey);

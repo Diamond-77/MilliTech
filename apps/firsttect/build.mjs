@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url));
 const read = (f) => readFileSync(join(here, f), 'utf8');
 
+const { fontCells } = new Function(read('font.js') + ';return { FONT: FONT, fontCells: fontCells };')();
 const SITE = 'https://www.firsttect.in/';
 const PREVIEW = process.env.PREVIEW === '1';
 const IMG = '/demo/firsttect/img/';
@@ -68,6 +69,7 @@ const P = {
   file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h5"/>',
   card: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 10h4M7 14h10"/>',
   down: '<path d="M12 4v12M6 11l6 6 6-6M5 21h14"/>',
+  theme: '<circle cx="12" cy="12" r="9"/><path d="M12 3v18a9 9 0 0 0 0-18z" fill="currentColor" stroke="none"/>',
   play: '<path d="M7 4v16l13-8z"/>',
   fb: '<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>',
   ig: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/>',
@@ -78,7 +80,12 @@ const ext = 'target="_blank" rel="noopener"';
 const pad = (n) => String(n).padStart(2, '0');
 const ini = (name) => name.split(' ').map((w) => w[0]).slice(0, 2).join('');
 const photo = (f) => `<div class="ph"><img src="${SITE}images/faculty/${f[2]}" alt="${f[0]}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.parentNode.className+=' noimg'"><span class="ini" aria-hidden="true">${ini(f[0])}</span></div>`;
-const heroVis = `<div class="pcw" aria-hidden="true"><canvas class="pc3d"></canvas></div>`;
+const heroVis = `<div class="pcw"><canvas class="pc3d" aria-label="A dotted computer you can spin. Click its screen to see the site inside."></canvas><span class="pc-hint mono">Drag to spin. Click the screen to go inside</span></div>`;
+/* dot-matrix text as SVG, each dot numbered so CSS can light them one after another */
+const dm = (str) => { const cells = fontCells(str); const w = str.length * 6 - 1; return `<svg class="dm" viewBox="0 0 ${w} 7" style="aspect-ratio:${w}/7" role="img" aria-label="${str}">${cells.map((c, i) => `<circle cx="${c[0] + 0.5}" cy="${c[1] + 0.5}" r=".38" style="--i:${i}"/>`).join('')}</svg>`; };
+const mdots = (m) => m ? `<span class="md" aria-hidden="true">${Array.from({ length: 12 }, (_, i) => `<i${i < m ? ' class="on"' : ''} style="--i:${i}"></i>`).join('')}</span>` : '';
+const areas = ['CCC', 'CBC', 'DCA', 'ADCA', 'PGDCA', 'Computer Programming', 'Tally & Accounting', 'DTP & Graphic Design', 'Stenography', 'Spoken English', 'Basic Computer Training'];
+const themeBtn = (cls) => `<button class="${cls}" type="button" data-theme-toggle aria-label="Switch between dark and light">${ic('theme')}</button>`;
 
 const form = (id) => `<form class="form enq-form" id="${id}">
   <label>Your Name<input name="name" required autocomplete="name"></label>
@@ -105,6 +112,7 @@ const desktop = `
     <nav class="d-nav" aria-label="Main">
       <a href="#courses">Courses</a><a href="#services">Student Services</a><a href="#faculty">Faculties</a><a href="${SITE}about.php" ${ext}>About</a><a href="#notices">Notifications</a><a href="#contact">Contact</a>
     </nav>
+    ${themeBtn('tbtn')}
     <a class="login" href="${SITE}login.php" ${ext}>Student Login</a>
     <a class="btn pri sm" href="${SITE}register.php" ${ext}>Register Now</a>
   </div></header>
@@ -123,7 +131,9 @@ const desktop = `
       </div>
     </section>
 
-    <section class="sec svc grid" id="services">
+    <section class="sec ledb" aria-label="Courses"><canvas class="led" data-text="CCC / CBC * DCA * ADCA * PROGRAMMING * ACCOUNTING TALLY * DTP * DATA ENTRY * MULTIMEDIA * PGDCA *"></canvas></section>
+
+    <section class="sec svc grid rv" id="services">
       <div class="cell lead">
         <div><div class="prompt"><b>$</b> Student Online Services</div>
         <h2>FirstTect Student Services</h2>
@@ -135,23 +145,24 @@ const desktop = `
       </div>
     </section>
 
-    <section class="sec stats grid">
-      ${stats.map((s, i) => `<div class="cell${i === 3 ? ' end' : ''}"><div class="n">${s[0]}</div><div class="l">${s[1]}</div></div>`).join('')}
+    <section class="sec stats grid rv">
+      ${stats.map((s, i) => `<div class="cell${i === 3 ? ' end' : ''}"><div class="n">${dm(s[0])}</div><div class="l">${s[1]}</div></div>`).join('')}
     </section>
 
-    <section class="sec crs" id="courses">
+    <section class="sec crs rv" id="courses">
       <div class="sec-h"><div><div class="prompt"><b>$</b> ls courses/</div><h2>Our Courses</h2></div><p>Duration is shown with each course. For the one-time course fee, please confirm with the institute.</p></div>
       <div class="grid">
-        ${courses.map((c, i) => `<div class="cell c${[2, 5, 8].includes(i) ? ' end' : ''}" style="grid-column:span ${c.span}"><div class="top mono"><span>${pad(i + 1)}</span><span>${c.m ? 'Duration' : 'Languages'}</span></div>${dur(c)}<h3>${c.t}</h3><p>${c.d}</p></div>`).join('\n        ')}
+        ${courses.map((c, i) => `<div class="cell c${[2, 5, 8].includes(i) ? ' end' : ''}" style="grid-column:span ${c.span}"><div class="top mono"><span>${pad(i + 1)}</span><span>${c.m ? 'Duration' : 'Languages'}</span></div>${dur(c)}${mdots(c.m)}<h3>${c.t}</h3><p>${c.d}</p></div>`).join('\n        ')}
       </div>
+      <div class="day" aria-hidden="true"><span class="mono">00</span>${Array.from({ length: 24 }, (_, h) => `<i data-hour="${h}"${h >= 6 && h < 18 ? ` class="b${Math.floor((h - 6) / 2) % 2}"` : ''}></i>`).join('')}<span class="mono">24</span></div>
       <div class="batches">
         <div class="hd"><b>Class timings</b><span class="mono">6 daily batches</span></div>
-        ${slotText.map((s, i) => `<div class="slot"><span class="mono">Batch ${i + 1}</span><b>${s.replace(' – ', '<br>')}</b></div>`).join('')}
+        ${slotText.map((s, i) => `<div class="slot" data-slot="${6 + i * 2}"><span class="mono">Batch ${i + 1}</span><b>${s.replace(' – ', '<br>')}</b></div>`).join('')}
       </div>
       <div class="grid" style="border-top:1px solid var(--line)"><div class="cell fee end last"><p><b>One-time course fee.</b> Fees and installment terms are confirmed with the institute at admission.</p><a class="btn pri" href="#contact">Enquire About Admission</a></div></div>
     </section>
 
-    <section class="sec fac grid" id="faculty">
+    <section class="sec fac grid rv" id="faculty">
       <div class="cell lead">
         <div><div class="prompt"><b>$</b> ls faculty/</div><h2>Our Faculty</h2>
         <p>Meet the educators and trainers supporting practical learning at FIRSTTECT Institute of Information Technology Pvt. Ltd.</p></div>
@@ -160,7 +171,14 @@ const desktop = `
       ${faculty.map((f, i) => `<div class="cell p${i === 3 || i === 7 ? ' end' : ''}${i > 3 ? ' last' : ''}">${photo(f)}<div class="who"><b>${f[0]}</b><span class="mono">${f[1]}</span></div></div>`).join('\n      ')}
     </section>
 
-    <section class="sec grid" id="notices">
+    <section class="sec abt grid rv" id="about">
+      <div class="cell lead"><div class="prompt"><b>$</b> cat about.txt</div><h2>About FIRSTTECT</h2><p>FIRSTTECT Institute of Information Technology Pvt. Ltd. provides computer and skill-development training, with practical knowledge for further study, everyday digital tasks and professional work.</p><a class="more" href="${SITE}about.php" ${ext}>About FIRSTTECT ${ic('out')}</a></div>
+      <div class="cell mv"><span class="mono">Mission</span><p>Make practical, accessible and relevant computer education available to learners at different skill levels.</p></div>
+      <div class="cell mv end"><span class="mono">Vision</span><p>Support confident, digitally skilled learners through structured instruction and hands-on practice.</p></div>
+      <div class="cell ar end last"><span class="mono">Training areas</span><div class="tags">${areas.map((a) => `<span class="tag">${a}</span>`).join('')}</div><span class="mono">Course availability and duration may vary</span></div>
+    </section>
+
+    <section class="sec grid rv" id="notices">
       <div class="cell ntc">
         <div class="blk"><div class="prompt"><b>$</b> tail notices/</div><h2>Notice Board</h2>${notice}<a class="more" href="${SITE}notifications.php" ${ext}>View all notifications ${ic('out')}</a></div>
         <div class="blk"><div class="prompt"><b>$</b> Contact Information</div>
@@ -179,6 +197,7 @@ const desktop = `
   </main>
 
   <footer class="d-foot">
+    <div class="wmw"><canvas class="wm" data-text="FIRSTTECT" aria-hidden="true"></canvas></div>
     <div class="cols">
       <div><a class="brand" href="#home"><img src="${LOGO}" alt="FIRSTTECT Institute logo" width="40" height="40"><span><b>FIRSTTECT INSTITUTE</b><small>of Information Technology Pvt Ltd</small></span></a><p>Computer education and professional skill development with emphasis on practical learning. Imphal, Manipur.</p></div>
       <div><h4>Related Links</h4><ul><li><a href="#home">Home</a></li><li><a href="${SITE}about.php" ${ext}>About FIRSTTECT</a></li><li><a href="#courses">Our Courses</a></li><li><a href="#faculty">Our Faculties</a></li><li><a href="${SITE}register.php" ${ext}>Online Admission</a></li><li><a href="#contact">Enquiry Form</a></li></ul></div>
@@ -199,7 +218,7 @@ const row = (href, icon, title, sub, cls = '') => `<a class="row" href="${href}"
 
 const mobile = `
 <div class="mob">
-  <header class="m-top"><img src="${LOGO}" alt="FirstTect Logo" width="32" height="32"><div class="tt"><b>${mMeta[0][0]}</b><span>${mMeta[0][1]}</span></div><button class="m-ib" type="button" data-sheet="sh-notice" aria-label="Latest notice">${ic('bell')}<i></i></button></header>
+  <header class="m-top"><img src="${LOGO}" alt="FirstTect Logo" width="32" height="32"><div class="tt"><b>${mMeta[0][0]}</b><span>${mMeta[0][1]}</span></div>${themeBtn('m-ib')}<button class="m-ib" type="button" data-sheet="sh-notice" aria-label="Latest notice">${ic('bell')}<i></i></button></header>
 
   <div class="m-pager">
     <section class="m-view m-home" aria-label="Home">
@@ -219,7 +238,7 @@ const mobile = `
     <section class="m-view m-courses" aria-label="Courses">
       <div class="m-lbl" style="margin-top:0"><span class="prompt"><b>$</b> ls courses/</span><span class="mono" id="cc-count">01 / 09</span></div>
       <div class="snap cards">
-        ${courses.map((c, i) => `<button class="cc" type="button" data-course="${i}"><span class="top mono"><span>${pad(i + 1)}</span><span>${c.m ? 'Duration' : 'Languages'}</span></span>${dur(c)}<h3>${c.t}</h3><p>${c.d}</p><span class="go">Details and admission ${ic('chev')}</span></button>`).join('\n        ')}
+        ${courses.map((c, i) => `<button class="cc" type="button" data-course="${i}"><span class="top mono"><span>${pad(i + 1)}</span><span>${c.m ? 'Duration' : 'Languages'}</span></span><span class="info mono"><span><b>$</b> course --info ${c.t.toLowerCase().replace(/ \/ /g, '-').replace(/ /g, '-')}</span><span>duration <em>${c.m ? c.m + ' months' : 'ask the institute'}</em></span><span>batches <em>6 daily, 2 hours each</em></span><span>timing <em>06:00 AM to 06:00 PM</em></span><span>training <em>100% practical</em></span><span>fee <em>one-time or installment</em></span></span>${dur(c)}${mdots(c.m)}<h3>${c.t}</h3><p>${c.d}</p><span class="go">Details and admission ${ic('chev')}</span></button>`).join('\n        ')}
       </div>
       <div class="m-lbl"><span class="prompt"><b>$</b> Class timings</span><span class="mono">6 daily batches</span></div>
       <div class="snap">${slotText.map((s, i) => `<div class="slotc"><span>Batch ${i + 1}</span>${s}</div>`).join('')}</div>
@@ -284,27 +303,20 @@ function sheet(id, title, body) {
 }
 
 /* ---------------- intro ---------------- */
-function scrDots() {
-  const col = ['#6ea8ff', '#5fd39a', '#f0b24a', '#ef6a6a', '#ededed'];
-  let o = '', n = 7;
-  for (let y = 43; y <= 145; y += 6) for (let x = 51; x <= 189; x += 6) {
-    n = (n * 1103515245 + 12345) % 2147483648;
-    if (n % 10 < 3) continue;
-    o += `<circle cx="${x}" cy="${y}" r="1.6" fill="${col[n % col.length]}" opacity="${(0.35 + (n % 7) / 10).toFixed(2)}"/>`;
-  }
-  return o;
+const introLog = [['$ npx install firsttect', 0], ['resolving imphal.manipur', 0], ['fetch courses/ccc-cbc', 1], ['fetch courses/dca', 1], ['fetch courses/adca', 1], ['fetch courses/pgdca', 1], ['fetch courses/tally', 1], ['fetch batches 06-18', 2], ['fetch faculty 8', 2], ['link exam-result', 3], ['link admit-card', 3], ['build practical ... ok', 0], ['[############] 100%', 0]];
+function scrLog() {
+  return introLog.map((l, k) => `<path class="l c${l[1]}" style="--i:${k}" d="${fontCells(l[0]).map((c) => `M${50 + c[0]} ${41 + k * 8.2 + c[1]}h.01`).join('')}"/>`).join('');
 }
 const intro = `
 <div id="intro" data-s="" role="dialog" aria-label="Intro">
   <button class="i-skip" type="button">Skip</button>
   <div class="i-pc" aria-hidden="true"><svg viewBox="0 0 240 300" width="240" height="300">
     <defs>
-      <pattern id="i-pd" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.6" fill="#ededed"/></pattern>
+      <pattern id="i-pd" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.05" fill="currentColor"/></pattern>
       <mask id="i-pm"><rect width="240" height="300" fill="#000"/><rect x="18" y="8" width="204" height="222" rx="22" fill="#fff"/><rect x="42" y="34" width="156" height="118" rx="12" fill="#000"/><rect x="132" y="184" width="62" height="6" fill="#000"/><rect x="36" y="238" width="168" height="32" rx="4" fill="#fff"/></mask>
     </defs>
     <rect width="240" height="300" fill="url(#i-pd)" mask="url(#i-pm)"/>
-    <g class="i-scr">${scrDots()}</g>
-    <rect x="50" y="42" width="30" height="16" fill="#0a0a0a"/><rect x="56" y="46" width="4" height="8" fill="#7c7c7c"/><rect id="i-blink" x="64" y="46" width="6" height="8" fill="#ededed"/>
+    <g class="i-scr" fill="none" stroke="currentColor" stroke-width=".74" stroke-linecap="round">${scrLog()}</g>
   </svg></div>
   <div class="i-stage">
     <div class="i-term">
@@ -330,9 +342,11 @@ const head = `<!doctype html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>
-(function(){var h=document.documentElement,q=location.search,seen=false;
-try{if(/[?&]intro/.test(q))sessionStorage.removeItem('ft-intro-3');seen=!!sessionStorage.getItem('ft-intro-3');}catch(e){}
-if(!seen&&!/[?&]skip/.test(q))h.className+=' intro-on intro-lock';})();
+(function(){var h=document.documentElement,q=location.search,t='dark';
+try{t=localStorage.getItem('ft-theme')||'dark';}catch(e){}
+h.setAttribute('data-theme',t==='light'?'light':'dark');
+if(/[?&]mini/.test(q))h.className+=' mini';
+else if(!/[?&]skip/.test(q))h.className+=' intro-on intro-lock';})();
 </script>
 <style>
 ${read('style.css')}
@@ -347,10 +361,19 @@ ${mobile}
 <script type="application/json" id="m-meta">${JSON.stringify(mMeta)}</script>
 <script type="application/json" id="c-data">${JSON.stringify(courses.map(({ t, d, m }) => ({ t, d, m })))}</script>
 <script>
+${read('font.js')}
+</script>
+<script>
 ${read('intro.js')}
 </script>
 <script>
 ${read('app.js')}
+</script>
+<script>
+${read('dots.js')}
+</script>
+<script>
+${read('pc.js')}
 </script>
 </body>
 </html>

@@ -3,92 +3,6 @@
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
-  /* turning dotted 3D computer: a small 2D-canvas point cloud, no WebGL.
-     Draws one frame straight away, so it still shows if animation frames never come. */
-  (function () {
-    var pts = [], step = 0.1;
-    var scr = [], COL = ['#6ea8ff', '#5fd39a', '#f0b24a', '#ef6a6a', '#ededed'];
-    function add(x, y, z, nx, ny, nz) { pts.push([x, y, z, nx, ny, nz, Math.random() * 6.28, 0.6 + Math.random() * 1.6]); }
-    function grid(a0, a1, b0, b1, fn) {
-      for (var a = a0; a <= a1 + 1e-6; a += step) for (var b = b0; b <= b1 + 1e-6; b += step) fn(a, b);
-    }
-    var Z = 0.8, T = -1.2, B = 0.9;
-    grid(-1, 1, T, B, function (x, y) {             /* front, with screen and disk slot cut out */
-      var screen = x > -0.75 && x < 0.75 && y > -0.98 && y < 0.12;
-      var slot = x > 0.18 && x < 0.78 && y > 0.4 && y < 0.5;
-      if (!screen && !slot) add(x, y, Z, 0, 0, 1);
-    });
-grid(-0.7, 0.7, -0.9, 0.05, function (x, y) { scr.push([x, y, Z - 0.08, Math.random() * 6.28, 0.5 + Math.random() * 1.5, Math.floor(Math.random() * COL.length)]); }); /* lit screen */
-    grid(-1, 1, T, B, function (x, y) { if (!(y > -0.6 && y < 0.2 && Math.round(y * 10) % 2 === 0 && x > -0.6 && x < 0.6)) add(x, y, -Z, 0, 0, -1); }); /* back, with vents */
-    grid(-Z, Z, T, B, function (z, y) { add(-1, y, z, -1, 0, 0); add(1, y, z, 1, 0, 0); });
-    grid(-1, 1, -Z, Z, function (x, z) { add(x, T, z, 0, -1, 0); });
-    grid(-0.8, 0.8, B + 0.1, B + 0.3, function (x, y) { add(x, y, 0.65, 0, 0, 1); add(x, y, -0.65, 0, 0, -1); });
-    grid(-0.65, 0.65, B + 0.1, B + 0.3, function (z, y) { add(-0.8, y, z, -1, 0, 0); add(0.8, y, z, 1, 0, 0); });
-
-    var still = false;
-    try { still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
-    var views = $$('canvas.pc3d').map(function (cv) { return { cv: cv, ctx: cv.getContext('2d'), w: 0, h: 0 }; });
-    function size(v) {
-      var r = v.cv.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1);
-      if (!r.width || !r.height) return false;
-      if (v.w !== r.width || v.h !== r.height) { v.w = r.width; v.h = r.height; v.cv.width = Math.round(r.width * d); v.cv.height = Math.round(r.height * d); v.d = d; }
-      return true;
-    }
-    function draw(v, ang, t) {
-      if (!v.ctx || !size(v)) return;
-      var c = v.ctx, d = v.d, W = v.cv.width, H = v.cv.height;
-      var s = Math.min(W / 4.2, H / 3.9), cx = W / 2, cy = H / 2 + 0.05 * s;
-      var ca = Math.cos(ang), sa = Math.sin(ang), cp = Math.cos(0.22), sp = Math.sin(0.22);
-      c.clearRect(0, 0, W, H);
-      c.fillStyle = '#ededed';
-      for (var i = 0; i < pts.length; i++) {
-        var p = pts[i];
-        /* how much this point's face looks at the viewer; faces turned away are not drawn */
-        var nz = -p[3] * sa + p[5] * ca;
-        var f = p[4] * sp + nz * cp;
-        if (f < 0.16) continue;
-        var x = p[0] * ca + p[2] * sa, z = -p[0] * sa + p[2] * ca;
-        var y = p[1] * cp - z * sp, z2 = p[1] * sp + z * cp;
-        var k = 5 / (5 - z2);
-        /* each dot drifts between grey and white on its own clock */
-        c.globalAlpha = Math.min(1, 0.05 + f * 1.15) * (0.62 + 0.38 * Math.sin(t * p[7] + p[6]));
-        var r = s * 0.1 * (0.34 + f * 0.3) * k;
-        c.beginPath();
-        c.arc(cx + x * k * s, cy + y * k * s, r / 2, 0, 6.2832);
-        c.fill();
-      }
-      /* coloured dots on the screen: each one fades and changes colour over time */
-      var fs = cp * ca;
-      if (fs > 0.16) {
-        for (var j = 0; j < scr.length; j++) {
-          var q = scr[j];
-          var x2 = q[0] * ca + q[2] * sa, zz = -q[0] * sa + q[2] * ca;
-          var y2 = q[1] * cp - zz * sp, z3 = q[1] * sp + zz * cp;
-          var k2 = 5 / (5 - z3);
-          var w = 0.5 + 0.5 * Math.sin(t * q[4] + q[3]);
-          c.globalAlpha = Math.min(1, fs * 1.2) * (0.12 + 0.88 * w);
-          c.fillStyle = COL[(q[5] + Math.floor((t * q[4] + q[3]) / 6.2832)) % COL.length];
-          var r2 = s * 0.1 * 0.62 * k2;
-          c.beginPath();
-          c.arc(cx + x2 * k2 * s, cy + y2 * k2 * s, r2 / 2, 0, 6.2832);
-          c.fill();
-        }
-      }
-      c.globalAlpha = 1;
-    }
-    var t0 = Date.now(), last = 0;
-    function frame() {
-      var now = Date.now();
-      if (now - last > 40) {
-        last = now;
-        var ang = -0.45 + (still ? 0 : (now - t0) / 1000 * 0.35);
-        for (var i = 0; i < views.length; i++) if (views[i].cv.offsetParent !== null) draw(views[i], ang, still ? 0 : (now - t0) / 1000);
-      }
-      if (!still) requestAnimationFrame(frame);
-    }
-    if (views.length) { frame(); window.addEventListener('resize', function () { if (still) frame(); }); }
-  })();
-
   /* phone: pager and tabs */
   var pager = $('.m-pager'), tabs = $$('.m-tabs button'), tTitle = $('.m-top .tt b'), tSub = $('.m-top .tt span');
   var meta = JSON.parse($('#m-meta').textContent);
@@ -192,9 +106,6 @@ grid(-0.7, 0.7, -0.9, 0.05, function (x, y) { scr.push([x, y, Z - 0.08, Math.ran
 
   /* replay the intro */
   $$('[data-replay]').forEach(function (b) {
-    b.addEventListener('click', function () {
-      try { sessionStorage.removeItem('ft-intro-3'); } catch (e) {}
-      location.href = location.pathname + '?intro';
-    });
+    b.addEventListener('click', function () { location.href = location.pathname; });
   });
 })();
