@@ -11,7 +11,6 @@ const PREVIEW = process.env.PREVIEW === '1';
 const IMG = '/demo/firsttect/img/';
 const b64 = (f, mime) => `data:${mime};base64,` + readFileSync(join(here, '../../demo/firsttect/img/', f)).toString('base64');
 const LOGO = PREVIEW ? b64('logo.png', 'image/png') : IMG + 'logo.png';
-const HERO = PREVIEW ? b64('hero-fallback.jpg', 'image/jpeg') : IMG + 'hero-fallback.jpg';
 const TEL = '+916009896955';
 const WA = 'https://wa.me/916009896955';
 const MAP = 'https://maps.app.goo.gl/MECq9wbpPm55zcJH8';
@@ -79,7 +78,7 @@ const ext = 'target="_blank" rel="noopener"';
 const pad = (n) => String(n).padStart(2, '0');
 const ini = (name) => name.split(' ').map((w) => w[0]).slice(0, 2).join('');
 const photo = (f) => `<div class="ph"><img src="${SITE}images/faculty/${f[2]}" alt="${f[0]}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.parentNode.className+=' noimg'"><span class="ini" aria-hidden="true">${ini(f[0])}</span></div>`;
-const heroImg = `<img class="hero-img" src="${HERO}" alt="Two FIRSTTECT Institute students holding their course books" referrerpolicy="no-referrer">`;
+const heroVis = `<div class="pcw" aria-hidden="true"><canvas class="pc3d"></canvas></div>`;
 
 const form = (id) => `<form class="form enq-form" id="${id}">
   <label>Your Name<input name="name" required autocomplete="name"></label>
@@ -120,7 +119,7 @@ const desktop = `
         <div class="acts"><a class="btn pri" href="${SITE}register.php" ${ext}>Register Now</a><a class="btn" href="#courses">Explore Courses</a></div>
       </div>
       <div class="vis">
-        <div class="ph">${heroImg}</div>
+        ${heroVis}
         <div class="cap"><b>Start Your Journey</b><span>Learn skills. Build confidence.</span></div>
       </div>
     </section>
@@ -211,7 +210,7 @@ const mobile = `
         <p class="m-sub">FirstTect Institute of Information Technology Pvt Ltd provides computer education and professional skill development with emphasis on practical learning.</p>
       </div>
       <div style="height:16px;flex:none"></div>
-      <div class="ph">${heroImg}</div>
+      ${heroVis}
       <div class="capm"><b>Start Your Journey</b><span>Learn skills. Build confidence.</span></div>
       <div style="height:16px;flex:none"></div>
       <div class="snap">${stats.map((s) => `<div class="stat"><div class="n">${s[0]}</div><div class="l">${s[1]}</div></div>`).join('')}</div>
@@ -289,9 +288,15 @@ function sheet(id, title, body) {
 const intro = `
 <div id="intro" data-s="" role="dialog" aria-label="Intro">
   <button class="i-skip" type="button">Skip</button>
-  <div class="i-logo"><img src="${LOGO}" alt="FIRSTTECT Institute"></div>
+  <div class="i-pc" aria-hidden="true"><svg viewBox="0 0 240 300" width="240" height="300">
+    <defs>
+      <pattern id="i-pd" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.6" fill="#ededed"/></pattern>
+      <mask id="i-pm"><rect width="240" height="300" fill="#000"/><rect x="18" y="8" width="204" height="222" rx="22" fill="#fff"/><rect x="42" y="34" width="156" height="118" rx="12" fill="#000"/><rect x="132" y="184" width="62" height="6" fill="#000"/><rect x="36" y="238" width="168" height="32" rx="4" fill="#fff"/></mask>
+    </defs>
+    <rect width="240" height="300" fill="url(#i-pd)" mask="url(#i-pm)"/>
+    <rect x="56" y="50" width="4" height="8" fill="#7c7c7c"/><rect id="i-blink" x="64" y="50" width="6" height="8" fill="#ededed"/>
+  </svg></div>
   <div class="i-stage">
-    <div class="i-dots" aria-hidden="true"></div>
     <div class="i-term">
       <div class="i-bar"><i></i><i></i><i></i><span>firsttect ~ imphal</span></div>
       <div class="i-body"><div class="i-log" aria-live="off"></div><div class="i-cmd"><span class="p">$</span> <span class="i-typed"></span><span class="i-caret"></span></div></div>
@@ -307,7 +312,7 @@ const head = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>FIRSTTECT Institute of Information Technology Pvt Ltd</title>
 <meta name="description" content="FirstTect Institute of Information Technology Pvt Ltd, Imphal. Computer education and professional skill development with emphasis on practical learning.">
-<meta name="theme-color" content="#100e1c">
+<meta name="theme-color" content="#0a0a0a">
 <meta name="robots" content="noindex">
 <link rel="icon" type="image/png" href="${IMG}favicon.png">
 <link rel="apple-touch-icon" href="${IMG}apple-touch-icon.png">

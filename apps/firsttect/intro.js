@@ -15,7 +15,6 @@
   try { rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
 
   var stage = root.querySelector('.i-stage');
-  var dotsBox = root.querySelector('.i-dots');
   var logEl = root.querySelector('.i-log');
   var cmdEl = root.querySelector('.i-cmd');
   var typed = root.querySelector('.i-typed');
@@ -29,6 +28,7 @@
     done = true;
     for (var i = 0; i < timers.length; i++) clearTimeout(timers[i]);
     if (ticker) clearInterval(ticker);
+    clearInterval(blinker);
     if (dog) clearInterval(dog);
     try { sessionStorage.setItem(KEY, '1'); } catch (e) {}
     html.className = html.className.replace(/\bintro-lock\b/g, '');
@@ -40,31 +40,12 @@
     }, rm ? 0 : 600);
   }
 
-  function buildDots() {
-    var W = stage.offsetWidth, H = stage.offsetHeight;
-    var cols = W < 480 ? 18 : 26, rows = W < 480 ? 20 : 16;
-    var colors = ['#d2c444', '#616eb4', '#4b7945', '#a05478', '#c8643a', '#eef0f5', '#6a52c4'];
-    var frag = document.createDocumentFragment(), n = 0;
-    for (var r = 0; r < rows; r++) {
-      for (var c = 0; c < cols; c++) {
-        var edge = r === 0 || r === rows - 1 || c === 0 || c === cols - 1 || r === 2;
-        if (!edge) continue;
-        var x = c / (cols - 1), y = r / (rows - 1);
-        var d = document.createElement('i');
-        d.style.left = (x * 100) + '%';
-        d.style.top = (y * 100) + '%';
-        d.style.background = colors[n % colors.length];
-        d.style.setProperty('--cx', Math.round((0.5 - x) * W) + 'px');
-        d.style.setProperty('--cy', Math.round((0.5 - y) * H) + 'px');
-        d.style.setProperty('--sx', Math.round((Math.random() - 0.5) * W * 1.5) + 'px');
-        d.style.setProperty('--sy', Math.round((Math.random() - 0.5) * H * 1.9) + 'px');
-        d.style.setProperty('--d', (n % 24) * 12 + 'ms');
-        frag.appendChild(d);
-        n++;
-      }
-    }
-    dotsBox.appendChild(frag);
-  }
+  var blink = root.querySelector('#i-blink'), blinkOn = true;
+  var blinker = setInterval(function () {
+    if (done || !blink) { clearInterval(blinker); return; }
+    blinkOn = !blinkOn;
+    blink.setAttribute('opacity', blinkOn ? '1' : '0');
+  }, 450);
 
   function type() {
     for (var k = 1; k <= CMD.length; k++) {
@@ -146,10 +127,8 @@
   }
 
   var scenes = [
-    { n: 'logo', d: 1700 },
-    { n: 'burst', d: 650 },
-    { n: 'arrange', d: 1250 },
-    { n: 'zoom', d: 1500 },
+    { n: 'pc', d: 1900 },
+    { n: 'zoom', d: 1800 },
     { n: 'type', d: 1700, on: type },
     { n: 'wait', d: 0, on: wait },
     { n: 'log', d: 2000, on: startLog },
@@ -197,11 +176,11 @@
   try {
     if (rm) {
       root.className += ' rm';
-      cur = 5;
+      cur = 3;
       root.setAttribute('data-s', 'wait');
       wait();
     } else {
-      buildDots();
+      root.style.setProperty('--S', (stage.offsetWidth / 156).toFixed(3));
       void root.offsetWidth;
       go(0);
     }
