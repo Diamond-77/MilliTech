@@ -2,11 +2,12 @@ import { useCallback, useEffect, useState } from 'react'
 import Intro from './Intro.jsx'
 import Page from './Page.jsx'
 
-const reduced = () =>
-  typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
-
 export default function App() {
-  const [intro, setIntro] = useState(() => !reduced() && !/[?&]skip\b/.test(location.search))
+  const [intro, setIntro] = useState(
+    // Not skipped for "reduce motion": Android turns that on by itself in battery saver,
+    // and the story only moves after the visitor taps anyway.
+    () => !/[?&]skip\b/.test(location.search),
+  )
   const [runs, setRuns] = useState(0)
 
   useEffect(() => {

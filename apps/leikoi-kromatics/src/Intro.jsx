@@ -355,7 +355,8 @@ class Guard extends Component {
 function hasWebGL() {
   try {
     const c = document.createElement('canvas')
-    return !!(c.getContext('webgl2') || c.getContext('webgl'))
+    // three.js only runs on WebGL2. Older phones get the simple version instead of a blank screen.
+    return !!c.getContext('webgl2')
   } catch {
     return false
   }
@@ -370,6 +371,7 @@ export default function Intro({ onDone }) {
   const [gl] = useState(hasWebGL)
   const [flat, setFlat] = useState(!gl)
   const wash = useRef()
+  const flatRef = useRef()
   const line = useRef()
   const finished = useRef(false)
 
@@ -380,6 +382,12 @@ export default function Intro({ onDone }) {
   }
 
   const onFrame = (e) => {
+    if (flatRef.current) {
+      const f = flatRef.current
+      f.style.setProperty('--give', smooth(span(e, [0, 1.2])))
+      f.style.setProperty('--hug', smooth(span(e, [T.hug[0], T.hug[0] + 0.8])))
+      f.style.setProperty('--zoom', easeInOut(span(e, T.zoom)))
+    }
     if (wash.current) wash.current.style.opacity = smooth(span(e, T.wash))
     if (line.current) {
       const a = smooth(span(e, [T.line[0], T.line[0] + 0.9])) * (1 - smooth(span(e, [T.line[1] - 0.7, T.line[1]])))
@@ -411,6 +419,13 @@ export default function Intro({ onDone }) {
     if (flat) setReady(true)
   }, [flat])
 
+  // Watchdog: if the drawing never appears (slow GPU, blocked WebGL, stuck load), switch to the simple version.
+  useEffect(() => {
+    if (flat || ready) return
+    const id = setTimeout(() => setFlat(true), 8000)
+    return () => clearTimeout(id)
+  }, [flat, ready])
+
   useEffect(() => {
     const key = (ev) => {
       if (ev.key === 'Escape') finish()
@@ -433,9 +448,10 @@ export default function Intro({ onDone }) {
       }}
     >
       {flat ? (
-        <div className="intro-flat">
+        <div className="intro-flat" ref={flatRef}>
           <img src={asset('scene/s1.webp')} alt="" style={cover} />
-          <img src={asset('scene/t3.webp')} alt="" style={cover} className="intro-flat-color" />
+          <img src={asset('scene/t2.webp')} alt="" style={cover} className="flat-t2" />
+          <img src={asset('scene/t3.webp')} alt="" style={cover} className="flat-t3" />
         </div>
       ) : (
         <Guard onFail={() => setFlat(true)}>
