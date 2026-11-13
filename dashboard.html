@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sales Log · MilliTech</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0D1720">
+<link rel="icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* MilliTech sales log. One page, data lives in this browser (localStorage) with JSON export/import.
+   Everything is visible without animation; motion is only an extra when the device allows it. */
+:root {
+  --lime: #D4F53C; --lime-deep: #8DAA0B; --lime-soft: #EEFBB4;
+  --ink: #0D1720; --ink-2: #15212c; --ink-3: #1e2c39; --line: #2a3a48;
+  --text: #EFF0EB; --muted: #93a0a8; --red: #ff6b4f;
+  --pixel: "Silkscreen", "Courier New", monospace;
+  --sans: "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* outcome colours */
+  --o-no_answer: #56636d; --o-ignored: #7d8a93; --o-ghosted: #b48cff; --o-no: #ff6b4f;
+  --o-closed: #a07a5a; --o-talked: #4fb8ff; --o-interested: #ffd23f; --o-deal: #D4F53C;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--ink); color: var(--text); font: 16px/1.5 var(--sans);
+  background-image: radial-gradient(rgba(212,245,60,.06) 1px, transparent 1px); background-size: 14px 14px;
+  padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 max(16px, env(safe-area-inset-left, 0px)); }
+h1, h2, h3, .px { font-family: var(--pixel); font-weight: 400; letter-spacing: .02em; }
+h2 { font-size: 15px; margin: 0 0 12px; color: var(--lime); text-transform: uppercase; }
+
+/* top bar */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: calc(14px + env(safe-area-inset-top, 0px)) 0 10px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--pixel); font-size: 14px; }
+.brand b { background: var(--lime); color: var(--ink); padding: 2px 6px; font-weight: 700; }
+.ghost-btn { background: none; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font-size: 13px; color: var(--muted); }
+
+.card { background: var(--ink-2); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin: 12px 0; }
+
+/* hero counter */
+.hero { border: 2px solid var(--lime); box-shadow: 6px 6px 0 var(--lime-deep); border-radius: 4px; padding: 18px 16px 16px; }
+.lvl { display: inline-flex; gap: 8px; align-items: center; font-family: var(--pixel); font-size: 12px; background: var(--lime); color: var(--ink); padding: 3px 8px; }
+.count { display: flex; align-items: baseline; gap: 10px; margin: 10px 0 2px; font-family: var(--pixel); }
+.count .n { font-size: clamp(64px, 20vw, 112px); line-height: .9; color: var(--lime); }
+.count .of { font-size: clamp(22px, 6vw, 34px); color: var(--muted); }
+.count-label { font-family: var(--pixel); font-size: 12px; color: var(--muted); }
+.blocks { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin: 16px 0 10px; }
+.blocks.many { grid-template-columns: repeat(20, 1fr); gap: 3px; }
+.blk { aspect-ratio: 1; background: var(--ink-3); border: 1px solid var(--line); }
+.blk.on { border-color: transparent; }
+.bar1000 { height: 18px; background: var(--ink-3); border: 1px solid var(--line); margin: 16px 0 10px; }
+.bar1000 i { display: block; height: 100%; background: var(--lime); }
+.togo { margin: 0; font-weight: 600; }
+.quote { margin: 12px 0 0; color: var(--muted); font-size: 14px; border-left: 3px solid var(--lime); padding-left: 10px; }
+
+/* stat tiles */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0; }
+.stat { background: var(--ink-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px; min-width: 0; }
+.stat .v { font-family: var(--pixel); font-size: 24px; line-height: 1.1; }
+.stat .k { font-size: 12px; color: var(--muted); }
+@media (max-width: 480px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+
+/* follow ups */
+.due { border-color: var(--o-interested); }
+.due h2 { color: var(--o-interested); }
+.due-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); }
+.due-row:first-of-type { border-top: 0; }
+
+/* breakdown */
+.stack { display: flex; height: 22px; border: 1px solid var(--line); overflow: hidden; margin-bottom: 10px; }
+.stack i { display: block; height: 100%; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 10px; height: 10px; display: inline-block; flex: none; }
+
+/* before-call tips */
+details.tips summary { list-style: none; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+details.tips summary::-webkit-details-marker { display: none; }
+details.tips summary h2 { margin: 0; }
+details.tips summary::after { content: "+"; font-family: var(--pixel); color: var(--lime); font-size: 18px; }
+details.tips[open] summary::after { content: "−"; }
+.tips ol { margin: 12px 0 0; padding-left: 22px; }
+.tips li { margin: 8px 0; }
+.tips q { color: var(--lime-soft); }
+
+/* list */
+.filters { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 8px; scrollbar-width: none; }
+.filters::-webkit-scrollbar { display: none; }
+.chip { flex: none; border: 1px solid var(--line); background: var(--ink-3); border-radius: 999px; padding: 6px 12px; font-size: 13px; white-space: nowrap; }
+.chip[aria-pressed="true"] { background: var(--lime); color: var(--ink); border-color: var(--lime); font-weight: 600; }
+.item { border-top: 1px solid var(--line); padding: 12px 0; }
+.item-head { display: flex; gap: 10px; align-items: flex-start; width: 100%; text-align: left; background: none; border: 0; padding: 0; }
+.item-num { font-family: var(--pixel); font-size: 12px; color: var(--muted); min-width: 2.6em; padding-top: 2px; }
+.item-main { flex: 1; min-width: 0; }
+.item-name { font-weight: 700; }
+.item-meta { font-size: 13px; color: var(--muted); }
+.pill { flex: none; font-size: 11px; font-family: var(--pixel); padding: 3px 7px; color: var(--ink); white-space: nowrap; }
+.item-body { margin: 10px 0 0 calc(2.6em + 10px); font-size: 14px; }
+.item-body p { margin: 0 0 8px; white-space: pre-wrap; }
+.item-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn { border: 1px solid var(--line); background: var(--ink-3); border-radius: 8px; padding: 8px 12px; font-size: 14px; }
+.btn.primary { background: var(--lime); color: var(--ink); border-color: var(--lime); font-weight: 700; }
+.btn.danger { color: var(--red); }
+.btn.danger.armed { background: var(--red); color: var(--ink); }
+.empty { color: var(--muted); padding: 12px 0; }
+
+/* floating log button */
+.fab-wrap { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(transparent, var(--ink) 40%); z-index: 20; }
+.fab { display: block; width: 100%; max-width: 728px; margin: 0 auto; background: var(--lime); color: var(--ink); border: 0; border-radius: 4px; box-shadow: 4px 4px 0 var(--lime-deep); padding: 16px; font-family: var(--pixel); font-size: 18px; }
+.fab:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--lime-deep); }
+
+/* sheet */
+.sheet-bg { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 30; display: none; }
+.sheet-bg.open { display: block; }
+.sheet { position: fixed; left: 0; right: 0; bottom: 0; max-height: 92vh; max-height: 92dvh; overflow-y: auto; background: var(--ink-2); border-top: 2px solid var(--lime); border-radius: 16px 16px 0 0; z-index: 31; display: none; padding: 0 0 calc(20px + env(safe-area-inset-bottom, 0px)); }
+.sheet.open { display: block; }
+.sheet .wrap { max-width: 640px; }
+.sheet-head { position: sticky; top: 0; background: var(--ink-2); display: flex; justify-content: space-between; align-items: center; padding: 14px 0 10px; z-index: 1; }
+.sheet-head h2 { margin: 0; }
+label.f { display: block; margin: 14px 0 6px; font-size: 13px; color: var(--muted); font-weight: 600; }
+input.t, select.t, textarea.t { width: 100%; background: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 11px 12px; font-size: 16px; }
+textarea.t { min-height: 80px; resize: vertical; }
+input.t:focus, select.t:focus, textarea.t:focus { outline: 2px solid var(--lime); outline-offset: 1px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.checks label { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; font-size: 15px; }
+.checks input { width: 20px; height: 20px; accent-color: var(--lime); flex: none; margin-top: 2px; }
+.form-actions { display: flex; gap: 10px; margin-top: 20px; }
+.form-actions .btn { flex: 1; padding: 14px; font-size: 16px; }
+.err { color: var(--red); font-size: 13px; min-height: 1em; margin-top: 6px; }
+
+/* toast and celebration */
+.toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--lime); color: var(--ink); font-weight: 700; font-size: 15px; padding: 10px 14px; z-index: 40; width: max-content; max-width: calc(100% - 32px); text-align: center; box-shadow: 4px 4px 0 var(--lime-deep); display: none; }
+.toast.show { display: block; }
+.party { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; background: rgba(13,23,32,.92); text-align: center; padding: 24px; }
+.party.show { display: flex; }
+.party .big { font-family: var(--pixel); font-size: clamp(44px, 14vw, 96px); color: var(--lime); line-height: 1; }
+.party p { font-size: 18px; max-width: 28em; margin: 16px auto 24px; }
+#burst { position: fixed; inset: 0; pointer-events: none; z-index: 45; }
+
+.warn { background: #3a2412; border: 1px solid #a0602a; color: #ffd2a8; border-radius: 10px; padding: 10px 12px; font-size: 14px; margin: 12px 0; display: none; }
+.data-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.small { font-size: 13px; color: var(--muted); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .toast.show { animation: pop .25s ease-out; }
+  .party.show .big { animation: pop .4s ease-out; }
+  .sheet.open { animation: up .22s ease-out; }
+  .blk.new { animation: blink .5s steps(2) 3; }
+  @keyframes pop { from { transform: translateX(-50%) scale(.8); } to { transform: translateX(-50%) scale(1); } }
+  .party.show .big { animation-name: pop2; }
+  @keyframes pop2 { from { transform: scale(.6); } to { transform: scale(1); } }
+  @keyframes up { from { transform: translateY(40px); opacity: .5; } to { transform: none; opacity: 1; } }
+  @keyframes blink { 50% { opacity: .2; } }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><b>MT</b> SALES LOG</div>
+    <button class="ghost-btn" id="toData" type="button">Backup</button>
+  </header>
+
+  <div class="warn" id="storeWarn">This browser is not saving data (private window or blocked storage). Use Backup → Export before you close the tab.</div>
+
+  <section class="card hero" aria-labelledby="hTitle">
+    <span class="lvl" id="lvl">LV 1</span>
+    <h1 class="sr" id="hTitle">Attempts</h1>
+    <div class="count"><span class="n" id="cnt">0</span><span class="of" id="goal">/ 50</span></div>
+    <div class="count-label">BUSINESSES APPROACHED</div>
+    <div id="meter"></div>
+    <p class="togo" id="togo"></p>
+    <p class="quote">"Either I make a real deal or I become the real deal of sales pitching. Nothing in between."</p>
+  </section>
+
+  <div class="stats">
+    <div class="stat"><div class="v" id="sToday">0</div><div class="k" id="sTodayK">today</div></div>
+    <div class="stat"><div class="v" id="sStreak">0</div><div class="k">day streak</div></div>
+    <div class="stat"><div class="v" id="sTalk">0</div><div class="k">real talks</div></div>
+    <div class="stat"><div class="v" id="sDeal">0</div><div class="k">deals</div></div>
+  </div>
+
+  <section class="card due" id="dueCard" hidden>
+    <h2>Follow up now</h2>
+    <div id="dueList"></div>
+  </section>
+
+  <details class="card tips" id="tips">
+    <summary><h2>Before you dial</h2></summary>
+    <ol>
+      <li><b>Breathe, go slow.</b> Slow sounds confident. Stuttering is fine, rushing is not.</li>
+      <li><b>Open with a question about them.</b> <q>How do most new customers find you right now?</q></li>
+      <li><b>Then shut up and listen.</b> Ask one more: <q>What happens when someone searches your name on Google?</q></li>
+      <li><b>Their problem, not your price.</b> Missed calls, orders lost in WhatsApp chats, no page to show trust. Price only when they ask.</li>
+      <li><b>Ask for a tiny next step.</b> <q>Can I send you a 1-minute demo on WhatsApp?</q></li>
+    </ol>
+    <p class="small" id="pitchScore"></p>
+  </details>
+
+  <section class="card" aria-labelledby="bTitle">
+    <h2 id="bTitle">How calls ended</h2>
+    <div class="stack" id="stack"></div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <section class="card" aria-labelledby="lTitle">
+    <h2 id="lTitle">Every attempt</h2>
+    <div class="filters" id="filters" role="toolbar" aria-label="Filter by outcome"></div>
+    <div id="list"></div>
+  </section>
+
+  <section class="card" id="dataCard" aria-labelledby="dTitle">
+    <h2 id="dTitle">Backup</h2>
+    <p class="small">Your log lives only in this browser. Export a file now and then (phone and laptop don't sync), and import it on another device to carry on.</p>
+    <div class="data-row">
+      <button class="btn primary" id="exportBtn" type="button">Export file</button>
+      <button class="btn" id="importBtn" type="button">Import file</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+      <button class="btn" id="goalBtn" type="button">Daily target: <span id="dailyV">5</span></button>
+    </div>
+    <p class="small" id="lastBackup"></p>
+  </section>
+</div>
+
+<div class="fab-wrap"><button class="fab" id="logBtn" type="button">+ LOG A CALL</button></div>
+
+<div class="sheet-bg" id="sheetBg"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="fTitle">
+  <div class="wrap">
+    <div class="sheet-head"><h2 id="fTitle">Log a call</h2><button class="ghost-btn" id="closeSheet" type="button">Close</button></div>
+    <form id="form" autocomplete="off" novalidate>
+      <label class="f" for="fName">Business name</label>
+      <input class="t" id="fName" required placeholder="e.g. Smile Dental Care">
+      <label class="f">Type</label>
+      <div class="chips" id="fType"></div>
+      <div class="row2">
+        <div><label class="f" for="fPhone">Phone</label><input class="t" id="fPhone" type="tel" inputmode="tel" placeholder="98xxxxxxxx"></div>
+        <div><label class="f" for="fDate">Date</label><input class="t" id="fDate" type="date"></div>
+      </div>
+      <div class="row2">
+        <div><label class="f" for="fChannel">How</label>
+          <select class="t" id="fChannel"><option value="call">Phone call</option><option value="whatsapp">WhatsApp</option><option value="visit">Walk-in visit</option><option value="instagram">Instagram DM</option><option value="other">Other</option></select></div>
+        <div><label class="f" for="fSite">Has a website?</label>
+          <select class="t" id="fSite"><option value="unknown">Don't know</option><option value="no">No</option><option value="yes">Yes</option></select></div>
+      </div>
+      <label class="f">What happened</label>
+      <div class="chips" id="fOutcome"></div>
+      <label class="f">Pitch check (be honest)</label>
+      <div class="checks" id="fChecks"></div>
+      <label class="f" for="fNotes">Notes</label>
+      <textarea class="t" id="fNotes" placeholder="What they said, who decides, what to try next time"></textarea>
+      <div class="row2">
+        <div><label class="f" for="fFollow">Follow up on</label><input class="t" id="fFollow" type="date"></div>
+        <div><label class="f" for="fDemo">Demo built?</label>
+          <select class="t" id="fDemo"><option value="no">No</option><option value="yes">Yes</option></select></div>
+      </div>
+      <div class="err" id="fErr"></div>
+      <div class="form-actions">
+        <button class="btn" type="button" id="cancelBtn">Cancel</button>
+        <button class="btn primary" type="submit" id="saveBtn">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="party" id="party" role="alertdialog" aria-labelledby="partyBig">
+  <div><div class="big" id="partyBig">LEVEL UP</div><p id="partyText"></p><button class="btn primary" id="partyOk" type="button">Keep going</button></div>
+</div>
+<canvas id="burst" aria-hidden="true"></canvas>
+
+<script>
+(function () {
+  'use strict';
+  var KEY = 'mt-sales-v1';
+
+  var TYPES = [
+    ['clinic', 'Clinic'], ['school', 'School'], ['coaching', 'Coaching'], ['bouquet', 'Bouquet / gifts'],
+    ['restaurant', 'Restaurant / cafe'], ['hotel', 'Hotel'], ['gym', 'Gym'], ['salon', 'Salon'],
+    ['events', 'Events'], ['other', 'Other']
+  ];
+  var OUTCOMES = [
+    ['no_answer', 'No answer'], ['ignored', 'Ignored'], ['ghosted', 'Ghosted'], ['no', 'Said no'],
+    ['closed', 'Closed / wrong no.'], ['talked', 'Real talk'], ['interested', 'Interested'], ['deal', 'DEAL']
+  ];
+  var CHECKS = [
+    ['asked', 'I asked questions and let them talk'],
+    ['slow', 'I spoke slowly, no rushing'],
+    ['problem', 'I talked about their problem, not my price'],
+    ['value', 'I showed what a site gets them (bookings, orders, trust)']
+  ];
+  // real talk or better
+  var TALKED = { talked: 1, interested: 1, deal: 1, no: 1, ghosted: 1 };
+  var LEVELS = [
+    { goal: 50, name: 'LV 1 · COLD CALLER' },
+    { goal: 100, name: 'LV 2 · PHONE WARRIOR' },
+    { goal: 1000, name: 'LV 3 · CLOSER IN TRAINING' },
+    { goal: Infinity, name: 'LV 4 · THE REAL DEAL' }
+  ];
+
+  var SEED = [
+    { id: 's1', name: 'Health Plus Clinic', type: 'clinic', date: '2026-10-28', channel: 'call', site: 'unknown', demo: 'yes', outcome: 'closed', checks: [], follow: '',
+      notes: 'Built a full demo site for them. The business shut down before any deal. (Date approximate.)' },
+    { id: 's2', name: 'RC Fitness Samurou', type: 'gym', date: '2026-10-30', channel: 'call', site: 'no', demo: 'yes', outcome: 'ignored', checks: [], follow: '',
+      notes: 'Built the gym landing page demo. Owner never replied for feedback. (Date approximate.)' },
+    { id: 's3', name: 'Leikoi Kromatics', type: 'bouquet', date: '2026-11-12', channel: 'call', site: 'no', demo: 'yes', outcome: 'ghosted', checks: [], follow: '2026-11-13',
+      notes: 'Bouquet shop. Staff took the call, said the manager would decide the next day. No word since.' },
+    { id: 's4', name: 'FirstTect computer coaching', type: 'coaching', date: '2026-11-13', channel: 'call', site: 'yes', demo: 'yes', outcome: 'no_answer', checks: [], follow: '2026-11-15',
+      notes: 'Rebuilt their firsttect.in site as a demo and sent the link on WhatsApp. Calls not answered yet.' }
+  ];
+
+  var state = { entries: [], daily: 5, lastBackup: '' };
+  var storeOk = true;
+  var filter = 'all';
+  var openId = null;
+  var editingId = null;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function ymd(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function today() { return ymd(new Date()); }
+  function parse(s) { var p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function label(list, k) { for (var i = 0; i < list.length; i++) if (list[i][0] === k) return list[i][1]; return k; }
+  function niceDate(s) {
+    if (!s) return '';
+    var t = today(); if (s === t) return 'Today';
+    var y = new Date(); y.setDate(y.getDate() - 1); if (s === ymd(y)) return 'Yesterday';
+    return parse(s).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  }
+  function uid() { return 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function oc(k) { return 'var(--o-' + k + ')'; }
+
+  function load() {
+    var raw = null;
+    try { raw = localStorage.getItem(KEY); } catch (e) { storeOk = false; }
+    if (raw) {
+      try { var d = JSON.parse(raw); if (d && Array.isArray(d.entries)) state = Object.assign(state, d); } catch (e) {}
+    } else {
+      state.entries = SEED.map(function (e) { return Object.assign({ created: e.date }, e); });
+      save();
+    }
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); storeOk = true; } catch (e) { storeOk = false; }
+    $('storeWarn').style.display = storeOk ? 'none' : 'block';
+  }
+
+  function sorted() {
+    return state.entries.slice().sort(function (a, b) {
+      if (a.date !== b.date) return a.date < b.date ? 1 : -1;
+      return (a.created || '') < (b.created || '') ? 1 : -1;
+    });
+  }
+  function levelFor(n) { for (var i = 0; i < LEVELS.length; i++) if (n < LEVELS[i].goal) return i; return LEVELS.length - 1; }
+  function streak() {
+    var days = {}; state.entries.forEach(function (e) { days[e.date] = 1; });
+    var d = new Date(); if (!days[ymd(d)]) d.setDate(d.getDate() - 1);
+    var n = 0; while (days[ymd(d)]) { n++; d.setDate(d.getDate() - 1); }
+    return n;
+  }
+  // number of each entry in time order (1 = first ever attempt)
+  function numbers() {
+    var m = {}; state.entries.slice().sort(function (a, b) {
+      if (a.date !== b.date) return a.date < b.date ? -1 : 1;
+      return (a.created || '') < (b.created || '') ? -1 : 1;
+    }).forEach(function (e, i) { m[e.id] = i + 1; });
+    return m;
+  }
+
+  function render(newest) {
+    var E = state.entries, n = E.length, li = levelFor(n), L = LEVELS[li];
+    var prev = li ? LEVELS[li - 1].goal : 0;
+    $('cnt').textContent = n;
+    $('lvl').textContent = L.name;
+    $('goal').textContent = isFinite(L.goal) ? '/ ' + L.goal : '';
+    // meter: one block per attempt, coloured by how it ended
+    var ordered = sorted().reverse();
+    var meter = $('meter');
+    if (isFinite(L.goal) && L.goal <= 100) {
+      var html = '<div class="blocks' + (L.goal > 50 ? ' many' : '') + '" role="img" aria-label="' + n + ' of ' + L.goal + ' attempts">';
+      for (var i = 0; i < L.goal; i++) {
+        var e = ordered[i];
+        html += e ? '<i class="blk on' + (e.id === newest ? ' new' : '') + '" style="background:' + oc(e.outcome) + '" title="' + esc(e.name) + '"></i>' : '<i class="blk"></i>';
+      }
+      meter.innerHTML = html + '</div>';
+    } else {
+      var pct = isFinite(L.goal) ? Math.min(100, (n - prev) / (L.goal - prev) * 100) : 100;
+      meter.innerHTML = '<div class="bar1000" role="img" aria-label="' + n + ' attempts"><i style="width:' + pct + '%"></i></div>';
+    }
+    var left = isFinite(L.goal) ? L.goal - n : 0;
+    var lines = n === 0 ? 'First call is the hardest. Make it.' :
+      left > 0 ? left + ' more to ' + (LEVELS[li + 1] ? LEVELS[li + 1].name.split(' · ')[0] : 'the top') + '. Every no is a rep.' :
+      'You made it past 1000. You are the real deal.';
+    $('togo').textContent = lines;
+
+    var t = today(), tc = E.filter(function (e) { return e.date === t; }).length;
+    $('sToday').textContent = tc + '/' + state.daily;
+    $('sToday').style.color = tc >= state.daily ? 'var(--lime)' : '';
+    $('sStreak').textContent = streak();
+    $('sTalk').textContent = E.filter(function (e) { return TALKED[e.outcome]; }).length;
+    $('sDeal').textContent = E.filter(function (e) { return e.outcome === 'deal'; }).length;
+    $('sDeal').style.color = $('sDeal').textContent !== '0' ? 'var(--lime)' : '';
+    $('dailyV').textContent = state.daily;
+
+    // follow ups due today or earlier
+    var due = E.filter(function (e) { return e.follow && e.follow <= t && e.outcome !== 'deal'; })
+      .sort(function (a, b) { return a.follow < b.follow ? -1 : 1; });
+    $('dueCard').hidden = !due.length;
+    $('dueList').innerHTML = due.map(function (e) {
+      return '<div class="due-row"><div><b>' + esc(e.name) + '</b><div class="small">' + (e.follow < t ? 'Was due ' : 'Due ') + niceDate(e.follow).toLowerCase() +
+        (e.phone ? ' · ' + esc(e.phone) : '') + '</div></div><button class="btn primary" data-again="' + e.id + '" type="button">Log call</button></div>';
+    }).join('');
+
+    // breakdown
+    var counts = {}; E.forEach(function (e) { counts[e.outcome] = (counts[e.outcome] || 0) + 1; });
+    $('stack').innerHTML = n ? OUTCOMES.filter(function (o) { return counts[o[0]]; }).map(function (o) {
+      return '<i style="width:' + (counts[o[0]] / n * 100) + '%;background:' + oc(o[0]) + '" title="' + o[1] + '"></i>';
+    }).join('') : '';
+    $('legend').innerHTML = OUTCOMES.map(function (o) {
+      return '<span><i class="dot" style="background:' + oc(o[0]) + '"></i>' + o[1] + ' ' + (counts[o[0]] || 0) + '</span>';
+    }).join('');
+
+    // pitch score over the latest calls that were rated
+    var rated = sorted().filter(function (e) { return e.checks && e.rated; }).slice(0, 5);
+    $('pitchScore').textContent = rated.length ?
+      'Pitch score, last ' + rated.length + ' rated calls: ' + (rated.reduce(function (s, e) { return s + e.checks.length; }, 0) / rated.length).toFixed(1) + ' / 4.' :
+      'Tick the pitch check when you log a call, and your pitch score shows up here.';
+
+    // filters
+    $('filters').innerHTML = [['all', 'All ' + n]].concat(OUTCOMES.filter(function (o) { return counts[o[0]]; }).map(function (o) { return [o[0], o[1] + ' ' + counts[o[0]]]; }))
+      .map(function (f) { return '<button class="chip" type="button" data-filter="' + f[0] + '" aria-pressed="' + (filter === f[0]) + '">' + esc(f[1]) + '</button>'; }).join('');
+
+    var nums = numbers();
+    var rows = sorted().filter(function (e) { return filter === 'all' || e.outcome === filter; });
+    $('list').innerHTML = rows.length ? rows.map(function (e) {
+      var open = openId === e.id;
+      var meta = [label(TYPES, e.type), niceDate(e.date), label([['call', 'Call'], ['whatsapp', 'WhatsApp'], ['visit', 'Visit'], ['instagram', 'Instagram'], ['other', 'Other']], e.channel)];
+      var body = '';
+      if (open) {
+        var facts = [];
+        if (e.phone) facts.push('<a href="tel:' + esc(e.phone.replace(/[^\d+]/g, '')) + '" style="color:var(--lime)">' + esc(e.phone) + '</a>');
+        facts.push('Website: ' + ({ yes: 'yes', no: 'no', unknown: 'unknown' }[e.site] || 'unknown'));
+        if (e.demo === 'yes') facts.push('Demo built');
+        if (e.follow) facts.push('Follow up ' + niceDate(e.follow).toLowerCase());
+        if (e.rated) facts.push('Pitch ' + e.checks.length + '/4');
+        body = '<div class="item-body"><p class="small">' + facts.join(' · ') + '</p>' + (e.notes ? '<p>' + esc(e.notes) + '</p>' : '') +
+          '<div class="item-actions"><button class="btn primary" type="button" data-again="' + e.id + '">Call again</button>' +
+          '<button class="btn" type="button" data-edit="' + e.id + '">Edit</button>' +
+          '<button class="btn danger" type="button" data-del="' + e.id + '">Delete</button></div></div>';
+      }
+      return '<div class="item"><button class="item-head" type="button" data-open="' + e.id + '" aria-expanded="' + open + '">' +
+        '<span class="item-num">#' + nums[e.id] + '</span><span class="item-main"><span class="item-name">' + esc(e.name) + '</span><br><span class="item-meta">' + meta.join(' · ') + '</span></span>' +
+        '<span class="pill" style="background:' + oc(e.outcome) + '">' + esc(label(OUTCOMES, e.outcome)) + '</span></button>' + body + '</div>';
+    }).join('') : '<div class="empty">Nothing here yet.</div>';
+
+    $('lastBackup').textContent = state.lastBackup ? 'Last export: ' + niceDate(state.lastBackup) + '.' : 'Not exported yet.';
+  }
+
+  // ---------- form ----------
+  function chipGroup(el, list, name) {
+    el.innerHTML = list.map(function (o) { return '<button class="chip" type="button" data-' + name + '="' + o[0] + '" aria-pressed="false">' + o[1] + '</button>'; }).join('');
+    el.addEventListener('click', function (ev) {
+      var b = ev.target.closest('[data-' + name + ']'); if (!b) return;
+      setChip(el, name, b.getAttribute('data-' + name));
+    });
+  }
+  function setChip(el, name, v) {
+    el.querySelectorAll('[data-' + name + ']').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-' + name) === v)); });
+  }
+  function getChip(el, name) { var b = el.querySelector('[aria-pressed="true"]'); return b ? b.getAttribute('data-' + name) : ''; }
+
+  chipGroup($('fType'), TYPES, 'type');
+  chipGroup($('fOutcome'), OUTCOMES, 'outcome');
+  $('fChecks').innerHTML = CHECKS.map(function (c) { return '<label><input type="checkbox" value="' + c[0] + '"> ' + c[1] + '</label>'; }).join('');
+
+  var lastFocus = null;
+  function openSheet(entry, mode) {
+    lastFocus = document.activeElement;
+    editingId = mode === 'edit' ? entry.id : null;
+    var e = entry || {};
+    $('fTitle').textContent = mode === 'edit' ? 'Edit attempt' : mode === 'again' ? 'Log another call' : 'Log a call';
+    $('fName').value = e.name || '';
+    setChip($('fType'), 'type', e.type || '');
+    $('fPhone').value = e.phone || '';
+    $('fDate').value = mode === 'edit' ? e.date : today();
+    $('fChannel').value = (mode === 'edit' && e.channel) || (mode === 'again' && e.channel) || 'call';
+    $('fSite').value = e.site || 'unknown';
+    setChip($('fOutcome'), 'outcome', mode === 'edit' ? e.outcome : '');
+    var ch = mode === 'edit' && e.checks ? e.checks : [];
+    $('fChecks').querySelectorAll('input').forEach(function (i) { i.checked = ch.indexOf(i.value) > -1; });
+    $('fNotes').value = mode === 'edit' ? (e.notes || '') : '';
+    $('fFollow').value = mode === 'edit' ? (e.follow || '') : '';
+    $('fDemo').value = e.demo || 'no';
+    $('fErr').textContent = '';
+    $('sheet').classList.add('open'); $('sheetBg').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    $('sheet').scrollTop = 0;
+    if (mode !== 'again') setTimeout(function () { $('fName').focus(); }, 50);
+  }
+  function closeSheet() {
+    $('sheet').classList.remove('open'); $('sheetBg').classList.remove('open');
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  $('form').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var name = $('fName').value.trim(), outcome = getChip($('fOutcome'), 'outcome');
+    if (!name) { $('fErr').textContent = 'Add the business name.'; $('fName').focus(); return; }
+    if (!outcome) { $('fErr').textContent = 'Pick what happened on the call.'; return; }
+    var checks = []; $('fChecks').querySelectorAll('input:checked').forEach(function (i) { checks.push(i.value); });
+    var data = {
+      name: name, type: getChip($('fType'), 'type') || 'other', phone: $('fPhone').value.trim(),
+      date: $('fDate').value || today(), channel: $('fChannel').value, site: $('fSite').value,
+      outcome: outcome, checks: checks, rated: true, notes: $('fNotes').value.trim(),
+      follow: $('fFollow').value, demo: $('fDemo').value
+    };
+    var before = state.entries.length, beforeLvl = levelFor(before), newest = null;
+    if (editingId) {
+      state.entries = state.entries.map(function (e) { return e.id === editingId ? Object.assign({}, e, data) : e; });
+      save(); closeSheet(); render(); toast('Saved.');
+      return;
+    }
+    data.id = uid(); data.created = new Date().toISOString(); newest = data.id;
+    state.entries.push(data);
+    save(); closeSheet(); filter = 'all'; render(newest);
+    var n = state.entries.length, li = levelFor(n);
+    if (outcome === 'deal') {
+      party('DEAL!', 'Attempt #' + n + ' closed. That is the one you were calling for. Now deliver it like a pro.');
+    } else if (li > beforeLvl) {
+      party(LEVELS[li].name.split(' · ')[0] + ' UNLOCKED', n + ' businesses approached. ' + LEVELS[li].name.split(' · ')[1].toLowerCase().replace(/\b\w/g, function (c) { return c.toUpperCase(); }) + '. Most people quit long before this.');
+    } else {
+      var L = LEVELS[li], left = isFinite(L.goal) ? L.goal - n : 0;
+      var msg = { no_answer: 'No answer. Next number.', ignored: 'Ignored. Their loss. Next.', ghosted: 'Ghosted. Follow up once, then move on.',
+        no: 'A real no. That is a rep.', closed: 'Dead lead. Next.', talked: 'You got them talking. That is the skill.', interested: 'Interested! Send the demo today.' }[outcome] || 'Logged.';
+      toast('+1 · ' + msg + (left ? ' ' + left + ' to go.' : ''));
+      if (outcome === 'talked' || outcome === 'interested') burst();
+    }
+  });
+
+  // ---------- list actions ----------
+  var armed = null;
+  document.addEventListener('click', function (ev) {
+    var t = ev.target.closest('button'); if (!t) return;
+    var id;
+    if ((id = t.getAttribute('data-open'))) { openId = openId === id ? null : id; armed = null; render(); return; }
+    if ((id = t.getAttribute('data-filter'))) { filter = id; render(); return; }
+    if ((id = t.getAttribute('data-again'))) { openSheet(find(id), 'again'); return; }
+    if ((id = t.getAttribute('data-edit'))) { openSheet(find(id), 'edit'); return; }
+    if ((id = t.getAttribute('data-del'))) {
+      if (armed === id) {
+        state.entries = state.entries.filter(function (e) { return e.id !== id; });
+        armed = null; openId = null; save(); render(); toast('Deleted.');
+      } else {
+        armed = id; t.classList.add('armed'); t.textContent = 'Tap again to delete';
+      }
+    }
+  });
+  function find(id) { for (var i = 0; i < state.entries.length; i++) if (state.entries[i].id === id) return state.entries[i]; return null; }
+
+  $('logBtn').addEventListener('click', function () { openSheet(null, 'new'); });
+  $('closeSheet').addEventListener('click', closeSheet);
+  $('cancelBtn').addEventListener('click', closeSheet);
+  $('sheetBg').addEventListener('click', closeSheet);
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape') { if ($('party').classList.contains('show')) hideParty(); else if ($('sheet').classList.contains('open')) closeSheet(); }
+  });
+  $('toData').addEventListener('click', function () { $('dataCard').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); });
+
+  // ---------- backup ----------
+  $('exportBtn').addEventListener('click', function () {
+    state.lastBackup = today(); save();
+    var blob = new Blob([JSON.stringify({ app: 'millitech-sales', version: 1, exported: new Date().toISOString(), entries: state.entries, daily: state.daily }, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'millitech-sales-' + today() + '.json';
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    render(); toast('Exported ' + state.entries.length + ' attempts.');
+  });
+  $('importBtn').addEventListener('click', function () { $('importFile').click(); });
+  $('importFile').addEventListener('change', function () {
+    var f = this.files && this.files[0]; if (!f) return;
+    var r = new FileReader();
+    r.onload = function () {
+      try {
+        var d = JSON.parse(r.result), list = Array.isArray(d) ? d : d.entries;
+        if (!Array.isArray(list)) throw new Error('no entries');
+        var byId = {}; state.entries.forEach(function (e) { byId[e.id] = e; });
+        var added = 0;
+        list.forEach(function (e) {
+          if (!e || !e.name || !e.outcome) return;
+          if (!e.id) e.id = uid();
+          if (!byId[e.id]) added++;
+          byId[e.id] = Object.assign({ type: 'other', date: today(), channel: 'call', site: 'unknown', checks: [], notes: '', follow: '', demo: 'no' }, e);
+        });
+        state.entries = Object.keys(byId).map(function (k) { return byId[k]; });
+        if (d.daily) state.daily = d.daily;
+        save(); render(); toast('Imported. ' + added + ' new, ' + state.entries.length + ' total.');
+      } catch (e) { toast('That file is not a MilliTech sales export.'); }
+    };
+    r.readAsText(f);
+    this.value = '';
+  });
+  $('goalBtn').addEventListener('click', function () {
+    var opts = [3, 5, 10, 15, 20], i = opts.indexOf(state.daily);
+    state.daily = opts[(i + 1) % opts.length]; save(); render(); toast('Daily target: ' + state.daily + ' calls.');
+  });
+
+  // ---------- feedback ----------
+  var toastT;
+  function toast(msg) {
+    var el = $('toast'); el.textContent = msg; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+    clearTimeout(toastT); toastT = setTimeout(function () { el.classList.remove('show'); }, 3200);
+  }
+  function party(big, text) {
+    $('partyBig').textContent = big; $('partyText').textContent = text;
+    $('party').classList.add('show'); $('partyOk').focus(); burst(true);
+  }
+  function hideParty() { $('party').classList.remove('show'); }
+  $('partyOk').addEventListener('click', hideParty);
+
+  // pixel confetti; skipped when the device asks for less motion (the toast/banner still shows)
+  function burst(big) {
+    if (reduce) return;
+    var c = $('burst'), x = c.getContext('2d'), w = c.width = innerWidth, h = c.height = innerHeight;
+    var cols = ['#D4F53C', '#EEFBB4', '#ffd23f', '#4fb8ff', '#ffffff'], ps = [], N = big ? 140 : 60;
+    for (var i = 0; i < N; i++) ps.push({ x: w / 2, y: h * (big ? .45 : .8), vx: (Math.random() - .5) * (big ? 16 : 10), vy: -Math.random() * (big ? 16 : 11) - 3, s: 4 + (Math.random() * 4 | 0), c: cols[i % cols.length] });
+    var f = 0;
+    (function tick() {
+      x.clearRect(0, 0, w, h);
+      ps.forEach(function (p) { p.vy += .45; p.x += p.vx; p.y += p.vy; x.fillStyle = p.c; x.fillRect(p.x | 0, p.y | 0, p.s, p.s); });
+      if (++f < 90) requestAnimationFrame(tick); else x.clearRect(0, 0, w, h);
+    })();
+  }
+
+  load();
+  render();
+  $('storeWarn').style.display = storeOk ? 'none' : 'block';
+})();
+</script>
+</body>
+</html>
