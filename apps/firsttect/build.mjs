@@ -310,6 +310,7 @@ function scrLog() {
 const intro = `
 <div id="intro" data-s="" role="dialog" aria-label="Intro">
   <button class="i-skip" type="button">Skip</button>
+  <button class="i-full" type="button" hidden>Play full animation</button>
   <div class="i-pc" aria-hidden="true"><svg viewBox="0 0 240 300" width="240" height="300">
     <defs>
       <pattern id="i-pd" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.05" fill="currentColor"/></pattern>
@@ -342,8 +343,9 @@ const head = `<!doctype html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>
-(function(){var h=document.documentElement,q=location.search,t='dark';
-try{t=localStorage.getItem('ft-theme')||'dark';}catch(e){}
+(function(){var h=document.documentElement,q=location.search,t='dark',m=false;
+try{t=localStorage.getItem('ft-theme')||'dark';if(/[?&]motion/.test(q))localStorage.setItem('ft-motion','1');if(/[?&]nomotion/.test(q))localStorage.removeItem('ft-motion');m=localStorage.getItem('ft-motion')==='1';}catch(e){}
+if(m)h.className+=' motion';
 h.setAttribute('data-theme',t==='light'?'light':'dark');
 if(/[?&]mini/.test(q))h.className+=' mini';
 else if(!/[?&]skip/.test(q))h.className+=' intro-on intro-lock';})();

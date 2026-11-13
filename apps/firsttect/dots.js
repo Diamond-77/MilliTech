@@ -4,6 +4,7 @@
   var $$ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
   var still = false;
   try { still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  if (/\bmotion\b/.test(document.documentElement.className)) still = false;
 
   /* ---- light / dark ---- */
   var ink = '#ededed';
