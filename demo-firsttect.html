@@ -15,7 +15,7 @@
 <script>
 (function(){var h=document.documentElement,q=location.search,t='dark',m=false;
 try{t=localStorage.getItem('ft-theme')||'dark';if(/[?&]motion/.test(q))localStorage.setItem('ft-motion','1');if(/[?&]nomotion/.test(q))localStorage.removeItem('ft-motion');m=localStorage.getItem('ft-motion')==='1';}catch(e){}
-if(m)h.className+=' motion';
+h.className+=' motion';
 h.setAttribute('data-theme',t==='light'?'light':'dark');
 if(/[?&]mini/.test(q))h.className+=' mini';
 else if(!/[?&]skip/.test(q))h.className+=' intro-on intro-lock';})();
@@ -733,7 +733,7 @@ function fontCells(str) {
   var timers = [], ticker = null, dog = null;
   var rm = false;
   try { rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
-  if (/\bmotion\b/.test(html.className)) rm = false;
+  rm = false; /* the intro always plays in full, whatever the phone's motion setting says */
 
   var stage = root.querySelector('.i-stage');
   var logEl = root.querySelector('.i-log');
@@ -892,14 +892,13 @@ function fontCells(str) {
   dog = setInterval(function () {
     if (done || waiting) return;
     var now = Date.now();
-    if (now - started - waitedMs > 12000) { finish(); return; }
-    if (now > expected + 2500) { if (cur + 1 >= scenes.length) finish(); else go(cur + 1); }
+    if (now - started - waitedMs > 30000) { finish(); return; }
+    if (now > expected + 6000) { if (cur + 1 >= scenes.length) finish(); else go(cur + 1); }
   }, 250);
 
   runBtn.addEventListener('click', run);
   skipBtn.addEventListener('click', finish);
   document.addEventListener('keydown', onKey);
-  window.addEventListener('error', function () { if (!done) finish(); });
 
   try {
     if (rm) {
