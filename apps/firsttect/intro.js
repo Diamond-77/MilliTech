@@ -12,6 +12,7 @@
   var timers = [], ticker = null, dog = null;
   var rm = false;
   try { rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  if (/\bmotion\b/.test(html.className)) rm = false;
 
   var stage = root.querySelector('.i-stage');
   var logEl = root.querySelector('.i-log');
@@ -19,6 +20,7 @@
   var typed = root.querySelector('.i-typed');
   var runBtn = root.querySelector('.i-run');
   var skipBtn = root.querySelector('.i-skip');
+  var fullBtn = root.querySelector('.i-full');
 
   function later(fn, ms) { var t = setTimeout(fn, ms); timers.push(t); return t; }
 
@@ -180,10 +182,26 @@
 
   try {
     if (rm) {
+      /* reduced motion: no zoom and no drawing. The computer shows as a still picture with its screen lit,
+         then the terminal replaces it. One tap on the button below plays the full animation instead. */
       root.className += ' rm';
-      cur = 4;
-      mark(4);
-      wait();
+      cur = 1;
+      mark(1);
+      expected = Date.now() + 1800;
+      if (fullBtn) {
+        fullBtn.hidden = false;
+        fullBtn.addEventListener('click', function () {
+          try { localStorage.setItem('ft-motion', '1'); } catch (e) {}
+          location.href = location.pathname + '?intro';
+        });
+      }
+      later(function () {
+        if (done) return;
+        cur = 4;
+        mark(4);
+        wait();
+        expected = Date.now() + 1e9;
+      }, 1800);
     } else {
       root.style.setProperty('--S', (stage.offsetWidth / 156).toFixed(3));
       void root.offsetWidth;

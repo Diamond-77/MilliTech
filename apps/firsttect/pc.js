@@ -5,6 +5,7 @@
   var MINI = /\bmini\b/.test(document.documentElement.className);
   var still = false;
   try { still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  if (/\bmotion\b/.test(document.documentElement.className)) still = false;
 
   /* ---- model ---- */
   var STEP = 0.05, Z = 0.85, T = -1.2, B = 0.95, R = 0.16;

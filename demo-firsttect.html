@@ -13,8 +13,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>
-(function(){var h=document.documentElement,q=location.search,t='dark';
-try{t=localStorage.getItem('ft-theme')||'dark';}catch(e){}
+(function(){var h=document.documentElement,q=location.search,t='dark',m=false;
+try{t=localStorage.getItem('ft-theme')||'dark';if(/[?&]motion/.test(q))localStorage.setItem('ft-motion','1');if(/[?&]nomotion/.test(q))localStorage.removeItem('ft-motion');m=localStorage.getItem('ft-motion')==='1';}catch(e){}
+if(m)h.className+=' motion';
 h.setAttribute('data-theme',t==='light'?'light':'dark');
 if(/[?&]mini/.test(q))h.className+=' mini';
 else if(!/[?&]skip/.test(q))h.className+=' intro-on intro-lock';})();
@@ -375,6 +376,8 @@ html.intro-on #intro{display:block;position:fixed;inset:0;z-index:100;background
 #intro.out{opacity:0;pointer-events:none}
 .i-skip{position:absolute;top:calc(12px + env(safe-area-inset-top));right:12px;z-index:5;height:48px;padding:0 16px;font-family:var(--mono);font-size:13px;color:var(--text2);border:1px dotted var(--line2);border-radius:6px;background:var(--bg)}
 .i-skip:hover{color:var(--text)}
+.i-full{position:absolute;top:calc(12px + env(safe-area-inset-top));left:12px;z-index:5;height:48px;padding:0 16px;font-family:var(--mono);font-size:13px;color:var(--text);border:1px dotted var(--line2);border-radius:6px;background:var(--bg)}
+.i-full[hidden]{display:none}
 /* the computer: screen centre sits at 120,93 of its 240x300 box */
 .i-pc{position:absolute;left:50%;top:50%;width:240px;height:300px;margin:-150px 0 0 -120px;transform-origin:120px 93px;-webkit-clip-path:inset(0 0 100% 0);clip-path:inset(0 0 100% 0);transition:clip-path 1.3s linear,-webkit-clip-path 1.3s linear}
 .i-pc svg{display:block;width:240px;height:300px}
@@ -413,8 +416,9 @@ html.intro-on #intro{display:block;position:fixed;inset:0;z-index:100;background
   .i-foot span{display:none}
 }
 @media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{transition-duration:.01ms !important;scroll-behavior:auto !important}
+  html:not(.motion) *,html:not(.motion) *::before,html:not(.motion) *::after{transition-duration:.01ms !important;scroll-behavior:auto !important}
 }
+
 
 </style>
 </head>
@@ -422,6 +426,7 @@ html.intro-on #intro{display:block;position:fixed;inset:0;z-index:100;background
 
 <div id="intro" data-s="" role="dialog" aria-label="Intro">
   <button class="i-skip" type="button">Skip</button>
+  <button class="i-full" type="button" hidden>Play full animation</button>
   <div class="i-pc" aria-hidden="true"><svg viewBox="0 0 240 300" width="240" height="300">
     <defs>
       <pattern id="i-pd" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.05" fill="currentColor"/></pattern>
@@ -728,6 +733,7 @@ function fontCells(str) {
   var timers = [], ticker = null, dog = null;
   var rm = false;
   try { rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  if (/\bmotion\b/.test(html.className)) rm = false;
 
   var stage = root.querySelector('.i-stage');
   var logEl = root.querySelector('.i-log');
@@ -735,6 +741,7 @@ function fontCells(str) {
   var typed = root.querySelector('.i-typed');
   var runBtn = root.querySelector('.i-run');
   var skipBtn = root.querySelector('.i-skip');
+  var fullBtn = root.querySelector('.i-full');
 
   function later(fn, ms) { var t = setTimeout(fn, ms); timers.push(t); return t; }
 
@@ -896,10 +903,26 @@ function fontCells(str) {
 
   try {
     if (rm) {
+      /* reduced motion: no zoom and no drawing. The computer shows as a still picture with its screen lit,
+         then the terminal replaces it. One tap on the button below plays the full animation instead. */
       root.className += ' rm';
-      cur = 4;
-      mark(4);
-      wait();
+      cur = 1;
+      mark(1);
+      expected = Date.now() + 1800;
+      if (fullBtn) {
+        fullBtn.hidden = false;
+        fullBtn.addEventListener('click', function () {
+          try { localStorage.setItem('ft-motion', '1'); } catch (e) {}
+          location.href = location.pathname + '?intro';
+        });
+      }
+      later(function () {
+        if (done) return;
+        cur = 4;
+        mark(4);
+        wait();
+        expected = Date.now() + 1e9;
+      }, 1800);
     } else {
       root.style.setProperty('--S', (stage.offsetWidth / 156).toFixed(3));
       void root.offsetWidth;
@@ -1030,6 +1053,7 @@ function fontCells(str) {
   var $$ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
   var still = false;
   try { still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  if (/\bmotion\b/.test(document.documentElement.className)) still = false;
 
   /* ---- light / dark ---- */
   var ink = '#ededed';
@@ -1148,6 +1172,7 @@ function fontCells(str) {
   var MINI = /\bmini\b/.test(document.documentElement.className);
   var still = false;
   try { still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  if (/\bmotion\b/.test(document.documentElement.className)) still = false;
 
   /* ---- model ---- */
   var STEP = 0.05, Z = 0.85, T = -1.2, B = 0.95, R = 0.16;
