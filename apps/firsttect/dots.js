@@ -64,11 +64,12 @@
     jobs.push(function (t) {
       var f = fit(cv); if (!f) return;
       var pitch = Math.min(f.w / (cols + 1), f.h / 9), x0 = (f.w - cols * pitch) / 2, y0 = (f.h - 7 * pitch) / 2, r = pitch * 0.36;
+      var dark = html.getAttribute('data-theme') !== 'light', lift = dark ? 0.3 : 0;
       var wave = still ? -99 : ((t * 0.22) % 1.6 - 0.3) * cols;
       f.c.fillStyle = ink;
       for (var i = 0; i < cells.length; i++) {
         var x = x0 + cells[i][0] * pitch + pitch / 2, y = y0 + cells[i][1] * pitch + pitch / 2;
-        var a = 0.3 + 0.08 * Math.sin(t * 1.3 + seed[i]);
+        var a = 0.32 + lift + 0.08 * Math.sin(t * 1.3 + seed[i]);
         var dw = Math.abs(cells[i][0] - wave); if (dw < 5) a += (1 - dw / 5) * 0.7;
         var dm = Math.sqrt((x - mx) * (x - mx) + (y - my) * (y - my)); if (dm < pitch * 5) a += (1 - dm / (pitch * 5)) * 0.8;
         f.c.globalAlpha = Math.min(1, a);

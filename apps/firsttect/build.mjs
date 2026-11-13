@@ -214,7 +214,7 @@ const mMeta = [
   ['Student Services', 'Exams · admit cards · results'],
   ['Institute', 'Faculty · centres · contact'],
 ];
-const row = (href, icon, title, sub, cls = '') => `<a class="row" href="${href}" ${ext}>${ic(icon)}<span class="b"><b>${title}</b><span class="${cls}">${sub}</span></span>${ic('chev')}</a>`;
+const row = (href, icon, title, sub, cls = '') => `<a class="row" href="${href}" ${ext}>${ic(icon)}<span class="b"><b>${title}</b><span class="${cls}">${sub}</span></span>${/^https?:/.test(href) ? ic('out') : ic('chev')}</a>`;
 
 const mobile = `
 <div class="mob">
@@ -245,7 +245,7 @@ const mobile = `
     </section>
 
     <section class="m-view m-students" aria-label="Student Services">
-      <div class="m-pad"><div class="prompt"><b>$</b> Student Online Services</div><h2 class="m-h">FirstTect Student Services</h2><p class="m-sub">Registered students can apply for exams, download admit cards and open their dashboard online.</p></div>
+      <div class="m-pad"><div class="prompt"><b>$</b> Student Online Services</div><h2 class="m-h">FirstTect Student Services</h2><p class="m-sub">Registered students can apply for exams, download admit cards and open their dashboard online. These open the institute's own portal in a new tab, so your place here stays put.</p></div>
       <div class="rows">
         ${row(SITE + 'public_exam_results.php', 'check', 'Exam Result', 'No student login required', 'open')}
         ${row(SITE + 'login.php', 'file', 'Exam Application', 'Student login required')}
