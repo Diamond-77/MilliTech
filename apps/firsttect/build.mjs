@@ -345,7 +345,7 @@ const head = `<!doctype html>
 <script>
 (function(){var h=document.documentElement,q=location.search,t='dark',m=false;
 try{t=localStorage.getItem('ft-theme')||'dark';if(/[?&]motion/.test(q))localStorage.setItem('ft-motion','1');if(/[?&]nomotion/.test(q))localStorage.removeItem('ft-motion');m=localStorage.getItem('ft-motion')==='1';}catch(e){}
-if(m)h.className+=' motion';
+h.className+=' motion';
 h.setAttribute('data-theme',t==='light'?'light':'dark');
 if(/[?&]mini/.test(q))h.className+=' mini';
 else if(!/[?&]skip/.test(q))h.className+=' intro-on intro-lock';})();

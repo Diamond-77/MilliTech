@@ -12,7 +12,7 @@
   var timers = [], ticker = null, dog = null;
   var rm = false;
   try { rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
-  if (/\bmotion\b/.test(html.className)) rm = false;
+  rm = false; /* the intro always plays in full, whatever the phone's motion setting says */
 
   var stage = root.querySelector('.i-stage');
   var logEl = root.querySelector('.i-log');
@@ -171,14 +171,13 @@
   dog = setInterval(function () {
     if (done || waiting) return;
     var now = Date.now();
-    if (now - started - waitedMs > 12000) { finish(); return; }
-    if (now > expected + 2500) { if (cur + 1 >= scenes.length) finish(); else go(cur + 1); }
+    if (now - started - waitedMs > 30000) { finish(); return; }
+    if (now > expected + 6000) { if (cur + 1 >= scenes.length) finish(); else go(cur + 1); }
   }, 250);
 
   runBtn.addEventListener('click', run);
   skipBtn.addEventListener('click', finish);
   document.addEventListener('keydown', onKey);
-  window.addEventListener('error', function () { if (!done) finish(); });
 
   try {
     if (rm) {
