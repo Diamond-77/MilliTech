@@ -203,9 +203,24 @@
         expected = Date.now() + 1e9;
       }, 1800);
     } else {
-      root.style.setProperty('--S', (stage.offsetWidth / 156).toFixed(3));
-      void root.offsetWidth;
-      go(0);
+      /* First visit: the page is still downloading and parsing, so the main thread is busy and the
+         opening transitions would finish unseen. Wait until the page has loaded (max 3s), then two
+         painted frames, and only then start the clock. */
+      var begun = false;
+      var begin = function () {
+        if (begun || done) return;
+        begun = true;
+        root.style.setProperty('--S', (stage.offsetWidth / 156).toFixed(3));
+        void root.offsetWidth;
+        var kick = function () { started = Date.now(); expected = started + 1500; go(0); };
+        if (window.requestAnimationFrame) requestAnimationFrame(function () { requestAnimationFrame(function () { setTimeout(kick, 60); }); });
+        else kick();
+      };
+      expected = Date.now() + 1e9;
+      if (document.readyState === 'complete') begin();
+      else window.addEventListener('load', begin);
+      later(begin, 3000);
+      expected = Date.now() + 6000;
     }
   } catch (e) { finish(); }
 })();
